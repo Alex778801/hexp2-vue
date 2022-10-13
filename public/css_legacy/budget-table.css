@@ -1,0 +1,95 @@
+body {
+    max-width: 75em !important;
+    margin:0 auto !important;
+}
+
+.ItemBtnIcon {
+    font-size: 1.8em;
+    color: #519df8;
+}
+
+.wideBtn {
+    width: 4em;
+}
+
+.EnBtn {
+    color: gold !important;
+}
+
+.EditTools {
+    color: #1b8253;
+    display: none;
+}
+
+.BordLine {
+    border-top-width: medium;
+    border-top-color: #80b9ff;
+}
+
+.NotesTd {
+    padding-right: 0 !important;
+    width: 100%;
+}
+
+.AmountTd {
+    width: 20em;
+    text-align: center;
+}
+
+.NotesField {
+    text-align: end;
+    width: 100%;
+}
+
+.AmountField {
+    text-align: end;
+    width: 8em;
+}
+
+table, td, th {
+    border: 0 !important;
+}
+
+th {
+    font-size: 1em;
+    vertical-align: middle;
+}
+
+td {
+    font-size: 0.95em;
+}
+
+tr {
+    /*vertical-align: middle;*/
+    text-align: center;
+}
+
+select {
+    font-size: 1.0em;
+    padding: 0.3em !important;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #519df8 !important;
+}
+
+.btn-outline-primary:hover {
+    color: darkslateblue;
+}
+
+.btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:active, .btn-outline-primary:visited {
+    background-color: white !important;
+}
+
+.ErrField {
+    margin-top: -0.3em;
+    border: 0.3em solid red;
+    border-radius: 0.2em;
+}
+
+.ErrField2 {
+    border: 0.3em solid red;
+    padding: 0.1em;
+    margin-top: 0.3em;
+    border-radius: 0.2em;
+}

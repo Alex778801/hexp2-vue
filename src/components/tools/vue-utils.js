@@ -30,6 +30,7 @@ export function boolFromUrlParam(value) {
 
 // Извлечь численное значение из GET параметра URL
 export function numFromUrlParam(value) {
+   return -1;
    return Number(isNaN(Number(value)) ? -1 : Number(value));
 }
 

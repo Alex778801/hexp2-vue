@@ -1,8 +1,9 @@
 <template>
    <CatListComp
-      :startPid =                 "-1"
-      :startEditMode =            "False"
+      :startPid =                 "get.parentdId"
+      :startEditMode =            "get.editMode"
       model =                     "projects"
+      modelQ =                    "query { projects { id, pid, g, o, name, } }"
       urlEnterElement =           "/finopers/log-v"
       urlEditGroup =              ""
       urlEditElement =            "/projects/element"
@@ -26,6 +27,12 @@ export default {
    components: {
       CatListComp
    },
+
+   data() {
+      return {
+         get: this.$route.query,
+      }
+   }
 
 }
 

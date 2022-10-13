@@ -1,0 +1,29 @@
+.ellipsis {
+    width: 80% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+    @media print {
+        body {
+            zoom: 80%;
+            font-size: 0.6em;
+        }
+        .no-print, .no-print *  {
+            display: none !important;
+        }
+    }
+}
+
+@media print
+{
+    .no-print, .no-print *  {
+        display: none !important;
+    }
+}
+
+.ui-dialog-titlebar {
+    color: #2e6e9e;
+}

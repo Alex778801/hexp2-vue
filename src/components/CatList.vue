@@ -108,9 +108,11 @@
 
 /* eslint-disable */
 
-const axios = require('axios');
-// axios.defaults.xsrfCookieName = 'csrftoken';
-// axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+import gql from "graphql-tag";
+
+const axios = require('axios').default;
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
 import InputTextDlg  from "./tools/InputTextDlg.vue";
 import ConfirmDlg    from "./tools/ConfirmDlg.vue";
@@ -123,6 +125,7 @@ import {
    findItemById,
    checkboxMobileFixMixin
 } from './tools/vue-utils';
+import {apolloClient} from "@/apollo-config";
 
 export default {
    name: 'CatListComp',
@@ -137,6 +140,8 @@ export default {
    props: {
       // Наименование справочника
       model: String,
+      // Строка запроса для получения справочника
+      modelQ: String,
       // URL операций
       urlEnterElement: String,
       urlEditGroup: String,
@@ -273,10 +278,12 @@ export default {
       },
 
       // Получить справочник
-      fetchList() {
-         axios.get(`/dbcore/cat-getdata?models=${this.model}`).then( (response) => {
-            // Преобразуем json в массив
-            this.list = response.data[this.model];
+      async fetchList() {
+         // Запрос справочника
+         const listQ = gql(this.modelQ);
+         await apolloClient.query({query: listQ} ).then( (response) => {
+            // Копируем данные из ответа
+            this.list = [...response.data[this.model]];
             // Сортировка
             this.list.sort((a, b) => {
                    if (a.pid === b.pid) {
@@ -286,7 +293,7 @@ export default {
                 }
             )
             // Отключим мигание кнопки обнолвения
-            setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) );
+            setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
          }).catch( (error) => fErr(error) );
       },
 

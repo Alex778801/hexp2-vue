@@ -5,10 +5,10 @@ import { createApp } from 'vue';
 import App from './App.vue';
 
 import vueRouter from './router.js';
+
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
-
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -112,6 +112,5 @@ app.component('Dialog', Dialog);
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Calendar', Calendar);
 app.component('Dropdown', Dropdown);
-
 
 app.mount('#app');
