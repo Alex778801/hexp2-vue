@@ -1,10 +1,10 @@
 /* eslint-disable */
 
 import { createApp } from 'vue';
-
-import App from './App.vue';
-
+import App from "./App.vue";
 import vueRouter from './router.js';
+import { createPinia } from "pinia";
+import {apolloProvider} from "@/apollo-config";
 
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -21,9 +21,11 @@ import 'primevue/resources/primevue.min.css'
 import 'primevue/resources/themes/bootstrap4-light-blue/theme.css'
 import 'primeicons/primeicons.css'
 
-const app = createApp(App);
-app.use(vueRouter);
-app.use(PrimeVue, {
+createApp(App)
+    .use(vueRouter)
+    .use(apolloProvider)
+    .use(createPinia())
+    .use(PrimeVue, {
     locale: {
         startsWith: 'Starts with',
         contains: 'Contains',
@@ -100,17 +102,15 @@ app.use(PrimeVue, {
             next: 'Next'
         }
     }
-});
-app.use(ConfirmationService);
-app.use(DialogService);
+})
+    .use(ConfirmationService)
+    .use(DialogService)
+    .directive('tooltip', Tooltip)
+    .component('InputText', InputText)
+    .component('Button', Button)
+    .component('Dialog', Dialog)
+    .component('ConfirmDialog', ConfirmDialog)
+    .component('Calendar', Calendar)
+    .component('Dropdown', Dropdown)
+    .mount('#app');
 
-app.directive('tooltip', Tooltip);
-
-app.component('InputText', InputText);
-app.component('Button', Button);
-app.component('Dialog', Dialog);
-app.component('ConfirmDialog', ConfirmDialog);
-app.component('Calendar', Calendar);
-app.component('Dropdown', Dropdown);
-
-app.mount('#app');

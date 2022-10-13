@@ -281,7 +281,8 @@ export default {
       async fetchList() {
          // Запрос справочника
          const listQ = gql(this.modelQ);
-         await apolloClient.query({query: listQ} ).then( (response) => {
+         // await apolloClient.query({query: listQ} ).then( (response) => {
+         await this.$apollo.query({query: listQ} ).then( (response) => {
             // Копируем данные из ответа
             this.list = [...response.data[this.model]];
             // Сортировка
@@ -294,7 +295,7 @@ export default {
             )
             // Отключим мигание кнопки обнолвения
             setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
-         }).catch( (error) => fErr(error) );
+         }).catch( (error) => clog(error) );
       },
 
       // Обновить историю браузера
