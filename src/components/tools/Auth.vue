@@ -58,7 +58,7 @@ export default {
    },
 
    mounted() {
-      this.clearLocalStorage();
+      this.clearSessionData();
    },
 
    methods: {
@@ -70,13 +70,18 @@ export default {
       cancelBtn() {
       },
       // **************************************************************************************************************
-      // Очистить данные авторизации в локальном хранилище
-      clearLocalStorage() {
+      // Очистить данные авторизации
+      clearSessionData() {
          localStorage.removeItem("token");
          localStorage.removeItem("username");
          localStorage.removeItem("refexpin");
          localStorage.removeItem("payload");
          localStorage.removeItem("user");
+         this.userNameFld = '';
+         this.passwordFld = '';
+         this.loginError = false;
+         this.loggedIn = false;
+         this.username = '';
       },
       // Вход в систему
       async login(username, password) {
@@ -112,9 +117,7 @@ export default {
       },
       // Выход из системы
       logout() {
-         this.clearLocalStorage();
-         this.username = '';
-         this.loggedIn = false;
+         this.clearSessionData();
       },
       // Проверка валидности логина
       async verifyLogin() {
@@ -130,7 +133,7 @@ export default {
                token: localStorage.getItem("token")
             }
          }).then((response) => {
-            this.loggedIn = true;
+            // Все ок, ничего не трогаем
          }).catch((error) => {
             this.logout();
             clog('AUTH verifyLogin failed:', error);
@@ -138,11 +141,12 @@ export default {
       },
       // Обработка ошибок
       err(error)  {
-         this.logout();
+         if (String(error).includes('Error decoding signature')) {
+            this.logout();
+         }
          clog('AUTH error:', error);
       }
    }
-
 }
 </script>
 
