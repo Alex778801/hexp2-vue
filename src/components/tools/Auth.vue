@@ -32,7 +32,7 @@ import {apolloClient} from "@/apollo-config";
 import {clog} from "@/components/tools/vue-utils";
 
 export default {
-   name: "LoginDlg",
+   name: "Auth",
 
    emits: ['loggedIn_Changed'],
 
@@ -102,6 +102,7 @@ export default {
             this.username = username;
             this.loggedIn = true;
             this.loginError = false;
+            this.userNameFld = '';
             this.passwordFld = '';
          }).catch( (error) => {
             this.loginError = true;

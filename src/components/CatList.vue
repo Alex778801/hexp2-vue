@@ -294,7 +294,7 @@ export default {
             )
             // Отключим мигание кнопки обнолвения
             setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
-         }).catch( (error) => authDGVA.err(error) );
+         }).catch( (error) => this.$root.$refs.auth.err(error) );
       },
 
       // Обновить историю браузера
