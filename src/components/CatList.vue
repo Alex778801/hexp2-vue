@@ -190,17 +190,15 @@ export default {
       this.editMode = boolFromUrlParam(this.startEditMode);
       // Получить справочник
       this.fetchList();
-      // При изменении Видимости приложения
-      document.addEventListener('visibilitychange', () => {
-          if (!document.hidden) {
-              this.fetchList();
-          }
-      }, false)
       // Авто обновление справочника по таймеру
-      setInterval(() => {
-         this.glowRefreshBtn = true;
-         this.fetchList();
-      }, this.autoFetchInterval);
+      // setInterval(() => {
+      //    clog('auto refresh');
+      //    // Автообновление только, если страница активна в браузере
+      //    if (document.hidden)
+      //       return;
+      //    this.glowRefreshBtn = true;
+      //    this.fetchList();
+      // }, this.autoFetchInterval);
    },
 
    computed: {
@@ -278,11 +276,12 @@ export default {
       },
 
       // Получить справочник
-      async fetchList() {
+      fetchList() {
+         clog('fetchList');
          // Запрос справочника
          const listQ = gql(this.modelQ);
-         // await apolloClient.query({query: listQ} ).then( (response) => {
-         await this.$apollo.query({query: listQ} ).then( (response) => {
+         apolloClient.query({query: listQ, fetchPolicy: "no-cache"} ).then( (response) => {
+         // this.$apollo.query({query: listQ} ).then( (response) => {
             // Копируем данные из ответа
             this.list = [...response.data[this.model]];
             // Сортировка
@@ -295,7 +294,7 @@ export default {
             )
             // Отключим мигание кнопки обнолвения
             setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
-         }).catch( (error) => clog(error) );
+         }).catch( (error) => authDGVA.err(error) );
       },
 
       // Обновить историю браузера

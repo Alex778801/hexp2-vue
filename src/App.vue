@@ -1,49 +1,32 @@
 <template>
-  <router-view></router-view>
+   <MainMenu v-if="loggedIn"/>
+   <router-view v-if="loggedIn"></router-view>
+   <LoginDlg @loggedIn_Changed="(value) => loggedIn = value"/>
 </template>
 
 <script>
 /* eslint-disable */
 
-import { useUserStore } from "@/stores/user";
 import {apolloClient} from "@/apollo-config";
 import gql from "graphql-tag";
 import {clog} from "@/components/tools/vue-utils";
+import MainMenu from "@/components/MainMenu";
+import LoginDlg from "@/components/tools/LoginDlg";
 
 export default {
-  name: 'App',
+   name: 'App',
 
-  setup() {
+   components: {
+      LoginDlg,
+      MainMenu
+   },
 
+   data() {
+      return {
+         loggedIn: false,
+      }
+   },
 
-
-     const authQ = gql(`
-         mutation TokenAuth($username: String!, $password: String!) {
-           tokenAuth(username: $username, password: $password) {
-             token
-             payload
-             refreshExpiresIn
-           }
-         }
-      `);
-
-     apolloClient.mutate({
-        mutation: authQ,
-        variables: {
-           username: 'admin',
-           password: '111'
-        }
-     }).then( (response) => {
-        clog(response)
-
-        const userStore = useUserStore();
-        userStore.setToken(response.data.tokenAuth.token);
-        userStore.setUser(response.data.tokenAuth.payload.username);
-
-
-     })
-
-  }
 }
 </script>
 

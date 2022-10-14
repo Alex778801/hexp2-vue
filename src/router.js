@@ -11,7 +11,7 @@ export default createRouter({
     history: createMemoryHistory(),
     routes: [
         { path: '/cat-projects',   component: CatProjects, alias: '/' },
-        // { path: '/cat-agents',     component: CatAgents },
+        { path: '/cat-agents',     component: CatProjects },
         // { path: '/cat-costtypes',  component: CatCostTypes },
         // { path: '/log-finopers',   component: LogFinOpers },
     ]

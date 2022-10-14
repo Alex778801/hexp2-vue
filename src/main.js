@@ -3,8 +3,7 @@
 import { createApp } from 'vue';
 import App from "./App.vue";
 import vueRouter from './router.js';
-import { createPinia } from "pinia";
-import {apolloProvider} from "@/apollo-config";
+import { apolloProvider } from "@/apollo-config";
 
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -16,15 +15,21 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import Tooltip from 'primevue/tooltip';
+import Menubar from 'primevue/menubar';
+import Password from 'primevue/password';
 
-import 'primevue/resources/primevue.min.css'
-import 'primevue/resources/themes/bootstrap4-light-blue/theme.css'
-import 'primeicons/primeicons.css'
+import 'primevue/resources/primevue.min.css';
+import 'primevue/resources/themes/saga-blue/theme.css';
+import 'primeicons/primeicons.css';
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
+library.add(faUserSecret);
 
 createApp(App)
     .use(vueRouter)
     .use(apolloProvider)
-    .use(createPinia())
     .use(PrimeVue, {
     locale: {
         startsWith: 'Starts with',
@@ -112,5 +117,8 @@ createApp(App)
     .component('ConfirmDialog', ConfirmDialog)
     .component('Calendar', Calendar)
     .component('Dropdown', Dropdown)
+    .component('Menubar', Menubar)
+    .component('Password', Password)
+    .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');
 

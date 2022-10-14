@@ -33,7 +33,6 @@ export default {
          get: this.$route.query,
       }
    }
-
 }
 
 </script>
