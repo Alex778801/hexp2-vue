@@ -4,22 +4,23 @@
          <span class="text-primary"> Авторизация </span>
       </template>
 
-      <form>
-         <div class="p-inputgroup">
+      <form id="loginForm" autocomplete="on">
+         <div class="p-inputgroup pt-2">
             <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
-            <InputText v-model="userNameFld" placeholder="логин" autocomplete="username"/>
+            <InputText id="username" v-model="userNameFld" placeholder="логин" autocomplete="username"/>
          </div>
 
          <div class="p-inputgroup pt-2">
             <span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
-            <Password id="pwd" v-model="passwordFld" placeholder="пароль" :feedback="false" @keyup.enter="loginBtn()" autocomplete="current-password"/>
+            <Password id="password" v-model="passwordFld" placeholder="пароль" :feedback="false" @keyup.enter="loginBtn()"
+                      :inputProps="{autocomplete: 'current-password'}"/>
          </div>
-         <small v-if="loginError" id="pwd-help" class="p-error"> Неверный логин/пароль </small>
+         <small v-if="loginError" id="password-help" class="p-error"> Неверный логин/пароль </small>
       </form>
 
       <template #footer>
-         <Button label="Отмена" class="p-button-text p-button-sm" @click="cancelBtn()"/>
-         <Button label="Вход" icon="fa fa-sign-in" class="p-button-sm" @click="loginBtn()"/>
+         <Button label="Отмена" @click="cancelBtn()"/>
+         <Button label="Вход" icon="fa fa-sign-in" @click="loginBtn()"/>
       </template>
    </Dialog>
 </template>
