@@ -19,6 +19,7 @@ import Menubar from 'primevue/menubar';
 import Password from 'primevue/password';
 import Card from 'primevue/card';
 import Slider from 'primevue/slider';
+import Toolbar from 'primevue/toolbar';
 
 import 'primevue/resources/primevue.min.css';
 // import 'primevue/resources/themes/saga-blue/theme.css';
@@ -125,6 +126,7 @@ createApp(App)
     .component('Password', Password)
     .component('Card', Card)
     .component('Slider', Slider)
-    .component('font-awesome-icon', FontAwesomeIcon)
+    .component('Slider', Slider)
+    .component('Toolbar', Toolbar)
     .mount('#app');
 
