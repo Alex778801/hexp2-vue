@@ -7,6 +7,7 @@
 <script>
 /* eslint-disable */
 
+import { settingsUtils } from "./components/tools/settings-utils"
 import Auth from "@/components/tools/Auth";
 import MainMenu from "@/components/MainMenu";
 
@@ -25,8 +26,10 @@ export default {
    },
 
    mounted() {
-      // Автологин !!!
+      // !!!!!!!!!!!! Автологин
       this.$refs.auth.login('admin', '111');
+      // Инициализация настроек приложения
+      settingsUtils.init();
    }
 
 }

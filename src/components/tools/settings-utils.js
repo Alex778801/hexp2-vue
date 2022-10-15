@@ -1,19 +1,12 @@
 /* eslint-disable */
 
-export const settings = {
-   // Масштаб интерфейса
-   scaleInterface: 0.9,
-   // Тема офорлмения
-   themes: [
-      {idx: 0, name: 'Saga blue',        file: '/lib/primevue/resources/themes/saga-blue/theme.css'},
-      {idx: 1, name: 'Saga green',       file: '/lib/primevue/resources/themes/saga-green/theme.css'},
-      {idx: 2, name: 'BS4 light blue',   file: '/lib/primevue/resources/themes/bootstrap4-light-blue/theme.css'},
-      {idx: 3, name: 'BS4 dark blue',    file: '/lib/primevue/resources/themes/bootstrap4-dark-blue/theme.css'},
-   ],
-   theme: 0,
+export const settingsUtils = {
    // Инициализация
    init() {
-
+      // Масштаб интерфейса
+      this.applyScaleInterface(this.loadScaleInterface());
+      // Тема оформления
+      this.applyTheme(this.loadTheme().idx);
    },
    //------------------------------------------------------------------------------------------------------------------
    // Масштаб интерфейса
@@ -28,6 +21,12 @@ export const settings = {
    },
    //------------------------------------------------------------------------------------------------------------------
    // Тема оформления
+   themes: [
+      {idx: 0, name: 'Saga blue',        file: '/lib/primevue/resources/themes/saga-blue/theme.css'},
+      {idx: 1, name: 'Saga green',       file: '/lib/primevue/resources/themes/saga-green/theme.css'},
+      {idx: 2, name: 'BS4 light blue',   file: '/lib/primevue/resources/themes/bootstrap4-light-blue/theme.css'},
+      {idx: 3, name: 'BS4 dark blue',    file: '/lib/primevue/resources/themes/bootstrap4-dark-blue/theme.css'},
+   ],
    loadTheme() {
       const idx = Number(localStorage.getItem('settings--theme' || '0'));
       const themeFile = this.themes.find(i => i.idx === idx).file;
@@ -41,5 +40,6 @@ export const settings = {
       const themeFile = this.themes.find( i => i.idx === idx).file;
       localStorage.setItem('settings--theme', idx);
    },
+   //------------------------------------------------------------------------------------------------------------------
    //
 }
