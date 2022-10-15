@@ -24,6 +24,11 @@ export default {
       }
    },
 
+   mounted() {
+      // Автологин !!!
+      this.$refs.auth.login('admin', '111');
+   }
+
 }
 </script>
 

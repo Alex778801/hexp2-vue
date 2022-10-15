@@ -55,6 +55,7 @@ export default {
          loggedIn: false,
          // Имя зарегистрированного пользователя
          username: '',
+         //
       }
    },
 
@@ -74,10 +75,6 @@ export default {
       // Очистить данные авторизации
       clearSessionData() {
          localStorage.removeItem("token");
-         localStorage.removeItem("username");
-         localStorage.removeItem("refexpin");
-         localStorage.removeItem("payload");
-         localStorage.removeItem("user");
          this.userNameFld = '';
          this.passwordFld = '';
          this.loginError = false;
@@ -100,11 +97,7 @@ export default {
                password: password
             }
          }).then( (response) => {
-            localStorage.setItem("token",    response.data.tokenAuth.token);
-            localStorage.setItem("username", username);
-            localStorage.setItem("refexpin", response.data.tokenAuth.refreshExpiresIn);
-            localStorage.setItem("payload",  JSON.stringify(response.data.tokenAuth.payload));
-            localStorage.setItem("user",     JSON.stringify(response.data.tokenAuth.user));
+            localStorage.setItem("token", response.data.tokenAuth.token);
             this.username = username;
             this.loggedIn = true;
             this.loginError = false;
