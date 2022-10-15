@@ -3,7 +3,7 @@
       <Menubar :model="items" class="m-1">
          <template #end>
             <div class="p-inputgroup">
-               <InputText placeholder="Keyword"/>
+               <InputText placeholder="строка поиска"/>
                <Button icon="pi pi-search"/>
             </div>
          </template>
@@ -20,7 +20,7 @@ export default {
    data() {
       return {
          items: [
-            { label: 'hExpenses',icon: 'fa fa-home', to: '/cat-projects1' },
+            { label: 'hExpenses',icon: 'fa fa-home', to: '/cat-projects1', disabled: true },
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-agents' },
             { label: 'Статьи', icon: 'fa fa-coins', url: 'http://ya.ru' },
             { label: 'Агенты', icon: 'fa fa-user-tie' },

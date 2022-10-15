@@ -96,6 +96,11 @@
       </div>
    </div>
 
+
+
+
+
+
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />
 
