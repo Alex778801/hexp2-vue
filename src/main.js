@@ -21,7 +21,7 @@ import Card from 'primevue/card';
 import Slider from 'primevue/slider';
 
 import 'primevue/resources/primevue.min.css';
-import 'primevue/resources/themes/saga-blue/theme.css';
+// import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primeicons/primeicons.css';
 
 import '/node_modules/primeflex/primeflex.css'

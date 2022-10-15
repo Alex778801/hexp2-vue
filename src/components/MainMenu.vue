@@ -41,7 +41,7 @@ export default {
 
 .router-link-active-exact .p-menuitem-text, .router-link-active-exact .p-menuitem-icon {
    color: var(--primary-color) !important;
-   text-shadow: 1px 1px 3px #fff, 1px 1px 6px var(--primary-color) !important;
+   text-shadow: 1px 1px 3px var(--primary-color-text), 1px 1px 6px var(--primary-color) !important;
 }
 
 </style>
