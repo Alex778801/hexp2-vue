@@ -4,9 +4,9 @@
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title> Масштаб интерфейса </template>
          <template #content>
-               <h5>Масштаб: {{scaleInterface}}</h5>
+               <h5>{{scaleInterface}}</h5>
                <Slider v-model="scaleInterface" :step="0.025" :min="0.5" :max="1.5"/>
-               <p class="mt-3">Отрегулируйте ползунком желаемый масштаб интерфейса.
+               <p class="mt-3 text-sm">Отрегулируйте ползунком желаемый масштаб интерфейса.
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>
       </Card>
