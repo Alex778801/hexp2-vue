@@ -12,6 +12,8 @@
 </template>
 
 <script>
+/* eslint-disable */
+
 export default {
    name: "MainMenu",
 
@@ -22,7 +24,7 @@ export default {
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-agents' },
             { label: 'Статьи', icon: 'fa fa-coins', url: 'http://ya.ru' },
             { label: 'Агенты', icon: 'fa fa-user-tie' },
-            { label: 'Настройки', icon: 'fa fa-cog' },
+            { label: 'Настройки', icon: 'fa fa-cog', to: '/settings' },
             { label: `Выход (${this.$root.$refs.auth.username})`,
                icon: 'fa fa-power-off',
                class: 'ps-5',

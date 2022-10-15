@@ -17,10 +17,14 @@ import Dropdown from 'primevue/dropdown';
 import Tooltip from 'primevue/tooltip';
 import Menubar from 'primevue/menubar';
 import Password from 'primevue/password';
+import Card from 'primevue/card';
+import Slider from 'primevue/slider';
 
 import 'primevue/resources/primevue.min.css';
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primeicons/primeicons.css';
+
+import '/node_modules/primeflex/primeflex.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -119,6 +123,8 @@ createApp(App)
     .component('Dropdown', Dropdown)
     .component('Menubar', Menubar)
     .component('Password', Password)
+    .component('Card', Card)
+    .component('Slider', Slider)
     .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');
 
