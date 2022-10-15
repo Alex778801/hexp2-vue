@@ -1,18 +1,16 @@
 <template>
 
-<!-- Текущая группа справочника -->
-<!--   <div class="container-fluid sticky-top p-2" style="background-color: #daf7ff">-->
-<!--      <div class="btn-toolbar justify-content-between">-->
-<!--         <div class="btn-group align-items-center py-1">-->
-<!--&lt;!&ndash;        Путь    &ndash;&gt;-->
-<!--            <i class="fas fa-code ListBtnIcon pe-2" @click="levelUp"></i><span id="Path" style="color: #67a2f1; font-weight: bold">{{ frmCurPath() }}</span>-->
-<!--         </div>-->
-<!--         <div class="btn-group">-->
-<!--&lt;!&ndash;        Кнопка На уровень вверх    &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" :disabled="!canLevelUp" @click="levelUp"><i class="fas fa-arrow-alt-circle-up" style="color: white"></i></button>-->
-<!--         </div>-->
-<!--      </div>-->
-<!--   </div>-->
+<!-- Текущая группа справочника-->
+<Toolbar class="m-1 p-2" style="background-color: var(--primary-100)">
+   <template #start>
+      <!-- Путь    -->
+      <i class="fas fa-code ListBtnIcon pe-2" @click="levelUp"></i><span>{{ frmCurPath() }}</span>
+   </template>
+   <template #end>
+      <!-- Кнопка На уровень вверх    -->
+      <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>
+   </template>
+</Toolbar>
 
 <!-- Содержимое справочника -->
 <!--   <div class="container-fluid" style="padding-bottom: 18em; min-height: 50em">-->
@@ -54,80 +52,51 @@
 <!--      </div>-->
 <!--   </div>-->
 
-<!-- Нижняя панель инструментов        -->
-<!--   <div class="container-fluid fixed-bottom p-2" style="max-width: 75em; background-color: #daf7ff;">-->
-<!--      <div class="btn-toolbar justify-content-between">-->
-<!--         <div class="btn-group py-1">-->
-<!--&lt;!&ndash;        Кнопка Иерархия            &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="hierarchyMode = !hierarchyMode"><i class="fas fa-folder-tree" :class="{EnBtn: hierarchyMode}"></i></button>-->
-<!--&lt;!&ndash;        Кнопка Редактирование      &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="editMode = !editMode"><i class="fas fa-pencil" :class="{EnBtn: editMode}"></i></button>-->
-<!--         </div>-->
-<!--         <div class="btn-group py-1">-->
-<!--&lt;!&ndash;        Кнопка Новая группа        &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="newGroup()" :disabled="!hierarchyMode"><i class="fas fa-folder-plus"></i></button>-->
-<!--&lt;!&ndash;        Кнопка Новый элемент       &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="newElem()" :disabled="!hierarchyMode"><i class="fas fa-file-plus"></i></button>-->
-<!--&lt;!&ndash;        Кнопка Удалить             &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="deleteItems()" :disabled="!canDeleteItems"><i class="fas fa-trash"></i></button>-->
-<!--         </div>-->
-<!--         <div class="btn-group py-1">-->
-<!--&lt;!&ndash;        Кнопка Вырезать            &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" :disabled="!canUseClipboard" @click="clipboardPut('cut')"><i id="cutBtn" class="fas fa-cut"></i></button>-->
-<!--&lt;!&ndash;        Кнопка Скопировать         &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" :disabled="!canUseClipboard" @click="clipboardPut('copy')"><i id="copyBtn" class="fas fa-copy"></i></button>-->
-<!--&lt;!&ndash;        Кнопка Вставить            &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" :disabled="!canPasteClipboard" @click="clipboardPaste()" v-tooltip.top="{value: tooltipClipboard, escape: true, class: 'tooltipClipboard'}">-->
-<!--               <i id="pasteBtn" class="fas fa-paste" :class="{EnBtn: canPasteClipboard}"></i></button>-->
-<!--         </div>-->
-<!--         <div class="input-group py-1">-->
-<!--&lt;!&ndash;        Быстрый фильтр             &ndash;&gt;-->
-<!--            <input type="text" class="form-control btn-outline-primary" size="20" placeholder="Быстрый фильтр" v-model="qFilter">-->
-<!--&lt;!&ndash;        Кнопка Сброс быстрого      &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" @click="qFilter=''"><i class="fas fa-times"></i></button>-->
-<!--         </div>-->
-<!--         <div class="btn-group py-1">-->
-<!--&lt;!&ndash;        Кнопка Обновить            &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary "-->
-<!--                    :class="{glowBtn: glowRefreshBtn}"-->
-<!--                    @click="fetchList()"><i class="fas fa-sync"></i></button>-->
-<!--&lt;!&ndash;        Кнопка На уровень вверх    &ndash;&gt;-->
-<!--            <button type="button" class="btn btn-primary" :disabled="!canLevelUp" @click="levelUp"><i class="fas fa-arrow-alt-circle-up"></i></button>-->
-<!--         </div>-->
-<!--      </div>-->
-<!--   </div>-->
-
-
-   <Toolbar class="m-1 p-2 gap-2 justify-content-around">
+<!-- Нижняя панель инструментов-->
+   <Toolbar class="m-1 p-2 gap-2 justify-content-evenly" >
       <template #start>
-         <div class="p-inputgroup pr-5">
-            <Button icon="fa fa-folder-tree"/>
-            <Button icon="fa fa-pencil"/>
+         <div class="p-inputgroup pe-3">
+            <!--        Кнопка Иерархия            -->
+            <Button icon="fa fa-folder-tree" @click="hierarchyMode = !hierarchyMode" :class="{EnBtn: hierarchyMode}"/>
+            <!--        Кнопка Редактирование      -->
+            <Button icon="fa fa-pencil" @click="editMode = !editMode" :class="{EnBtn: editMode}"/>
          </div>
-         <div class="p-inputgroup pr-5">
-            <Button icon="fa fa-folder-plus"/>
-            <Button icon="fa fa-file-plus"/>
-            <Button icon="fa fa-trash"/>
+         <div class="p-inputgroup pe-3">
+            <!--        Кнопка Новая группа        -->
+            <Button icon="fa fa-folder-plus" @click="newGroup()" :disabled="!hierarchyMode"/>
+            <!--        Кнопка Новый элемент       -->
+            <Button icon="fa fa-file-plus"  @click="newElem()" :disabled="!hierarchyMode"/>
+            <!--        Кнопка Удалить             -->
+            <Button icon="fa fa-trash" @click="deleteItems()" :disabled="!canDeleteItems"/>
          </div>
+
          <div class="p-inputgroup">
-            <Button icon="fas fa-cut"/>
-            <Button icon="fas fa-copy"/>
-            <Button icon="fas fa-paste"/>
+            <!--        Кнопка Вырезать            -->
+            <Button icon="fas fa-cut" :disabled="!canUseClipboard" @click="clipboardPut('cut')"/>
+            <!--        Кнопка Скопировать         -->
+            <Button icon="fas fa-copy" :disabled="!canUseClipboard" @click="clipboardPut('copy')"/>
+            <!--        Кнопка Вставить            -->
+            <Button icon="fas fa-paste" :disabled="!canPasteClipboard" @click="clipboardPaste()"
+                    v-tooltip.top="{value: tooltipClipboard, escape: true, class: 'tooltipClipboard'}">
+               <i id="pasteBtn" class="fas fa-paste" :class="{EnBtn: canPasteClipboard}"></i>
+            </button>
          </div>
       </template>
       <template #end>
-         <div class="p-inputgroup">
-            <InputText placeholder="быстрый фильтр" style="width: 12em"/>
-            <Button icon="fa fa-times"/>
-         </div>
-         <div class="p-inputgroup pl-5 justify-content-end">
-            <Button icon="fa fa-sync"/>
-            <Button icon="fa fa-arrow-alt-circle-up"/>
-         </div>
+            <div class="p-inputgroup">
+               <!--        Быстрый фильтр             -->
+               <InputText placeholder="быстрый фильтр" style="width: 12em" v-model="qFilter"/>
+               <!--        Кнопка Сброс быстрого      -->
+               <Button icon="fa fa-times" @click="qFilter=''"/>
+            </div>
+            <div class="p-inputgroup ps-3">
+               <!--        Кнопка Обновить            -->
+               <Button icon="fa fa-sync" :class="{glowBtn: glowRefreshBtn}" @click="fetchList()"/>
+               <!--        Кнопка На уровень вверх    -->
+               <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>
+            </div>
       </template>
    </Toolbar>
-
-
 
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />
@@ -555,7 +524,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 
    .draggedItem {
       background-color: #d2eef4;

@@ -24,10 +24,9 @@ export default {
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-agents' },
             { label: 'Статьи', icon: 'fa fa-coins', url: 'http://ya.ru' },
             { label: 'Агенты', icon: 'fa fa-user-tie' },
-            { label: 'Настройки', icon: 'fa fa-cog', to: '/settings' },
+            { label: 'Настройки', icon: 'fa fa-cog', class: 'pe-5', to: '/settings' },
             { label: `Выход (${this.$root.$refs.auth.username})`,
                icon: 'fa fa-power-off',
-               class: 'ps-5',
                command: () => { this.$root.$refs.auth.logout() } }
          ]
       }
