@@ -4,7 +4,7 @@
 <Toolbar class="m-1 p-2" style="background-color: var(--primary-100)">
    <template #start>
       <!-- Путь    -->
-      <i class="fas fa-code ListBtnIcon pe-2" @click="levelUp"></i><span>{{ frmCurPath() }}</span>
+      <i class="fas fa-code ListBtnIcon pe-2" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
    </template>
    <template #end>
       <!-- Кнопка На уровень вверх    -->
@@ -13,44 +13,47 @@
 </Toolbar>
 
 <!-- Содержимое справочника -->
+   <ScrollPanel style="width: 100%; height: 100%">
 <!--   <div class="container-fluid" style="padding-bottom: 18em; min-height: 50em">-->
-<!--   <div class="container-fluid" >-->
-<!--      <div class="item"-->
-<!--           v-for="item in fList" :key="item.id"-->
-<!--           :draggable="editMode"-->
-<!--           @dragstart="dragStart($event, item)"-->
-<!--           @dragend="dragEnd($event, item)"-->
-<!--           @drop="dragDrop($event, item)"-->
-<!--           @dragover.prevent-->
-<!--           @dragenter.prevent-->
-<!--      >-->
-<!--         <div class="List-Cont row p-3">-->
-<!--&lt;!&ndash;        Чек, редакт, иконка, имя     &ndash;&gt;-->
-<!--            <div class="List-Name col-11 px-0">-->
-<!--&lt;!&ndash;           Чек    &ndash;&gt;-->
-<!--               <input class="List-Check form-check-input me-2" type="checkbox" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)">-->
-<!--&lt;!&ndash;           Редактирование    &ndash;&gt;-->
-<!--               <i class="fas pe-2 fa-pen ListBtnIcon" style="scale: 70%;" v-if="editMode" @click="itemEdit(item)"></i>-->
-<!--&lt;!&ndash;           Иконка и имя    &ndash;&gt;-->
-<!--               <span @click="itemEnter(item)">-->
-<!--                  <i class="fas pe-2" :class="item.g ? 'fa-folder ListFolderIcon' : 'fa-file ListElementIcon'" :style="{ 'color': itemColor(item) }"></i> {{ item.name }}-->
-<!--               </span>-->
-<!--            </div>-->
-<!--&lt;!&ndash;        Полоски и меню       &ndash;&gt;-->
-<!--            <div class="List-Btns col-1 p-0 text-end" v-if="editMode">-->
-<!--               <i class="fas fa-grip-lines ListBtnIcon" data-bs-toggle="dropdown"></i>-->
-<!--               <ul class="dropdown-menu" style="background-color: #d2eef4">-->
-<!--                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_changeOrder(item, -1)"> <i class="fas fa-arrow-up"></i> Вверх </button> </li>-->
-<!--                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_changeOrder(item, 1)"> <i class="fas fa-arrow-down"></i> Вниз </button> </li>-->
-<!--                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_delete(item)"> <i class="fas fa-trash"></i> Удалить </button></li>-->
-<!--                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenuClipboardPut(item, 'copy')"> <i class="fas fa-copy"></i> Копировать </button></li>-->
-<!--                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenuClipboardPut(item, 'cut')"> <i class="fas fa-cut"></i> Вырезать </button></li>-->
-<!--               </ul>-->
-<!--            </div>-->
-<!--&lt;!&ndash;        &#45;&#45;                   &ndash;&gt;-->
-<!--         </div>-->
-<!--      </div>-->
+   <div class="container-fluid">
+      <div class="item"
+           v-for="item in fList" :key="item.id"
+           :draggable="editMode"
+           @dragstart="dragStart($event, item)"
+           @dragend="dragEnd($event, item)"
+           @drop="dragDrop($event, item)"
+           @dragover.prevent
+           @dragenter.prevent
+      >
+         <div class="List-Cont row p-3">
+<!--        Чек, редакт, иконка, имя     -->
+            <div class="List-Name col-11 px-0">
+<!--           Чек    -->
+               <input class="List-Check form-check-input me-2" type="checkbox" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)">
+<!--           Редактирование    -->
+               <i class="fas pe-2 fa-pen ListBtnIcon" style="scale: 70%;" v-if="editMode" @click="itemEdit(item)"></i>
+<!--           Иконка и имя    -->
+               <span @click="itemEnter(item)">
+                  <i class="fas pe-2" :class="item.g ? 'fa-folder ListFolderIcon' : 'fa-file ListElementIcon'" :style="{ 'color': itemColor(item) }"></i> {{ item.name }}
+               </span>
+            </div>
+<!--        Полоски и меню       -->
+            <div class="List-Btns col-1 p-0 text-end" v-if="editMode">
+               <i class="fas fa-grip-lines ListBtnIcon" data-bs-toggle="dropdown"></i>
+               <ul class="dropdown-menu" style="background-color: #d2eef4">
+                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_changeOrder(item, -1)"> <i class="fas fa-arrow-up"></i> Вверх </button> </li>
+                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_changeOrder(item, 1)"> <i class="fas fa-arrow-down"></i> Вниз </button> </li>
+                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenu_delete(item)"> <i class="fas fa-trash"></i> Удалить </button></li>
+                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenuClipboardPut(item, 'copy')"> <i class="fas fa-copy"></i> Копировать </button></li>
+                   <li> <button class="dropdown-item text-primary" type="button" @click="itemMenuClipboardPut(item, 'cut')"> <i class="fas fa-cut"></i> Вырезать </button></li>
+               </ul>
+            </div>
+<!--        --                   -->
+         </div>
+      </div>
+   </div>
 <!--   </div>-->
+   </ScrollPanel>
 
 <!-- Нижняя панель инструментов-->
    <Toolbar class="m-1 p-2 gap-2 justify-content-evenly" >
@@ -128,6 +131,7 @@ import {
    checkboxMobileFixMixin
 } from './tools/vue-utils';
 import {apolloClient} from "@/apollo-config";
+import {authUtils} from "@/components/tools/auth-utils";
 
 export default {
    name: 'CatListComp',
@@ -296,7 +300,7 @@ export default {
             )
             // Отключим мигание кнопки обнолвения
             setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
-         }).catch( (error) => this.$root.$refs.auth.err(error) );
+         }).catch( (error) => authUtils.err(error) );
       },
 
       // Обновить историю браузера

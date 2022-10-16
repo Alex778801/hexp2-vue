@@ -20,6 +20,7 @@ import Password from 'primevue/password';
 import Card from 'primevue/card';
 import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
+import ScrollPanel from 'primevue/scrollpanel';
 
 import 'primevue/resources/primevue.min.css';
 // import 'primevue/resources/themes/saga-blue/theme.css';
@@ -126,7 +127,7 @@ createApp(App)
     .component('Password', Password)
     .component('Card', Card)
     .component('Slider', Slider)
-    .component('Slider', Slider)
     .component('Toolbar', Toolbar)
+    .component('ScrollPanel', ScrollPanel)
     .mount('#app');
 

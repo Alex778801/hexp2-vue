@@ -1,21 +1,22 @@
 <template>
    <MainMenu v-if="loggedIn"/>
    <router-view v-if="loggedIn"></router-view>
-   <Auth ref="auth" @loggedIn_Changed="(value) => loggedIn = value"/>
+   <Auth v-if="!loggedIn"/>
 </template>
 
 <script>
 /* eslint-disable */
 
 import { settingsUtils } from "./components/tools/settings-utils"
-import Auth from "@/components/tools/Auth";
+import { authUtils } from "@/components/tools/auth-utils";
+import AuthDlg from "@/components/tools/AuthDlg";
 import MainMenu from "@/components/MainMenu";
 
 export default {
    name: 'App',
 
    components: {
-      Auth,
+      AuthDlg,
       MainMenu,
    },
 
@@ -26,10 +27,16 @@ export default {
    },
 
    mounted() {
+      // Подписка на уведомления авторизации
+      authUtils.subscribeNotification(this.authNotif);
       // !!!!!!!!!!!! Автологин
-      this.$refs.auth.login('admin', '111');
-      // Инициализация настроек приложения
-      settingsUtils.init();
+      // authUtils.login('admin', '111');
+   },
+
+   methods: {
+      authNotif(loggedIn, event) {
+         this.loggedIn = loggedIn;
+      }
    }
 
 }

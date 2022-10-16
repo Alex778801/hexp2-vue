@@ -14,6 +14,8 @@
 <script>
 /* eslint-disable */
 
+import {authUtils} from "@/components/tools/auth-utils";
+
 export default {
    name: "MainMenu",
 
@@ -25,7 +27,7 @@ export default {
             { label: 'Статьи', icon: 'fa fa-coins', url: 'http://ya.ru' },
             { label: 'Агенты', icon: 'fa fa-user-tie' },
             { label: 'Настройки', icon: 'fa fa-cog', class: 'pe-5', to: '/settings' },
-            { label: `Выход (${this.$root.$refs.auth.username})`,
+            { label: `Выход (${authUtils.username})`,
                icon: 'fa fa-power-off',
                command: () => { this.$root.$refs.auth.logout() } }
          ]
