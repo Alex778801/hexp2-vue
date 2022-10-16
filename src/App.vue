@@ -1,7 +1,7 @@
 <template>
    <MainMenu v-if="loggedIn"/>
    <router-view v-if="loggedIn"></router-view>
-   <Auth v-if="!loggedIn"/>
+   <AuthDlg v-if="!loggedIn"/>
 </template>
 
 <script>
