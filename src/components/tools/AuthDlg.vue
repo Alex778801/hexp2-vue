@@ -1,15 +1,13 @@
 <template>
-   <Dialog class="p-dialog" :modal="true" style="width: 20em">
+   <Dialog class="p-dialog" :modal="true" :visible="true" style="width: 20em">
       <template #header>
-         <span class="text-primary"> Авторизация </span>
+         <span class="text-primary"> <img src="images/login.gif" style="width: 2.5rem"/> Авторизация </span>
       </template>
-
       <form id="loginForm" autocomplete="on">
          <div class="p-inputgroup pt-2">
             <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
             <InputText id="username" v-model="userNameFld" placeholder="логин" autocomplete="username"/>
          </div>
-
          <div class="p-inputgroup pt-2">
             <span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
             <Password id="password" v-model="passwordFld" placeholder="пароль" :feedback="false" @keyup.enter="loginBtn()"
@@ -17,10 +15,9 @@
          </div>
          <small v-if="loginError" id="password-help" class="p-error"> Неверный логин/пароль </small>
       </form>
-
       <template #footer>
-         <Button label="Отмена" @click="cancelBtn()"/>
-         <Button label="Вход" icon="fa fa-sign-in" @click="loginBtn()"/>
+         <Button label="Отмена" class="p-button-sm" @click="cancelBtn()"/>
+         <Button label="Вход" class="p-button-sm" icon="fa fa-sign-in" @click="loginBtn()"/>
       </template>
    </Dialog>
 </template>
@@ -28,8 +25,6 @@
 <script>
 /* eslint-disable */
 
-import gql from "graphql-tag";
-import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import {clog} from "@/components/tools/vue-utils";
 
@@ -46,15 +41,24 @@ export default {
          loginError: false,
       }
    },
+   mounted() {
+      // Подписка на уведомления авторизации
+      authUtils.subscribeNotification(this.authNotif);
+   },
 
    methods: {
       // Кнопка ОК
       loginBtn() {
-         this.loginError = !authUtils.login(this.userNameFld, this.passwordFld);
+        authUtils.login(this.userNameFld, this.passwordFld);
       },
       // Кнопка Отмена
       cancelBtn() {
       },
+      // Уведомения авторизации
+      authNotif(loggedIn, event) {
+         this.loginError = !loggedIn;
+         this.passwordFld = '';
+      }
    }
 }
 </script>

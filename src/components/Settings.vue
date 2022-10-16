@@ -19,6 +19,7 @@
             <p class="mt-3 text-sm"> Внимание! Темы по разному адаптированны
                к дектопам, планшетам и смартфонам. Возможны нюансы на разных ОС и браузерах.
                Настройка задается индивидуально для каждого устройства и браузера</p>
+            <Button label="Сохранить" icon="fa fa-save" class="p-button-sm" style="float: right;"  @click="saveTheme()"/>
          </template>
       </Card>
 
@@ -58,11 +59,16 @@ export default {
       },
       // Тема оформления
       themeIdx(newVal) {
-         this.themeIdx = newVal;
          settingsUtils.applyTheme(newVal);
-         settingsUtils.saveTheme(newVal);
       }
    },
+
+   methods: {
+      // Тема оформления
+      saveTheme() {
+         settingsUtils.saveTheme(this.themeIdx);
+      }
+   }
 }
 </script>
 

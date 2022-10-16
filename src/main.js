@@ -23,7 +23,6 @@ import Toolbar from 'primevue/toolbar';
 import ScrollPanel from 'primevue/scrollpanel';
 
 import 'primevue/resources/primevue.min.css';
-// import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primeicons/primeicons.css';
 
 import '/node_modules/primeflex/primeflex.css'

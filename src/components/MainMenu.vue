@@ -29,7 +29,7 @@ export default {
             { label: 'Настройки', icon: 'fa fa-cog', class: 'pe-5', to: '/settings' },
             { label: `Выход (${authUtils.username})`,
                icon: 'fa fa-power-off',
-               command: () => { this.$root.$refs.auth.logout() } }
+               command: () => { authUtils.logout() } }
          ]
       }
    },

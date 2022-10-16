@@ -1,13 +1,13 @@
 <template>
-   <MainMenu v-if="loggedIn"/>
-   <router-view v-if="loggedIn"></router-view>
-   <AuthDlg v-if="!loggedIn"/>
+   <MainMenu v-if="loggedIn" />
+   <router-view v-if="loggedIn" />
+   <AuthDlg v-if="!loggedIn" />
 </template>
 
 <script>
 /* eslint-disable */
 
-import { settingsUtils } from "./components/tools/settings-utils"
+import {clog} from "@/components/tools/vue-utils";
 import { authUtils } from "@/components/tools/auth-utils";
 import AuthDlg from "@/components/tools/AuthDlg";
 import MainMenu from "@/components/MainMenu";
@@ -30,7 +30,7 @@ export default {
       // Подписка на уведомления авторизации
       authUtils.subscribeNotification(this.authNotif);
       // !!!!!!!!!!!! Автологин
-      // authUtils.login('admin', '111');
+      authUtils.login('admin', '111');
    },
 
    methods: {

@@ -14,7 +14,6 @@ export const authUtils = {
    // Инициализация
    init() {
       this.clearSessionData();
-      this.sendNotifications(false, 'init');
    },
    // Подписаться на уведомления авторизации
    subscribeNotification(callback) {
@@ -50,12 +49,10 @@ export const authUtils = {
          this.username = username;
          this.loggedIn = true;
          this.sendNotifications(true, 'login ok');
-         return true;
       }).catch( (error) => {
          this.clearSessionData();
          this.sendNotifications(false, 'login failed');
          clog('AUTH login failed:', error);
-         return false;
       });
    },
    // Выход из системы
@@ -78,12 +75,10 @@ export const authUtils = {
          }
       }).then((response) => {
          this.sendNotifications(true, 'token verify ok');
-         return true;
       }).catch((error) => {
          this.clearSessionData();
          this.sendNotifications(false, 'token verify failed');
          clog('AUTH token verify failed:', error);
-         return false;
       });
    },
    // Обработка ошибок
