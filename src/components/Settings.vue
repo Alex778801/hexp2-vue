@@ -5,13 +5,23 @@
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title> Масштаб интерфейса </template>
          <template #content>
-               <h5>{{scaleInterface}}</h5>
+               <h5>{{scaleInterface * 100}} %</h5>
                <Slider v-model="scaleInterface" :step="0.025" :min="0.5" :max="1.5"/>
                <p class="mt-3 text-sm">Отрегулируйте ползунком желаемый масштаб интерфейса.
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>
       </Card>
-<!--  Тема оформления-->
+<!--  Ширина экрана    -->
+      <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
+         <template #title>  Ширина экрана </template>
+         <template #content>
+            <h5>{{ screenWidth }} em</h5>
+            <Slider v-model="screenWidth" :step="5" :min="50" :max="201"/>
+            <p class="mt-3 text-sm">Отрегулируйте ползунком ширину рабочей области экрана.
+               Настройка задается индивидуально для каждого устройства и браузера</p>
+         </template>
+      </Card>
+<!--  Тема оформления    -->
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title> Тема офорлмения </template>
          <template #content>
@@ -40,15 +50,12 @@ export default {
       return {
          // Масштаб интерфейса
          scaleInterface: settingsUtils.loadScaleInterface(),
+         // Ширина экрана
+         screenWidth: settingsUtils.loadScreenWidth(),
          // Тема офорлмения
          themes: settingsUtils.themes,
          themeIdx: settingsUtils.loadTheme().idx,
       }
-   },
-
-   mounted() {
-      // Инициализация настроек приложения
-      settingsUtils.init();
    },
 
    watch: {
@@ -56,6 +63,11 @@ export default {
       scaleInterface(newVal) {
          settingsUtils.applyScaleInterface(newVal);
          settingsUtils.saveScaleInterface(newVal);
+      },
+      // Ширина экрана
+      screenWidth(newVal) {
+        settingsUtils.applyScreenWidth(newVal);
+        settingsUtils.saveScreenWidth(newVal);
       },
       // Тема оформления
       themeIdx(newVal) {

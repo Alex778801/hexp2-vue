@@ -7,6 +7,8 @@ export const settingsUtils = {
       this.applyScaleInterface(this.loadScaleInterface());
       // Тема оформления
       this.applyTheme(this.loadTheme().idx);
+      // Ширина экрана
+      this.applyScreenWidth(this.loadScreenWidth());
    },
    //------------------------------------------------------------------------------------------------------------------
    // Масштаб интерфейса
@@ -41,5 +43,16 @@ export const settingsUtils = {
       localStorage.setItem('settings--theme', idx);
    },
    //------------------------------------------------------------------------------------------------------------------
-   //
+   // Ширина экрана
+   loadScreenWidth() {
+      return Number(localStorage.getItem('settings--screen-width') || '50');
+   },
+   applyScreenWidth(width) {
+      document.documentElement.style.setProperty('--screen-width', `${width}em`);
+   },
+   saveScreenWidth(width) {
+      localStorage.setItem('settings--screen-width', width);
+   },
 }
+
+settingsUtils.init();
