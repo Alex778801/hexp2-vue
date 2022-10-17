@@ -21,10 +21,10 @@ export default {
    data() {
       return {
          items: [
-            { label: 'hExpenses',icon: 'fa fa-home', to: '/cat-projects1', disabled: true },
-            { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-agents' },
-            { label: 'Статьи', icon: 'fa fa-coins', url: 'http://ya.ru' },
-            { label: 'Агенты', icon: 'fa fa-user-tie' },
+            { label: 'hExpenses',icon: 'fa fa-home', disabled: true },
+            { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-projects' },
+            { label: 'Статьи', icon: 'fa fa-coins', to: '/cat-costtypes' },
+            { label: 'Агенты', icon: 'fa fa-user-tie', to: '/cat-agents' },
             { label: 'Настройки', icon: 'fa fa-cog', class: 'pe-5', to: '/settings' },
             { label: `Выход (${authUtils.username})`,
                icon: 'fa fa-power-off',

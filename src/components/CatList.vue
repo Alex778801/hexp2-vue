@@ -165,6 +165,7 @@ export default {
             { label: 'Копировать', icon: 'fa fa-copy' },
             { label: 'Вырезать', icon: 'fas fa-cut' },
          ],
+         // Объект каталога, на котором вызвано контекстное меню
          menuFocusedItem: {},
          // Период авто обновления справочника
          autoFetchInterval: 60000,
@@ -251,6 +252,7 @@ export default {
          this.menuFocusedItem = item
          this.$refs.itemMenu.toggle(event);
       },
+
       // Контекстное меню 2
       itemMenuContextClick(item) {
          if (this.editMode) {
@@ -258,6 +260,7 @@ export default {
             this.$refs.itemMenuContext.show(event);
          }
       },
+
       // Сформировать путь текущей группы
       frmCurPath() {
          if (this.hierarchyMode) {
@@ -308,7 +311,7 @@ export default {
                    } else return a.pid - b.pid;
                 }
             )
-            // Отключим мигание кнопки обнолвения
+            // Отключим мигание кнопки обновления
             setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
          }).catch( (error) => authUtils.err(error) );
       },
@@ -536,12 +539,6 @@ export default {
    }
 }
 </script>
-
-<style>
-
-
-
-</style>
 
 <style scoped>
 
