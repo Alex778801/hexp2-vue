@@ -52,7 +52,7 @@
             </div>
             <div class="p-inputgroup mr-2">
                <!--        Кнопка Новая группа        -->
-               <Button icon="fa fa-folder-plus" ick="newGroup()" :disabled="!hierarchyMode"/>
+               <Button icon="fa fa-folder-plus" @click="newGroup()" :disabled="!hierarchyMode"/>
                <!--        Кнопка Новый элемент       -->
                <Button icon="fa fa-file-plus" class="butWide11" @click="newElem()" :disabled="!hierarchyMode"/>
                <!--        Кнопка Удалить             -->
@@ -422,8 +422,8 @@ export default {
          if (this.canDeleteItems) {
             // Сообщение с перечнем удаляемых объектов
             const msg = this.checkedItems.reduce( (sum, i) => {
-               let icon = i.g ? "fa-folder ListFolderIcon" : "fa-file ListElementIcon";
-               return sum + `<i class="fas ${icon}"></i> ` + i.name + '<br>'
+               let icon = i.g ? "fa-folder text-primary-700" : "fa-file text-primary-300";
+               return sum + `<i class="p-1 text-xl fa ${icon}"></i> ` + i.name + '<br>'
             }, '');
             this.$refs.confirmDlg.show(
                 'Удалить эти объекты?',
