@@ -557,6 +557,7 @@ export default {
       column-count: 2;
       column-fill: auto;
       column-rule: 0.15rem dotted var(--primary-100);
+
    }
 
    @keyframes glowing {
