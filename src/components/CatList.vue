@@ -44,17 +44,17 @@
    <div class="bottom-toolbar">
       <Toolbar class="mx-1 p-2 gap-2 justify-content-evenly">
          <template #start>
-            <div class="p-inputgroup mr-3">
+            <div class="p-inputgroup mr-2">
                <!--        Кнопка Иерархия            -->
                <Button icon="fa fa-folder-tree" @click="hierarchyMode = !hierarchyMode" :class="{EnBtn: hierarchyMode}"/>
                <!--        Кнопка Редактирование      -->
-               <Button icon="fa fa-pencil" class="butWide2" @click="editMode = !editMode" :class="{EnBtn: editMode}"/>
+               <Button icon="fa fa-pencil" class="butWide1" @click="editMode = !editMode" :class="{EnBtn: editMode}"/>
             </div>
-            <div class="p-inputgroup mr-3">
+            <div class="p-inputgroup mr-2">
                <!--        Кнопка Новая группа        -->
                <Button icon="fa fa-folder-plus" ick="newGroup()" :disabled="!hierarchyMode"/>
                <!--        Кнопка Новый элемент       -->
-               <Button icon="fa fa-file-plus" class="butWide2" @click="newElem()" :disabled="!hierarchyMode"/>
+               <Button icon="fa fa-file-plus" class="butWide11" @click="newElem()" :disabled="!hierarchyMode"/>
                <!--        Кнопка Удалить             -->
                <Button icon="fa fa-trash" @click="deleteItems()" :disabled="!canDeleteItems"/>
             </div>
@@ -77,7 +77,7 @@
                <!--        Кнопка Сброс быстрого      -->
                <Button icon="fa fa-times" @click="qFilter=''"/>
             </div>
-            <div class="p-inputgroup ml-3">
+            <div class="p-inputgroup ml-2">
                <!--        Кнопка Обновить            -->
                <Button icon="fa fa-sync" :class="{glowBtn: glowRefreshBtn}" @click="fetchList()"/>
                <!--        Кнопка На уровень вверх    -->
