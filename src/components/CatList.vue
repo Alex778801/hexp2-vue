@@ -13,7 +13,7 @@
 </Toolbar>
 
 <!-- Содержимое справочника -->
-   <div class="mb-8">
+   <div class="mb-8" :class="{'columns2': use2columns}">
       <div
            v-for="item in fList" :key="item.id"
            :draggable="editMode"
@@ -122,6 +122,7 @@ import {
 } from './tools/vue-utils';
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
+import {settingsUtils} from "@/components/tools/settings-utils";
 
 export default {
    name: 'CatListComp',
@@ -169,6 +170,8 @@ export default {
          menuFocusedItem: {},
          // Период авто обновления справочника
          autoFetchInterval: 60000,
+         // Использовать 2 колонки списка справочника
+         use2columns: settingsUtils.loadCatUse2col(),
          // Справочник
          list: [],
          // Текущий родитель
@@ -548,6 +551,12 @@ export default {
 
    .tooltipClipboard {
       background-color: navajowhite !important;
+   }
+
+   .columns2 {
+      column-count: 2;
+      column-fill: auto;
+      column-rule: 0.15rem dotted var(--primary-100);
    }
 
    @keyframes glowing {

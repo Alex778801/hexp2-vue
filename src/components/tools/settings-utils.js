@@ -1,5 +1,7 @@
 /* eslint-disable */
 
+import {clog} from "@/components/tools/vue-utils";
+
 export const settingsUtils = {
    // Инициализация
    init() {
@@ -53,6 +55,15 @@ export const settingsUtils = {
    saveScreenWidth(width) {
       localStorage.setItem('settings--screen-width', width);
    },
+   //------------------------------------------------------------------------------------------------------------------
+   // Использовать две колонки в списке справочника
+   loadCatUse2col() {
+      return (localStorage.getItem('settings--cat-use2col') || 'false') === 'true';
+   },
+   saveCatUse2col(use) {
+      localStorage.setItem('settings--cat-use2col', use);
+   },
+   //------------------------------------------------------------------------------------------------------------------
 }
 
 settingsUtils.init();

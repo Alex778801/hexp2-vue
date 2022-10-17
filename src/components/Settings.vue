@@ -32,6 +32,24 @@
             <Button label="Сохранить" icon="fa fa-save" class="p-button-sm" style="float: right;"  @click="saveTheme()"/>
          </template>
       </Card>
+      <!--  Использовать 2 колонки в справочниках  -->
+      <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
+         <template #title>  Компоновка справочников </template>
+         <template #content>
+
+            <div class="field-radiobutton">
+               <RadioButton inputId="catUse1col" name="catUse2col" value="false" v-model="catUse2col" />
+               <label for="catUse1col">Одна колонка</label>
+            </div>
+            <div class="field-radiobutton">
+               <RadioButton inputId="catUse2col" name="catUse2col" value="true" v-model="catUse2col" />
+               <label for="catUse2col">Две колонки</label>
+            </div>
+
+            <p class="mt-3 text-sm">Задайте колво колонок при отображении списка справочника.
+               Настройка задается индивидуально для каждого устройства и браузера</p>
+         </template>
+      </Card>
 
 
    </div>
@@ -55,6 +73,8 @@ export default {
          // Тема офорлмения
          themes: settingsUtils.themes,
          themeIdx: settingsUtils.loadTheme().idx,
+         // 2 колонки в списке справочника
+         catUse2col: settingsUtils.loadCatUse2col() ? 'true' : 'false',
       }
    },
 
@@ -72,7 +92,11 @@ export default {
       // Тема оформления
       themeIdx(newVal) {
          settingsUtils.applyTheme(newVal);
-      }
+      },
+      // Колонок справочников
+      catUse2col(newVal) {
+         settingsUtils.saveCatUse2col(newVal);
+      },
    },
 
    methods: {

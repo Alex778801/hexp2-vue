@@ -26,6 +26,7 @@ import Checkbox from 'primevue/checkbox';
 import ContextMenu from 'primevue/contextmenu';
 import Menu from 'primevue/menu';
 import Toast from 'primevue/toast';
+import RadioButton from 'primevue/radiobutton';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -138,5 +139,6 @@ createApp(App)
     .component('ContextMenu', ContextMenu)
     .component('Menu', Menu)
     .component('Toast', Toast)
+    .component('RadioButton', RadioButton)
     .mount('#app');
 
