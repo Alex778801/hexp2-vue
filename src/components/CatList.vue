@@ -4,7 +4,7 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь    -->
-         <i class="fa fa-code text-primary text-2xl pr-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
+         <i class="fa fa-code text-primary text-2xl pr-1" :class="{'glowSymb': glowDirBtn}" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
       </template>
       <template #end>
          <!-- Кнопка На уровень вверх    -->
@@ -118,7 +118,7 @@ import {
    boolFromUrlParam,
    numFromUrlParam,
    findItemById,
-   checkboxMobileFixMixin
+   checkboxMobileFixMixin,
 } from './tools/vue-utils';
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
@@ -189,6 +189,8 @@ export default {
          clipMode: '',
          // Мигание кнопки обновление при обновлении каталога
          glowRefreshBtn: false,
+         //
+         glowDirBtn: false,
       }
    },
 
@@ -330,6 +332,9 @@ export default {
          if (this.canLevelUp) {
             this.curPid = findItemById(this.curPid, this.list).pid;
             this.updateHistory();
+            // Мигание
+            // this.glowDirBtn = true;
+            // setTimeout(() => {this.glowDirBtn = false}, 1000);
          }
       },
 
@@ -339,6 +344,9 @@ export default {
             // Войти в группу
             this.curPid = item.id;
             this.updateHistory();
+            // Мигание
+            // this.glowDirBtn = true;
+            // setTimeout(() => {this.glowDirBtn = false}, 1000);
          }
          else {
             // Войти в элемент
@@ -560,13 +568,22 @@ export default {
       column-span: none;
    }
 
-   @keyframes glowing {
+   @keyframes glowingBg {
       0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
       50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
       100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
    }
    .glowBtn {
-      animation: glowing 1300ms 1;
+      animation: glowingBg 1300ms 1;
+   }
+
+   @keyframes glowingCol {
+      0% { color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+      50% { color: #49e819; box-shadow: 0 0 20px #49e819; }
+      100% { color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+   }
+   .glowSymb {
+      animation: glowingCol 500ms 1;
    }
 
 </style>
