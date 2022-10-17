@@ -1,19 +1,19 @@
 <template>
 
 <!-- Текущая группа справочника-->
-<Toolbar class="m-1 p-2" style="background-color: var(--primary-100)">
+<Toolbar class="m-1 p-2 sticky" style="background-color: var(--primary-100)">
    <template #start>
       <!-- Путь    -->
-      <i class="fa fa-code text-primary text-2xl pe-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
+      <i class="fa fa-code text-primary text-2xl pr-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
    </template>
    <template #end>
       <!-- Кнопка На уровень вверх    -->
-      <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>
+<!--      <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>-->
    </template>
 </Toolbar>
 
 <!-- Содержимое справочника -->
-   <div>
+   <div class="mb-8">
       <div
            v-for="item in fList" :key="item.id"
            :draggable="editMode"
@@ -23,69 +23,68 @@
            @dragover.prevent
            @dragenter.prevent
       >
-            <div style="height: 4rem; display: flex; align-items: center; ">
-<!--           Чек    -->
-               <Checkbox class="ms-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
-<!--           Редактирование    -->
-               <i class="fa fa-pen text-primary ms-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
-<!--           Иконка и имя    -->
-               <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
-                  <i class="fa ms-3 me-2" style="font-size: 2rem;" :class="item.g ? 'fa-folder text-yellow-500' : 'fa-file text-cyan-500'" :style="{ 'color': itemColor(item) }"></i>
-                  <span class="text-color" style="vertical-align: 20%"> {{ item.name }} </span>
-               </span>
-<!--           Кнопка меню    -->
-               <i class="fa fa-grip-lines text-primary me-3" style="font-size: 1.5rem; margin-left: auto" v-if="editMode"
-                  @click="itemMenuToggle(item)" aria-haspopup="true" aria-controls="itemMenu"></i>
-            </div>
+         <div style="height: 4rem; display: flex; align-items: center; ">
+   <!--           Чек    -->
+            <Checkbox class="ml-2" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
+   <!--           Редактирование    -->
+            <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
+   <!--           Иконка и имя    -->
+            <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
+               <i class="fa ml-3 mr-2" style="font-size: 2rem;" :class="item.g ? 'fa-folder text-yellow-500' : 'fa-file text-cyan-500'" :style="{ 'color': itemColor(item) }"></i>
+               <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
+            </span>
+   <!--           Кнопка меню    -->
+            <i class="fa fa-grip-lines text-primary mr-3" style="font-size: 1.5rem; margin-left: auto" v-if="editMode"
+               @click="itemMenuToggle(item)" aria-haspopup="true" aria-controls="itemMenu"></i>
+         </div>
       </div>
    </div>
 
 <!-- Нижняя панель инструментов-->
-   <div style="padding-top: 12rem;">
-      <Toolbar class="m-1 p-2 gap-2 justify-content-evenly fixed-bottom" >
-      <template #start>
-         <div class="p-inputgroup pe-3">
-            <!--        Кнопка Иерархия            -->
-            <Button icon="fa fa-folder-tree" @click="hierarchyMode = !hierarchyMode" :class="{EnBtn: hierarchyMode}"/>
-            <!--        Кнопка Редактирование      -->
-            <Button icon="fa fa-pencil" @click="editMode = !editMode" :class="{EnBtn: editMode}"/>
-         </div>
-         <div class="p-inputgroup pe-3">
-            <!--        Кнопка Новая группа        -->
-            <Button icon="fa fa-folder-plus" @click="newGroup()" :disabled="!hierarchyMode"/>
-            <!--        Кнопка Новый элемент       -->
-            <Button icon="fa fa-file-plus"  @click="newElem()" :disabled="!hierarchyMode"/>
-            <!--        Кнопка Удалить             -->
-            <Button icon="fa fa-trash" @click="deleteItems()" :disabled="!canDeleteItems"/>
-         </div>
-
-         <div class="p-inputgroup">
-            <!--        Кнопка Вырезать            -->
-            <Button icon="fas fa-cut" :disabled="!canUseClipboard" @click="clipboardPut('cut')"/>
-            <!--        Кнопка Скопировать         -->
-            <Button icon="fas fa-copy" :disabled="!canUseClipboard" @click="clipboardPut('copy')"/>
-            <!--        Кнопка Вставить            -->
-            <Button icon="fas fa-paste" :disabled="!canPasteClipboard" @click="clipboardPaste()"
-                    v-tooltip.top="{value: tooltipClipboard, escape: true, class: 'tooltipClipboard'}">
-               <i id="pasteBtn" class="fas fa-paste" :class="{EnBtn: canPasteClipboard}"></i>
-            </button>
-         </div>
-      </template>
-      <template #end>
+   <div class="bottom-toolbar">
+      <Toolbar class="mx-1 p-2 gap-2 justify-content-evenly">
+         <template #start>
+            <div class="p-inputgroup mr-3">
+               <!--        Кнопка Иерархия            -->
+               <Button icon="fa fa-folder-tree" @click="hierarchyMode = !hierarchyMode" :class="{EnBtn: hierarchyMode}"/>
+               <!--        Кнопка Редактирование      -->
+               <Button icon="fa fa-pencil" class="butWide2" @click="editMode = !editMode" :class="{EnBtn: editMode}"/>
+            </div>
+            <div class="p-inputgroup mr-3">
+               <!--        Кнопка Новая группа        -->
+               <Button icon="fa fa-folder-plus" ick="newGroup()" :disabled="!hierarchyMode"/>
+               <!--        Кнопка Новый элемент       -->
+               <Button icon="fa fa-file-plus" class="butWide2" @click="newElem()" :disabled="!hierarchyMode"/>
+               <!--        Кнопка Удалить             -->
+               <Button icon="fa fa-trash" @click="deleteItems()" :disabled="!canDeleteItems"/>
+            </div>
+            <div class="p-inputgroup">
+               <!--        Кнопка Вырезать            -->
+               <Button icon="fas fa-cut" :disabled="!canUseClipboard" @click="clipboardPut('cut')"/>
+               <!--        Кнопка Скопировать         -->
+               <Button icon="fas fa-copy" :disabled="!canUseClipboard" @click="clipboardPut('copy')"/>
+               <!--        Кнопка Вставить            -->
+               <Button icon="fas fa-paste" :disabled="!canPasteClipboard" @click="clipboardPaste()"
+                       v-tooltip.top="{value: tooltipClipboard, escape: true, class: 'tooltipClipboard'}">
+                  <i id="pasteBtn" class="fa fa-paste" :class="{EnBtn: canPasteClipboard}"></i>
+               </button>
+            </div>
+         </template>
+         <template #end>
             <div class="p-inputgroup">
                <!--        Быстрый фильтр             -->
                <InputText placeholder="быстрый фильтр" style="width: 12em" v-model="qFilter"/>
                <!--        Кнопка Сброс быстрого      -->
                <Button icon="fa fa-times" @click="qFilter=''"/>
             </div>
-            <div class="p-inputgroup ps-3">
+            <div class="p-inputgroup ml-3">
                <!--        Кнопка Обновить            -->
                <Button icon="fa fa-sync" :class="{glowBtn: glowRefreshBtn}" @click="fetchList()"/>
                <!--        Кнопка На уровень вверх    -->
-               <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>
+               <Button icon="fa fa-arrow-alt-circle-up" class="butWide2" :disabled="!canLevelUp" @click="levelUp"/>
             </div>
-      </template>
-   </Toolbar>
+         </template>
+      </Toolbar>
    </div>
 
 <!-- Контекстное меню объекта каталога  -->
@@ -538,12 +537,13 @@ export default {
 }
 </script>
 
-
 <style>
 
-   /*html {*/
-   /*   height: 100%;*/
-   /*}*/
+
+
+</style>
+
+<style scoped>
 
    .draggedItem {
       background-color: #d2eef4;

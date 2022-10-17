@@ -44,6 +44,47 @@ export default {
 
 <style>
 
+:root {
+   --screen-width: 100em;
+}
 
+html {
+   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+body {
+   margin:0 auto;
+   max-width: var(--screen-width) !important;
+}
+
+.bottom-toolbar {
+   position: fixed;
+   width: 100%;
+   max-width: var(--screen-width) !important;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+button {
+   padding-left: 1.2rem !important;
+   padding-right: 1.2rem !important;
+}
+
+.butWide1 {
+   padding-left: 1.6rem !important;
+   padding-right: 1.6rem !important;
+}
+
+.butWide2 {
+   padding-left: 2.1rem !important;
+   padding-right: 2.1rem !important;
+}
+
+.EnBtn {
+   color: var(--yellow-300);
+}
 
 </style>
