@@ -1,7 +1,7 @@
 <template>
    <CatListComp
       :startPid =                 "get.parentdId"
-      :startEditMode =            "get.editMode"
+      :startEditMode =            "true"
       model =                     "projects"
       modelQ =                    "query { projects { id, pid, g, o, name, } }"
       urlEnterElement =           "/finopers/log-v"

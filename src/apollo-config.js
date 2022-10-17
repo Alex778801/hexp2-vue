@@ -7,7 +7,8 @@ import { setContext } from "@apollo/client/link/context";
 import { createApolloProvider } from "@vue/apollo-option";
 
 const httpLink = createHttpLink({
-    uri: 'http://127.0.0.1:8000/gp/',
+    // uri: 'http://127.0.0.1:8000/gp/',
+    uri: 'http://192.168.1.222:8000/gp/',
 })
 
 const authLink = setContext((_, { headers }) => {

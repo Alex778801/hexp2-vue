@@ -1,14 +1,12 @@
 <template>
-   <div>
-      <Menubar :model="items" class="m-1">
-         <template #end>
-            <div class="p-inputgroup">
-               <InputText placeholder="строка поиска" style="width: 12em"/>
-               <Button icon="pi pi-search"/>
-            </div>
-         </template>
-      </Menubar>
-   </div>
+   <Menubar :model="items" class="m-1">
+      <template #end>
+         <div class="p-inputgroup">
+            <InputText placeholder="строка поиска" style="width: 12em"/>
+            <Button icon="pi pi-search"/>
+         </div>
+      </template>
+   </Menubar>
 </template>
 
 <script>

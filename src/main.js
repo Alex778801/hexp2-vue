@@ -21,6 +21,9 @@ import Card from 'primevue/card';
 import Slider from 'primevue/slider';
 import Toolbar from 'primevue/toolbar';
 import ScrollPanel from 'primevue/scrollpanel';
+import Checkbox from 'primevue/checkbox';
+import ContextMenu from 'primevue/contextmenu';
+import Menu from 'primevue/menu';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -128,5 +131,8 @@ createApp(App)
     .component('Slider', Slider)
     .component('Toolbar', Toolbar)
     .component('ScrollPanel', ScrollPanel)
+    .component('Checkbox', Checkbox)
+    .component('ContextMenu', ContextMenu)
+    .component('Menu', Menu)
     .mount('#app');
 
