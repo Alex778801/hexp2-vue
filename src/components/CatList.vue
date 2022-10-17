@@ -29,13 +29,13 @@
 <!--           Редактирование    -->
                <i class="fa fa-pen text-primary ms-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
 <!--           Иконка и имя    -->
-               <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick" aria-haspopup="true">
+               <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
                   <i class="fa ms-3 me-2" style="font-size: 2rem;" :class="item.g ? 'fa-folder text-yellow-500' : 'fa-file text-cyan-500'" :style="{ 'color': itemColor(item) }"></i>
                   <span style="vertical-align: 20%"> {{ item.name }} </span>
                </span>
 <!--           Кнопка меню    -->
                <i class="fa fa-grip-lines text-primary me-3" style="font-size: 1.5rem; margin-left: auto" v-if="editMode"
-                  @click="itemMenuToggle" aria-haspopup="true" aria-controls="itemMenu"></i>
+                  @click="itemMenuToggle(item)" aria-haspopup="true" aria-controls="itemMenu"></i>
             </div>
       </div>
    </div>
@@ -166,6 +166,7 @@ export default {
             { label: 'Копировать', icon: 'fa fa-copy' },
             { label: 'Вырезать', icon: 'fas fa-cut' },
          ],
+         menuFocusedItem: {},
          // Период авто обновления справочника
          autoFetchInterval: 60000,
          // Справочник
@@ -247,13 +248,16 @@ export default {
 
    methods: {
       // Контекстное меню 1
-      itemMenuToggle(event) {
+      itemMenuToggle(item) {
+         this.menuFocusedItem = item
          this.$refs.itemMenu.toggle(event);
       },
       // Контекстное меню 2
-      itemMenuContextClick(event) {
-         if (this.editMode)
+      itemMenuContextClick(item) {
+         if (this.editMode) {
+            this.menuFocusedItem = item
             this.$refs.itemMenuContext.show(event);
+         }
       },
       // Сформировать путь текущей группы
       frmCurPath() {
