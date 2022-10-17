@@ -30,7 +30,7 @@
             <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
    <!--           Иконка и имя    -->
             <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
-               <i class="fa ml-3 mr-2" style="font-size: 2rem;" :class="item.g ? 'fa-folder text-yellow-500' : 'fa-file text-cyan-500'" :style="{ 'color': itemColor(item) }"></i>
+               <i class="fa ml-3 mr-2" :class="item.g ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
                <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
             </span>
    <!--           Кнопка меню    -->
