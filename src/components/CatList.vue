@@ -23,7 +23,7 @@
            @dragover.prevent
            @dragenter.prevent
       >
-            <div style="height: 5rem; display: flex; align-items: center; ">
+            <div style="height: 4rem; display: flex; align-items: center; ">
 <!--           Чек    -->
                <Checkbox class="ms-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
 <!--           Редактирование    -->
@@ -31,7 +31,7 @@
 <!--           Иконка и имя    -->
                <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
                   <i class="fa ms-3 me-2" style="font-size: 2rem;" :class="item.g ? 'fa-folder text-yellow-500' : 'fa-file text-cyan-500'" :style="{ 'color': itemColor(item) }"></i>
-                  <span style="vertical-align: 20%"> {{ item.name }} </span>
+                  <span class="text-color" style="vertical-align: 20%"> {{ item.name }} </span>
                </span>
 <!--           Кнопка меню    -->
                <i class="fa fa-grip-lines text-primary me-3" style="font-size: 1.5rem; margin-left: auto" v-if="editMode"
@@ -40,12 +40,8 @@
       </div>
    </div>
 
-<!-- Контекстное меню объекта каталога  -->
-   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" :popup="true" />
-   <ContextMenu ref="itemMenuContext" :model="itemMenuContent" />
-
 <!-- Нижняя панель инструментов-->
-   <div class="pt-8">
+   <div style="padding-top: 12rem;">
       <Toolbar class="m-1 p-2 gap-2 justify-content-evenly fixed-bottom" >
       <template #start>
          <div class="p-inputgroup pe-3">
@@ -91,6 +87,10 @@
       </template>
    </Toolbar>
    </div>
+
+<!-- Контекстное меню объекта каталога  -->
+   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" :popup="true" />
+   <ContextMenu ref="itemMenuContext" :model="itemMenuContent" />
 
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />

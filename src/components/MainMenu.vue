@@ -1,5 +1,6 @@
 <template>
    <Menubar :model="items" class="m-1">
+
       <template #end>
          <div class="p-inputgroup">
             <InputText placeholder="строка поиска" style="width: 12em"/>
@@ -41,6 +42,11 @@ export default {
 .router-link-active-exact .p-menuitem-text, .router-link-active-exact .p-menuitem-icon {
    color: var(--primary-color) !important;
    text-shadow: 1px 1px 3px var(--primary-color-text), 1px 1px 6px var(--primary-color) !important;
+}
+
+.p-menuitem {
+   padding-top: 0.2rem;
+   padding-bottom: 0.2rem;
 }
 
 </style>
