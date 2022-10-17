@@ -25,7 +25,7 @@
       >
          <div style="height: 4rem; display: flex; align-items: center; ">
    <!--           Чек    -->
-            <Checkbox class="ml-2" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
+            <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
    <!--           Редактирование    -->
             <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
    <!--           Иконка и имя    -->

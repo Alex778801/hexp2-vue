@@ -1,4 +1,5 @@
 <template>
+   <Toast />
    <MainMenu v-if="loggedIn" />
    <router-view v-if="loggedIn" />
    <AuthDlg v-if="!loggedIn" />
@@ -46,10 +47,12 @@ export default {
 
 :root {
    --screen-width: 100em;
+   --base-font-size: 0.9em;
 }
 
 html {
    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+   font-size:  var(--base-font-size);
 }
 
 body {

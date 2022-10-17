@@ -16,7 +16,7 @@ export const settingsUtils = {
       return Number(localStorage.getItem('settings--scale-interface') || '0.9');
    },
    applyScaleInterface(scale) {
-      document.getElementsByTagName("html")[0].style["font-size"] = `${scale}em`;
+      document.documentElement.style.setProperty('--base-font-size', `${scale}em`);
    },
    saveScaleInterface(scale) {
       localStorage.setItem('settings--scale-interface', scale);
@@ -45,7 +45,7 @@ export const settingsUtils = {
    //------------------------------------------------------------------------------------------------------------------
    // Ширина экрана
    loadScreenWidth() {
-      return Number(localStorage.getItem('settings--screen-width') || '50');
+      return Number(localStorage.getItem('settings--screen-width') || '100');
    },
    applyScreenWidth(width) {
       document.documentElement.style.setProperty('--screen-width', `${width}em`);

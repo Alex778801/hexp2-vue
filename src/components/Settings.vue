@@ -79,6 +79,7 @@ export default {
       // Тема оформления
       saveTheme() {
          settingsUtils.saveTheme(this.themeIdx);
+         this.$toast.add({severity:'success', summary: 'Настройки', detail:'Успешное сохранены', life: 3000});
       }
    }
 }

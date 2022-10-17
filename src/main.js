@@ -8,6 +8,7 @@ import { apolloProvider } from "@/apollo-config";
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
+import ToastService from 'primevue/toastservice';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -24,6 +25,7 @@ import ScrollPanel from 'primevue/scrollpanel';
 import Checkbox from 'primevue/checkbox';
 import ContextMenu from 'primevue/contextmenu';
 import Menu from 'primevue/menu';
+import Toast from 'primevue/toast';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -118,6 +120,7 @@ createApp(App)
 })
     .use(ConfirmationService)
     .use(DialogService)
+    .use(ToastService)
     .directive('tooltip', Tooltip)
     .component('InputText', InputText)
     .component('Button', Button)
@@ -134,5 +137,6 @@ createApp(App)
     .component('Checkbox', Checkbox)
     .component('ContextMenu', ContextMenu)
     .component('Menu', Menu)
+    .component('Toast', Toast)
     .mount('#app');
 
