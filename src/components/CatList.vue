@@ -1,7 +1,7 @@
 <template>
 
 <!-- Текущая группа справочника-->
-<Toolbar class="m-1 p-2 sticky" style="background-color: var(--primary-100)">
+<Toolbar class="m-1 p-2 top-infobar">
    <template #start>
       <!-- Путь    -->
       <i class="fa fa-code text-primary text-2xl pr-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>

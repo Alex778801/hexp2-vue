@@ -68,6 +68,13 @@ body {
    margin-right: auto;
 }
 
+.top-infobar {
+   background-color: var(--primary-100);
+   position: sticky;
+   top: 0.3rem;
+   z-index: 1000;
+}
+
 button {
    padding-left: 1.2rem !important;
    padding-right: 1.2rem !important;
