@@ -1,16 +1,16 @@
 <template>
 
 <!-- Текущая группа справочника-->
-<Toolbar class="m-1 p-2 top-infobar">
-   <template #start>
-      <!-- Путь    -->
-      <i class="fa fa-code text-primary text-2xl pr-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
-   </template>
-   <template #end>
-      <!-- Кнопка На уровень вверх    -->
-<!--      <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>-->
-   </template>
-</Toolbar>
+   <Toolbar class="m-1 p-2 top-infobar">
+      <template #start>
+         <!-- Путь    -->
+         <i class="fa fa-code text-primary text-2xl pr-1" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
+      </template>
+      <template #end>
+         <!-- Кнопка На уровень вверх    -->
+   <!--      <Button icon="fa fa-arrow-alt-circle-up" :disabled="!canLevelUp" @click="levelUp"/>-->
+      </template>
+   </Toolbar>
 
 <!-- Содержимое справочника -->
    <div class="mb-8" :class="{'columns2': use2columns}">
@@ -23,7 +23,7 @@
            @dragover.prevent
            @dragenter.prevent
       >
-         <div style="height: 4rem; display: flex; align-items: center; ">
+         <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column">
    <!--           Чек    -->
             <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
    <!--           Редактирование    -->
@@ -41,7 +41,7 @@
    </div>
 
 <!-- Нижняя панель инструментов-->
-   <div class="bottom-toolbar">
+   <div class="bottom-toolbar footer1">
       <Toolbar class="mx-1 p-2 gap-2 justify-content-evenly">
          <template #start>
             <div class="p-inputgroup mr-2">
@@ -557,7 +557,7 @@ export default {
       column-count: 2;
       column-fill: auto;
       column-rule: 0.15rem dotted var(--primary-100);
-
+      column-span: none;
    }
 
    @keyframes glowing {

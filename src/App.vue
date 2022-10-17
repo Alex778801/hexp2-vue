@@ -23,8 +23,19 @@ export default {
 
    data() {
       return {
+         // Пользователь авторизован
          loggedIn: false,
       }
+   },
+
+   watch: {
+      // Заголовок страницы
+      $route: {
+         immediate: true,
+         handler(to, from) {
+            document.title = to.meta.title || 'hExpenses';
+         }
+      },
    },
 
    mounted() {
@@ -35,6 +46,7 @@ export default {
    },
 
    methods: {
+      // Уведомления авторизации
       authNotif(loggedIn, event) {
          this.loggedIn = loggedIn;
       }

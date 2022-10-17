@@ -11,10 +11,10 @@ import Settings from "@/components/Settings";
 export default createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/cat-projects',    component: CatProjects, alias: '/' },
-        // { path: '/cat-costtypes',   component: CatCostTypes },
-        // { path: '/cat-agents',      component: CatProjects },
-        // { path: '/log-finopers',    component: LogFinOpers },
-        { path: '/settings',        component: Settings },
+        { path: '/cat-projects',    component: CatProjects, meta: { title: 'Проекты'}, alias: '/' },
+        // { path: '/cat-costtypes',   component: CatCostTypes, meta: { title: 'Статьи'} },
+        // { path: '/cat-agents',      component: CatProjects, meta: { title: 'Агенты'} },
+        // { path: '/log-finopers',    component: LogFinOpers, meta: { title: 'Операции'} },
+        { path: '/settings',        component: Settings, meta: { title: 'Настройки'} },
     ]
 })
