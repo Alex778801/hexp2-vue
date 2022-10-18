@@ -285,8 +285,8 @@ export default {
 
       // Цвет элемента
       itemColor(item) {
-         if (!item.grp && item.color != undefined) {
-            return item.color;
+         if (!item.grp && item.color !== undefined) {
+            return item.color + " !important";
          } else {
             return 'auto';
          }
