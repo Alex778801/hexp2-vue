@@ -256,7 +256,7 @@ export default {
    methods: {
       // Контекстное меню 1
       itemMenuToggle(item) {
-         this.menuFocusedItem = item
+         this.menuFocusedItem = item;
          this.$refs.itemMenu.toggle(event);
       },
 
@@ -579,31 +579,55 @@ export default {
       // Меню объекта - перемещение вверх/вниз
       itemMenu_changeOrder(delta) {
          // Отправка запроса на изменение порядка объекта
-         const payload = new FormData();
-         payload.append('id', item.id);
-         payload.append('from', item.ord);
-         payload.append('to', item.ord + delta);
-         axios.post(this.urlChangeOrder, payload
-         ).then( (response) => {
+         const mut = gql(`
+                         mutation ($model: String!, $id: Int!, $order: Int!) {
+                            changeOrderCatObject(model: $model, id: $id, order: $order) {
+                               ok, result
+                            }
+                         }
+                      `);
+         apolloClient.mutate({
+            mutation: mut,
+            variables: { model: this.model, id: this.menuFocusedItem.id, order: this.menuFocusedItem.ord + delta},
+            fetchPolicy: "no-cache"
+         }).then( (response) => {
+            this.$toast.add({severity:'success', summary: `Элемент '${this.menuFocusedItem.name}'`, detail:'Успешно перемещен', life: 2000});
             this.fetchList();
-         }).catch( (error) => console.log(error) )
+         }).catch( (error) => {
+            this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
+         })
+         // --
       },
 
       // Меню объекта - удалить
       itemMenu_delete() {
          this.$refs.confirmDlg.show(
              'Удалить объект?',
-             item.name,
+             this.menuFocusedItem.name,
              () => {
                 // Отправка запроса на удаление объектов
-                const payload = new FormData();
-                const tmp = []; tmp.push(item);
+                const tmp = [];
+                tmp.push(this.menuFocusedItem);
                 const ids = JSON.stringify(tmp.map( i => i.id ))
-                payload.append('ids', ids);
-                axios.post(this.urlDelete, payload
-                ).then( (response) => {
+                const mut = gql(`
+                         mutation ($model: String!, $ids: String!) {
+                            deleteCatObjects(model: $model, ids: $ids) {
+                               ok, result
+                            }
+                         }
+                      `);
+                apolloClient.mutate({
+                   mutation: mut,
+                   variables: { model: this.model, ids: ids},
+                   fetchPolicy: "no-cache"
+                }).then( (response) => {
+                   this.$toast.add({severity:'success', summary: `${this.menuFocusedItem.name}`, detail:'успешно удален', life: 2000});
                    this.fetchList();
-                }).catch( (error) => console.log(error) )
+                }).catch( (error) => {
+                   this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                   authUtils.err(error);
+                })
                 // --
              })
       },
@@ -611,7 +635,7 @@ export default {
       // Меню объекта - копировать/вырезать
       itemMenu_clipboardPut(mode) {
          this.clipboard = [];
-         this.clipboard.push(item);
+         this.clipboard.push(this.menuFocusedItem);
          this.clipMode = mode;
       }
    }
