@@ -7,11 +7,6 @@
       urlEditGroup =              ""
       urlEditElement =            "/projects/element"
       urlEnterElement =           "/finopers/"
-
-
-      urlClone =                  "/projects/clone"
-      urlChangeOrder =            "/projects/change-order"
-      urlChangeParent =           "/projects/change-parent"
    />
 </template>
 

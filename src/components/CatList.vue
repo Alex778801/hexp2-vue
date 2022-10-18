@@ -160,11 +160,11 @@ export default {
       return {
          // Пункты контекстного меню объекта каталога
          itemMenuContent: [
-            { label: 'Вверх', icon: 'fa fa-arrow-up' },
-            { label: 'Вниз', icon: 'fa fa-arrow-down' },
-            { label: 'Удалить', icon: 'fa fa-trash' },
-            { label: 'Копировать', icon: 'fa fa-copy' },
-            { label: 'Вырезать', icon: 'fas fa-cut' },
+            { label: 'Вверх', icon: 'fa fa-arrow-up',    command:() => { this.itemMenu_changeOrder(-1) } },
+            { label: 'Вниз', icon: 'fa fa-arrow-down',   command:() => { this.itemMenu_changeOrder(1) } },
+            { label: 'Удалить', icon: 'fa fa-trash',     command:() => { this.itemMenu_delete() } },
+            { label: 'Копировать', icon: 'fa fa-copy',   command:() => { this.itemMenu_clipboardPut('copy')  } },
+            { label: 'Вырезать', icon: 'fas fa-cut',     command:() => { this.itemMenu_clipboardPut('cut') } },
          ],
          // Объект каталога, на котором вызвано контекстное меню
          menuFocusedItem: {},
@@ -577,7 +577,7 @@ export default {
       },
 
       // Меню объекта - перемещение вверх/вниз
-      itemMenu_changeOrder(item, delta) {
+      itemMenu_changeOrder(delta) {
          // Отправка запроса на изменение порядка объекта
          const payload = new FormData();
          payload.append('id', item.id);
@@ -590,7 +590,7 @@ export default {
       },
 
       // Меню объекта - удалить
-      itemMenu_delete(item) {
+      itemMenu_delete() {
          this.$refs.confirmDlg.show(
              'Удалить объект?',
              item.name,
@@ -609,7 +609,7 @@ export default {
       },
 
       // Меню объекта - копировать/вырезать
-      itemMenuClipboardPut(item, mode) {
+      itemMenu_clipboardPut(mode) {
          this.clipboard = [];
          this.clipboard.push(item);
          this.clipMode = mode;
