@@ -307,7 +307,6 @@ export default {
          // Запрос справочника
          const listQ = gql(this.modelQ);
          apolloClient.query({query: listQ, fetchPolicy: "no-cache"} ).then( (response) => {
-         // this.$apollo.query({query: listQ} ).then( (response) => {
             // Копируем данные из ответа
             this.list = [...response.data[this.model]];
             // Сортировка
@@ -369,14 +368,25 @@ export default {
                    item.name,
                    (data) => {
                       // Отправка запроса на переименование группы
-                      const payload = new FormData();
-                      payload.append('id', item.id);
-                      payload.append('newname', data);
-                      axios.post(this.urlRenameGroup, payload
-                      ).then( (response) => {
+                      const mut = gql(`
+                         mutation ($model: String!, $id: Int!, $name: String!) {
+                            renameCatObject(model: $model, id: $id, name: $name) {
+                               ok, result
+                            }
+                         }
+                      `);
+                      apolloClient.mutate({
+                         mutation: mut,
+                         variables: { model: this.model, id: item.id, name: data},
+                         fetchPolicy: "no-cache"
+                      }).then( (response) => {
+                         this.$toast.add({severity:'success', summary: `Группа '${data}'`, detail:'Успешно переименована', life: 2000});
                          this.fetchList();
-                      }).catch( (error) => console.log(error) )
-                      // --
+                      }).catch( (error) => {
+                         this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                         authUtils.err(error);
+                      })
+                     // --
                    }
                )
             }
@@ -396,13 +406,27 @@ export default {
                 'Новая группа',
                 (data) => {
                    // Отправка запроса на создание новой группы
-                   const payload = new FormData();
-                   payload.append('name', data);
-                   payload.append('parentid', this.curPid);
-                   axios.post(this.urlCreateNewGroup, payload
-                   ).then( (response) => {
+                   const mut = gql(`
+                         mutation ($model: String!, $id: Int!, $name: String!) {
+                            renameCatObject(model: $model, id: $id, name: $name) {
+                               ok, result
+                            }
+                         }
+                      `);
+                   apolloClient.mutate({
+                      mutation: mut,
+                      variables: { model: this.model, id: item.id, name: data},
+                      fetchPolicy: "no-cache"
+                   }).then( (response) => {
+                      this.$toast.add({severity:'success', summary: `Группа '${data}'`, detail:'Успешно переименована', life: 2000});
                       this.fetchList();
-                   }).catch( (error) => console.log(error) )
+                   }).catch( (error) => {
+                      this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                      authUtils.err(error);
+                   })
+
+
+
                    // --
                 })
          }
