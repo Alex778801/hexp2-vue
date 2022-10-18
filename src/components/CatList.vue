@@ -79,7 +79,7 @@
             </div>
             <div class="p-inputgroup ml-2">
                <!--        Кнопка Обновить            -->
-               <Button icon="fa fa-sync" :class="{glowBtn: glowRefreshBtn}" @click="fetchList()"/>
+               <Button icon="fa fa-sync" :class="{'glowBtn': glowRefreshBtn}" @click="fetchList()"/>
                <!--        Кнопка На уровень вверх    -->
                <Button icon="fa fa-arrow-alt-circle-up" class="butWide2" :disabled="!canLevelUp" @click="levelUp"/>
             </div>
