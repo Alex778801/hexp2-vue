@@ -4,16 +4,12 @@
       :startEditMode =            "get.editMode"
       model =                     "projects"
       modelQ =                    "query { projects { id, pid, grp, ord, name, } }"
-
-
-
-      urlEnterElement =           "/finopers/log-v"
       urlEditGroup =              ""
       urlEditElement =            "/projects/element"
-      urlCreateNewGroup =         "/projects/new-group"
-      urlCreateNewElement =       "/projects/new-element"
+      urlEnterElement =           "/finopers/"
+
+
       urlClone =                  "/projects/clone"
-      urlDelete =                 "/projects/delete"
       urlChangeOrder =            "/projects/change-order"
       urlChangeParent =           "/projects/change-parent"
    />
