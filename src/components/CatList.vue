@@ -13,7 +13,7 @@
    </Toolbar>
 
 <!-- Содержимое справочника -->
-   <div class="mb-8" :class="{'columns2': use2columns}">
+   <div style="padding-bottom: 9rem;" :class="{'columns2': use2columns}">
       <div
            v-for="item in fList" :key="item.id"
            :draggable="editMode"
