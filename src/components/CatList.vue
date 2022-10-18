@@ -4,7 +4,7 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь    -->
-         <i class="fa fa-code text-primary text-2xl pr-1" :class="{'glowSymb': glowDirBtn}" @click="levelUp"></i><span class="text-primary font-bold">{{ frmCurPath() }}</span>
+         <Button icon="fa fa-arrow-alt-circle-up" style="padding: 0.3rem 0;" :class="{'glowBtn': glowDirBtn}" @click="levelUp"></Button><span class="text-primary font-bold ml-2">{{ frmCurPath() }}</span>
       </template>
       <template #end>
          <!-- Кнопка На уровень вверх    -->
@@ -30,7 +30,7 @@
             <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
    <!--           Иконка и имя    -->
             <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
-               <i class="fa ml-3 mr-2" :class="item.g ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
+               <i class="fa ml-3 mr-2" :class="item.grp ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
                <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
             </span>
    <!--           Кнопка меню    -->
@@ -207,8 +207,10 @@ export default {
       //    // Автообновление только, если страница активна в браузере
       //    if (document.hidden)
       //       return;
-      //    this.glowRefreshBtn = true;
       //    this.fetchList();
+      //    // Мигание кнопки обновления
+      //    this.glowRefreshBtn = true;
+      //    setTimeout( ()=> { this.glowRefreshBtn = false }, 300 )
       // }, this.autoFetchInterval);
    },
 
@@ -283,7 +285,7 @@ export default {
 
       // Цвет элемента
       itemColor(item) {
-         if (!item.g && item.color != undefined) {
+         if (!item.grp && item.color != undefined) {
             return item.color;
          } else {
             return 'auto';
@@ -311,13 +313,11 @@ export default {
             // Сортировка
             this.list.sort((a, b) => {
                    if (a.pid === b.pid) {
-                      if (a.g === b.g) return a.o - b.o;
-                      else return b.g - a.g;
+                      if (a.grp === b.grp) return a.ord - b.ord;
+                      else return b.grp - a.grp;
                    } else return a.pid - b.pid;
                 }
             )
-            // Отключим мигание кнопки обновления
-            setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) )
          }).catch( (error) => authUtils.err(error) );
       },
 
@@ -333,20 +333,20 @@ export default {
             this.curPid = findItemById(this.curPid, this.list).pid;
             this.updateHistory();
             // Мигание
-            // this.glowDirBtn = true;
-            // setTimeout(() => {this.glowDirBtn = false}, 1000);
+            this.glowDirBtn = true;
+            setTimeout(() => {this.glowDirBtn = false}, 300);
          }
       },
 
       // Вход в группу/элемент справочника
       itemEnter(item) {
-         if (item.g && this.hierarchyMode) {
+         if (item.grp && this.hierarchyMode) {
             // Войти в группу
             this.curPid = item.id;
             this.updateHistory();
             // Мигание
-            // this.glowDirBtn = true;
-            // setTimeout(() => {this.glowDirBtn = false}, 1000);
+            this.glowDirBtn = true;
+            setTimeout(() => {this.glowDirBtn = false}, 300);
          }
          else {
             // Войти в элемент
@@ -358,7 +358,7 @@ export default {
 
       // Редактирование группы/элемента справочника
       itemEdit(item) {
-         if (item.g) {
+         if (item.grp) {
             // Редактировать группу
             if (this.urlEditGroup !== '')
                // @ts-ignore:
@@ -433,7 +433,7 @@ export default {
          if (this.canDeleteItems) {
             // Сообщение с перечнем удаляемых объектов
             const msg = this.checkedItems.reduce( (sum, i) => {
-               let icon = i.g ? "fa-folder text-primary-700" : "fa-file text-primary-300";
+               let icon = i.grp ? "fa-folder text-primary-700" : "fa-file text-primary-300";
                return sum + `<i class="p-1 text-xl fa ${icon}"></i> ` + i.name + '<br>'
             }, '');
             this.$refs.confirmDlg.show(
@@ -501,8 +501,8 @@ export default {
          // Отправка запроса на изменение порядка объекта
          const payload = new FormData();
          payload.append('id', sourceItem.id);
-         payload.append('from', sourceItem.o);
-         payload.append('to', targetItem.o);
+         payload.append('from', sourceItem.ord);
+         payload.append('to', targetItem.ord);
          axios.post(this.urlChangeOrder, payload
          ).then( (response) => {
             this.fetchList();
@@ -514,8 +514,8 @@ export default {
          // Отправка запроса на изменение порядка объекта
          const payload = new FormData();
          payload.append('id', item.id);
-         payload.append('from', item.o);
-         payload.append('to', item.o + delta);
+         payload.append('from', item.ord);
+         payload.append('to', item.ord + delta);
          axios.post(this.urlChangeOrder, payload
          ).then( (response) => {
             this.fetchList();
@@ -568,22 +568,13 @@ export default {
       column-span: none;
    }
 
-   @keyframes glowingBg {
-      0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-      50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
-      100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+   @keyframes glowing {
+      0% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
+      50% { background-color: var(--primary-100); box-shadow: 0 0 20px var(--primary-100); }
+      100% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
    }
    .glowBtn {
-      animation: glowingBg 1300ms 1;
-   }
-
-   @keyframes glowingCol {
-      0% { color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-      50% { color: #49e819; box-shadow: 0 0 20px #49e819; }
-      100% { color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-   }
-   .glowSymb {
-      animation: glowingCol 500ms 1;
+      animation: glowing 200ms 1;
    }
 
 </style>

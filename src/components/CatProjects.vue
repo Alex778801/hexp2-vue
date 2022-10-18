@@ -3,7 +3,7 @@
       :startPid =                 "get.parentId"
       :startEditMode =            "get.editMode"
       model =                     "projects"
-      modelQ =                    "query { projects { id, pid, g, o, name, } }"
+      modelQ =                    "query { projects { id, pid, grp, ord, name, } }"
       urlEnterElement =           "/finopers/log-v"
       urlEditGroup =              ""
       urlEditElement =            "/projects/element"
