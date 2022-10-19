@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import {createRouter, createMemoryHistory, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory } from 'vue-router';
 
 import CatProjects      from './components/CatProjects.vue';
 import CatAgents        from './components/CatAgents.vue';

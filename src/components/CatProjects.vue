@@ -5,7 +5,7 @@
       model =                     "projects"
       modelQ =                    "query { projects { id, pid, grp, ord, name, } }"
       urlEditGroup =              ""
-      urlEditElement =            "/projects/element"
+      urlEditElement =            "/project/"
       urlEnterElement =           "/finopers/"
    />
 </template>

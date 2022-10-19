@@ -28,6 +28,7 @@ import Menu from 'primevue/menu';
 import Toast from 'primevue/toast';
 import RadioButton from 'primevue/radiobutton';
 import Fieldset from 'primevue/fieldset';
+import TreeSelect from 'primevue/treeselect';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -143,5 +144,6 @@ createApp(App)
     .component('Toast', Toast)
     .component('RadioButton', RadioButton)
     .component('Fieldset', Fieldset)
+    .component('TreeSelect', TreeSelect)
     .mount('#app');
 

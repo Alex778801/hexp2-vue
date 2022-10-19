@@ -5,7 +5,7 @@
       model =                     "agents"
       modelQ =                    "query { agents { id, pid, grp, ord, name, } }"
       urlEditGroup =              ""
-      urlEditElement =            "/agents/"
+      urlEditElement =            "/agent/"
       urlEnterElement =           ""
    />
 </template>
