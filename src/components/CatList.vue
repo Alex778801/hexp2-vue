@@ -302,11 +302,11 @@ export default {
       },
 
       // Получить справочник
-      fetchList() {
+      async fetchList() {
          clog('fetchList');
          // Запрос справочника
          const listQ = gql(this.modelQ);
-         apolloClient.query({query: listQ, fetchPolicy: "no-cache"} ).then( (response) => {
+         await apolloClient.query({query: listQ, fetchPolicy: "no-cache"}).then((response) => {
             // Копируем данные из ответа
             this.list = [...response.data[this.model]];
             // Сортировка
@@ -317,7 +317,7 @@ export default {
                    } else return a.pid - b.pid;
                 }
             )
-         }).catch( (error) => authUtils.err(error) );
+         }).catch((error) => authUtils.err(error));
       },
 
       // Обновить историю браузера
@@ -366,7 +366,7 @@ export default {
                this.$refs.inputTextDlg.show(
                    'Введите имя группы',
                    item.name,
-                   (data) => {
+                   async (data) => {
                       // Отправка запроса на переименование группы
                       const mut = gql(`
                          mutation ($model: String!, $id: Int!, $name: String!) {
@@ -375,18 +375,23 @@ export default {
                             }
                          }
                       `);
-                      apolloClient.mutate({
+                      await apolloClient.mutate({
                          mutation: mut,
-                         variables: { model: this.model, id: item.id, name: data},
+                         variables: {model: this.model, id: item.id, name: data},
                          fetchPolicy: "no-cache"
-                      }).then( (response) => {
-                         this.$toast.add({severity:'success', summary: `Группа '${data}'`, detail:'Успешно переименована', life: 2000});
+                      }).then((response) => {
+                         this.$toast.add({
+                            severity: 'success',
+                            summary: `Группа '${data}'`,
+                            detail: 'Успешно переименована',
+                            life: 2000
+                         });
                          this.fetchList();
-                      }).catch( (error) => {
-                         this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                      }).catch((error) => {
+                         this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                          authUtils.err(error);
                       })
-                     // --
+                      // --
                    }
                )
             }
@@ -404,7 +409,7 @@ export default {
             this.$refs.inputTextDlg.show(
                 'Введите имя новой группы',
                 'Новая группа',
-                (data) => {
+                async (data) => {
                    // Отправка запроса на создание новой группы
                    const mut = gql(`
                          mutation ($model: String!, $pid: Int!, $isGrp: Boolean!, $name: String!) {
@@ -413,15 +418,20 @@ export default {
                             }
                          }
                       `);
-                   apolloClient.mutate({
+                   await apolloClient.mutate({
                       mutation: mut,
-                      variables: { model: this.model, pid: this.curPid, isGrp: true, name: data},
+                      variables: {model: this.model, pid: this.curPid, isGrp: true, name: data},
                       fetchPolicy: "no-cache"
-                   }).then( (response) => {
-                      this.$toast.add({severity:'success', summary: `Группа '${data}'`, detail:'Успешно создана', life: 2000});
+                   }).then((response) => {
+                      this.$toast.add({
+                         severity: 'success',
+                         summary: `Группа '${data}'`,
+                         detail: 'Успешно создана',
+                         life: 2000
+                      });
                       this.fetchList();
-                   }).catch( (error) => {
-                      this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                   }).catch((error) => {
+                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -435,7 +445,7 @@ export default {
             this.$refs.inputTextDlg.show(
                 'Введите имя нового элемента',
                 'Новый элемент',
-                (data) => {
+                async (data) => {
                    // Отправка запроса на создание новой группы
                    const mut = gql(`
                          mutation ($model: String!, $pid: Int!, $isGrp: Boolean!, $name: String!) {
@@ -444,15 +454,20 @@ export default {
                             }
                          }
                       `);
-                   apolloClient.mutate({
+                   await apolloClient.mutate({
                       mutation: mut,
-                      variables: { model: this.model, pid: this.curPid, isGrp: false, name: data},
+                      variables: {model: this.model, pid: this.curPid, isGrp: false, name: data},
                       fetchPolicy: "no-cache"
-                   }).then( (response) => {
-                      this.$toast.add({severity:'success', summary: `Элемент '${data}'`, detail:'Успешно создан', life: 2000});
+                   }).then((response) => {
+                      this.$toast.add({
+                         severity: 'success',
+                         summary: `Элемент '${data}'`,
+                         detail: 'Успешно создан',
+                         life: 2000
+                      });
                       this.fetchList();
-                   }).catch( (error) => {
-                      this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                   }).catch((error) => {
+                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -471,9 +486,9 @@ export default {
             this.$refs.confirmDlg.show(
                 'Удалить эти объекты?',
                 msg,
-                () => {
+                async () => {
                    // Отправка запроса на удаление объектов
-                   const ids = JSON.stringify(this.checkedItems.map( i => i.id ))
+                   const ids = JSON.stringify(this.checkedItems.map(i => i.id))
                    const mut = gql(`
                          mutation ($model: String!, $ids: String!) {
                             deleteCatObjects(model: $model, ids: $ids) {
@@ -481,15 +496,20 @@ export default {
                             }
                          }
                       `);
-                   apolloClient.mutate({
+                   await apolloClient.mutate({
                       mutation: mut,
-                      variables: { model: this.model, ids: ids},
+                      variables: {model: this.model, ids: ids},
                       fetchPolicy: "no-cache"
-                   }).then( (response) => {
-                      this.$toast.add({severity:'success', summary: `${this.checkedItems.length} объекта(ов)`, detail:'успешно удалены', life: 2000});
+                   }).then((response) => {
+                      this.$toast.add({
+                         severity: 'success',
+                         summary: `${this.checkedItems.length} объекта(ов)`,
+                         detail: 'успешно удалены',
+                         life: 2000
+                      });
                       this.fetchList();
-                   }).catch( (error) => {
-                      this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                   }).catch((error) => {
+                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -507,12 +527,12 @@ export default {
       },
 
       // Вставить буфер обмена
-      clipboardPaste() {
+      async clipboardPaste() {
          if (this.canPasteClipboard) {
             const action = this.clipMode === 'copy' ? 'copyCatObjects' : 'changeParentCatObjects';
             const actionText = this.clipMode === 'copy' ? 'скопирован(ы)' : 'перемещен(ы)';
             // Отправка запроса на клонирование/перенос
-            const ids = JSON.stringify(this.clipboard.map( i => i.id ))
+            const ids = JSON.stringify(this.clipboard.map(i => i.id))
             const mut = gql(`
                          mutation ($model: String!, $pid: Int!, $ids: String!) {
                             ${action}(model: $model, pid: $pid, ids: $ids) {
@@ -520,16 +540,21 @@ export default {
                             }
                          }
                       `);
-            apolloClient.mutate({
+            await apolloClient.mutate({
                mutation: mut,
-               variables: { model: this.model, pid: this.curPid, ids: ids},
+               variables: {model: this.model, pid: this.curPid, ids: ids},
                fetchPolicy: "no-cache"
-            }).then( (response) => {
-               this.$toast.add({severity:'success', summary: `${this.clipboard.length} объекта(ов)`, detail: `успешно ${actionText}`, life: 2000});
+            }).then((response) => {
+               this.$toast.add({
+                  severity: 'success',
+                  summary: `${this.clipboard.length} объекта(ов)`,
+                  detail: `успешно ${actionText}`,
+                  life: 2000
+               });
                this.clipboard = [];
                this.fetchList();
-            }).catch( (error) => {
-               this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+            }).catch((error) => {
+               this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                authUtils.err(error);
             })
             // --
@@ -550,7 +575,7 @@ export default {
       },
 
       // На что перетащили
-      dragDrop(event, targetItem) {
+      async dragDrop(event, targetItem) {
          const sourceItemId = event.dataTransfer.getData('itemId');
          const sourceItem = findItemById(sourceItemId, this.list);
          event.target.classList.remove('draggedItem');
@@ -562,22 +587,27 @@ export default {
                             }
                          }
                       `);
-         apolloClient.mutate({
+         await apolloClient.mutate({
             mutation: mut,
-            variables: { model: this.model, id: sourceItem.id, order: targetItem.ord},
+            variables: {model: this.model, id: sourceItem.id, order: targetItem.ord},
             fetchPolicy: "no-cache"
-         }).then( (response) => {
-            this.$toast.add({severity:'success', summary: `Элемент '${sourceItem.name}'`, detail:'Успешно перемещен', life: 2000});
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Элемент '${sourceItem.name}'`,
+               detail: 'Успешно перемещен',
+               life: 2000
+            });
             this.fetchList();
-         }).catch( (error) => {
-            this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
          // --
       },
 
       // Меню объекта - перемещение вверх/вниз
-      itemMenu_changeOrder(delta) {
+      async itemMenu_changeOrder(delta) {
          // Отправка запроса на изменение порядка объекта
          const mut = gql(`
                          mutation ($model: String!, $id: Int!, $order: Int!) {
@@ -586,15 +616,20 @@ export default {
                             }
                          }
                       `);
-         apolloClient.mutate({
+         await apolloClient.mutate({
             mutation: mut,
-            variables: { model: this.model, id: this.menuFocusedItem.id, order: this.menuFocusedItem.ord + delta},
+            variables: {model: this.model, id: this.menuFocusedItem.id, order: this.menuFocusedItem.ord + delta},
             fetchPolicy: "no-cache"
-         }).then( (response) => {
-            this.$toast.add({severity:'success', summary: `Элемент '${this.menuFocusedItem.name}'`, detail:'Успешно перемещен', life: 2000});
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Элемент '${this.menuFocusedItem.name}'`,
+               detail: 'Успешно перемещен',
+               life: 2000
+            });
             this.fetchList();
-         }).catch( (error) => {
-            this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
          // --
@@ -605,11 +640,11 @@ export default {
          this.$refs.confirmDlg.show(
              'Удалить объект?',
              this.menuFocusedItem.name,
-             () => {
+             async () => {
                 // Отправка запроса на удаление объектов
                 const tmp = [];
                 tmp.push(this.menuFocusedItem);
-                const ids = JSON.stringify(tmp.map( i => i.id ))
+                const ids = JSON.stringify(tmp.map(i => i.id))
                 const mut = gql(`
                          mutation ($model: String!, $ids: String!) {
                             deleteCatObjects(model: $model, ids: $ids) {
@@ -617,15 +652,20 @@ export default {
                             }
                          }
                       `);
-                apolloClient.mutate({
+                await apolloClient.mutate({
                    mutation: mut,
-                   variables: { model: this.model, ids: ids},
+                   variables: {model: this.model, ids: ids},
                    fetchPolicy: "no-cache"
-                }).then( (response) => {
-                   this.$toast.add({severity:'success', summary: `${this.menuFocusedItem.name}`, detail:'успешно удален', life: 2000});
+                }).then((response) => {
+                   this.$toast.add({
+                      severity: 'success',
+                      summary: `${this.menuFocusedItem.name}`,
+                      detail: 'успешно удален',
+                      life: 2000
+                   });
                    this.fetchList();
-                }).catch( (error) => {
-                   this.$toast.add({severity:'error', summary: `Модуль AUTH`, detail: String(error)});
+                }).catch((error) => {
+                   this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                    authUtils.err(error);
                 })
                 // --
