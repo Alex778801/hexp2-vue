@@ -1,7 +1,7 @@
 <template>
    <Dialog class="p-dialog" :modal="true" :visible="true" style="width: 20em">
       <template #header>
-         <span class="text-primary"> <img src="images/login.gif" style="width: 2.5rem"/> Авторизация </span>
+         <span class="text-primary"> <img src="/images/login.gif" style="width: 2.5rem"/> Авторизация </span>
       </template>
       <form id="loginForm" autocomplete="on">
          <div class="p-inputgroup pt-2">
