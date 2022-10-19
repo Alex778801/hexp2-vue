@@ -14,18 +14,30 @@
 
 <!-- Поля  -->
    <Fieldset legend="Поля"  class="mt-3">
+<!--  Имя -->
       <div class="field">
          <label for="name" class="text-primary"> Имя </label>
-         <InputText id="name" type="username" aria-describedby="name-help" size="50" :model-value="project.name"/>
+         <InputText id="name" type="username" aria-describedby="name-help" :model-value="project.name"/>
       </div>
+<!--  Группа статей    -->
       <div class="field">
          <label for="prefCostTypeGroup" class="text-primary"> Группа статей </label> <br>
          <TreeSelect id="prefCostTypeGroup" placeholder="статья..."
                      v-model="selPrefCostTypeGroup"
                      :options="prefCostTypeGroupTree" >
-
          </TreeSelect>
       </div>
+<!--  Группа агенов    -->
+      <div class="field">
+         <label for="prefAgentGroup" class="text-primary"> Группа агентов </label> <br>
+         <TreeSelect id="prefAgentGroup" placeholder="статья..."
+                     v-model="selPrefAgentGroup"
+                     :options="prefAgentGroupTree" >
+         </TreeSelect>
+      </div>
+
+
+
    </Fieldset>
 
    <Fieldset legend="Контроль доступа" class="mt-3">
@@ -56,6 +68,8 @@ export default {
          project: {},
          prefCostTypeGroupTree: null,
          selPrefCostTypeGroup: null,
+         prefAgentGroupTree: null,
+         selPrefAgentGroup:null,
       }
    },
 
@@ -71,6 +85,7 @@ export default {
                   prefFinOperLogIntvN,
                   acl,
                   prefCostTypeGroupTree,
+                  prefAgentGroupTree,
                }
             }
       `);
@@ -79,11 +94,19 @@ export default {
          variables: {id: this.projectId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.project = response.data.project;
+            // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
-            const id = this.project.prefCostTypeGroup.id;
-            const key = this.prefCostTypeGroupTree.find( i => i.data === id).key;
+            let id = this.project.prefCostTypeGroup.id;
+            let key = this.prefCostTypeGroupTree.find( i => i.data === id).key;
             this.selPrefCostTypeGroup = {}
             this.selPrefCostTypeGroup[key] = true;
+            // -- prefAgentGroupTree
+            this.prefAgentGroupTree = JSON.parse(this.project.prefAgentGroupTree);
+            id = this.project.prefAgentGroup.id;
+            key = this.prefAgentGroupTree.find( i => i.data === id).key;
+            this.selPrefAgentGroup = {}
+            this.selPrefAgentGroup[key] = true;
+            // --
       }).catch( (error) => authUtils.err(error) );
       // --
    }
@@ -116,6 +139,11 @@ export default {
 
 .field .p-inputtext, {
    display: block;
+}
+
+.field * {
+   width: 100%;
+   max-width: 30rem;
 }
 
 </style>
