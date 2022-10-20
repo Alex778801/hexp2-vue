@@ -3,6 +3,7 @@
 <!-- eslint-disable -->
 
 <div>
+
 <!-- Верхняя плашка -->
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
@@ -14,7 +15,7 @@
 
 
 <!-- Поля  -->
-   <Fieldset legend="Поля"  class="mt-3">
+   <Fieldset legend="Поля"  class="mt-2">
 <!--  Имя -->
       <div class="field">
          <label for="name" class="text-primary"> Имя </label>
@@ -50,7 +51,7 @@
 
 
 <!-- Списки контроля доступа  -->
-   <Fieldset legend="Контроль доступа" class="mt-3">
+   <Fieldset legend="Контроль доступа" class="mt-2 m-1">
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Имя </label>
@@ -80,15 +81,20 @@
 
 
 <!-- Нижняя панель инструментов -->
-   <Toolbar class="m-2 p-2">
+   <Toolbar class="m-1 p-2">
+      <template #start>
+<!--  Флаг изменений        -->
+         <font-awesome-icon icon="fa-solid fa-user-secret" class="text-primary text-2xl ml-2" v-if="dataChanged"/>
+      </template>
       <template #end>
-         <!--  Кнопки действий       -->
+<!--  Кнопки действий       -->
          <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" @click="save()"/>
          <Button label="Отмена" icon="fa fa-ban" class="mr-2 p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
 
 </div>
+
 </template>
 
 
@@ -106,7 +112,7 @@ export default {
    data() {
       return {
          projectId: Number(this.$route.params.id),
-         project: {owner: '11'},
+         project: {},
          prefCostTypeGroupTree: null,
          selPrefCostTypeGroup: null,
          prefAgentGroupTree: null,
@@ -117,7 +123,26 @@ export default {
          acl_a_mod: null,
          acl_o_mod: null,
          acl_report: null,
+         // --
+         dataChanged: false,
       }
+   },
+
+   watch: {
+      // Признак внесения изменений в данные
+      project: {
+         handler() {
+            this.dataChanged = true;
+         },
+         deep: true,
+      },
+      selPrefCostTypeGroup()  { this.dataChanged = true; },
+      selPrefAgentGroup()     { this.dataChanged = true; },
+      acl_read()              { this.dataChanged = true; },
+      acl_a_mod()             { this.dataChanged = true; },
+      acl_o_mod()             { this.dataChanged = true; },
+      acl_report()            { this.dataChanged = true; },
+      // --
    },
 
    mounted() {
@@ -144,6 +169,7 @@ export default {
          variables: {id: this.projectId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.project = response.data.project;
+            document.title =this.project.name;
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
             let id = this.project.prefCostTypeGroup.id;
@@ -164,32 +190,67 @@ export default {
             this.acl_o_mod= JSON.parse(this.project.acl).o_mod;
             this.acl_a_mod = JSON.parse(this.project.acl).a_mod;
             this.acl_report= JSON.parse(this.project.acl).report;
+            // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
+            setTimeout(() => { this.dataChanged = false }, 10);
       }).catch( (error) => authUtils.err(error) );
       // --
    },
 
    methods: {
       // Кнопка Сохранить
-      save() {
+      async save() {
          // -- prefCostTypeGroupTree
          let firstKey = Object.keys(this.selPrefCostTypeGroup)[0];
-         let id = this.prefCostTypeGroupTree.find( i => i.key === firstKey).data;
-         this.project.prefCostTypeGroup = id;
+         let id = this.prefCostTypeGroupTree.find(i => i.key === firstKey).data;
+         this.project.prefCostTypeGroup.id = id;
          // -- prefAgentGroupTree
          firstKey = Object.keys(this.selPrefAgentGroup)[0];
-         id = this.prefAgentGroupTree.find( i => i.key === firstKey).data;
-         this.project.prefAgentGroup = id;
+         id = this.prefAgentGroupTree.find(i => i.key === firstKey).data;
+         this.project.prefAgentGroup.id = id;
          // -- acl
-         this.project.acl = {
-            'read': JSON.stringify(this.acl_read),
-            'acl_o_mod': JSON.stringify(this.acl_o_mod),
-            'acl_a_mod': JSON.stringify(this.acl_a_mod),
-            'acl_report': JSON.stringify(this.acl_report),
-         };
+         this.project.acl = JSON.stringify({
+            'read': this.acl_read,
+            'acl_o_mod': this.acl_o_mod,
+            'acl_a_mod': this.acl_a_mod,
+            'acl_report': this.acl_report,
+         });
+
          // -- Мутация - запись изменений
-
-
-         // this.$router.go(-1);
+         const updateM = gql(`
+               mutation ($id: Int!, $name: String!, $prefCostTypeGroup: Int!, $prefAgentGroup: Int!,
+                         $prefFinOperLogIntv: Int!, $prefFinOperLogIntvN: Int!, $owner: String!, $acl: String!) {
+                  updateProject (id: $id, name: $name, prefCostTypeGroup: $prefCostTypeGroup,
+                                 prefAgentGroup: $prefAgentGroup, prefFinOperLogIntv: $prefFinOperLogIntv,
+                                 prefFinOperLogIntvN: $prefFinOperLogIntvN, owner: $owner, acl: $acl) {
+                     ok, result
+                  }
+               }
+         `);
+         await apolloClient.mutate({
+            mutation: updateM,
+            variables: {
+               id: this.project.id,
+               name: this.project.name,
+               prefCostTypeGroup: this.project.prefCostTypeGroup.id,
+               prefAgentGroup: this.project.prefAgentGroup.id,
+               prefFinOperLogIntv: this.project.prefFinOperLogIntv,
+               prefFinOperLogIntvN: this.project.prefFinOperLogIntvN,
+               owner: this.project.owner,
+               acl: this.project.acl,
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Проект '${this.project.name}'`,
+               detail: 'Успешно сохранен',
+               life: 2000
+            });
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
+         })
+         this.$router.go(-1);
       },
       // Кнопка Отмена
       cancel() {
