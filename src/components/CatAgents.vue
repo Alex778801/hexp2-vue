@@ -2,7 +2,7 @@
    <CatListComp
       :startPid =                 "get.parentId"
       :startEditMode =            "get.editMode"
-      model =                     "agents"
+      model =                     "agent"
       modelQ =                    "query { agents { id, pid, grp, ord, name, } }"
       urlEditGroup =              ""
       urlEditElement =            "/agent"

@@ -301,7 +301,7 @@ export default {
          const listQ = gql(this.modelQ);
          await apolloClient.query({query: listQ, fetchPolicy: "no-cache"}).then((response) => {
             // Копируем данные из ответа
-            this.list = [...response.data[this.model]];
+            this.list = [...response.data[this.model+'s']];
             // Сортировка
             this.list.sort((a, b) => {
                    if (a.pid === b.pid) {
@@ -499,6 +499,7 @@ export default {
                          detail: 'успешно удалены',
                          life: 2000
                       });
+                      this.checkedItems = [];
                       this.fetchList();
                    }).catch((error) => {
                       this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
