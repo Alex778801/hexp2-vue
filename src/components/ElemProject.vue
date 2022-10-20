@@ -171,7 +171,25 @@ export default {
    methods: {
       // Кнопка Сохранить
       save() {
-         this.$router.go(-1);
+         // -- prefCostTypeGroupTree
+         let firstKey = Object.keys(this.selPrefCostTypeGroup)[0];
+         let id = this.prefCostTypeGroupTree.find( i => i.key === firstKey).data;
+         this.project.prefCostTypeGroup = id;
+         // -- prefAgentGroupTree
+         firstKey = Object.keys(this.selPrefAgentGroup)[0];
+         id = this.prefAgentGroupTree.find( i => i.key === firstKey).data;
+         this.project.prefAgentGroup = id;
+         // -- acl
+         this.project.acl = {
+            'read': JSON.stringify(this.acl_read),
+            'acl_o_mod': JSON.stringify(this.acl_o_mod),
+            'acl_a_mod': JSON.stringify(this.acl_a_mod),
+            'acl_report': JSON.stringify(this.acl_report),
+         };
+         // -- Мутация - запись изменений
+
+
+         // this.$router.go(-1);
       },
       // Кнопка Отмена
       cancel() {
