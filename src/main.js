@@ -30,6 +30,7 @@ import RadioButton from 'primevue/radiobutton';
 import Fieldset from 'primevue/fieldset';
 import TreeSelect from 'primevue/treeselect';
 import InputNumber from 'primevue/inputnumber';
+import MultiSelect from 'primevue/multiselect';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -147,5 +148,6 @@ createApp(App)
     .component('Fieldset', Fieldset)
     .component('TreeSelect', TreeSelect)
     .component('InputNumber', InputNumber)
+    .component('MultiSelect', MultiSelect)
     .mount('#app');
 
