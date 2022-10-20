@@ -8,7 +8,7 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
 <!-- Путь    -->
-         <span class="fa fa-file-code text-primary text-3xl"/>
+         <i class="fa fa-file-code text-primary text-3xl"/>
          <span class="text-primary ml-2"> [{{project.id}}] {{project.path}}{{project.name}}</span>
       </template>
    </Toolbar>
@@ -54,7 +54,7 @@
    <Fieldset legend="Контроль доступа" class="mt-2 m-1">
 <!--  Владелец    -->
       <div class="field">
-         <label for="owner" class="text-primary"> Имя </label>
+         <label for="owner" class="text-primary"> Владелец </label>
          <InputText id="owner" type="text" aria-describedby="name-help" v-model="project.owner" :disabled="project.owner !== 'admin'"/>
       </div>
 <!--  Чтение READ    -->
@@ -84,7 +84,7 @@
    <Toolbar class="m-1 p-2">
       <template #start>
 <!--  Флаг изменений        -->
-         <font-awesome-icon icon="fa-solid fa-user-secret" class="text-primary text-2xl ml-2" v-if="dataChanged"/>
+         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
       </template>
       <template #end>
 <!--  Кнопки действий       -->
@@ -172,16 +172,24 @@ export default {
             document.title =this.project.name;
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
-            let id = this.project.prefCostTypeGroup.id;
-            let key = this.prefCostTypeGroupTree.find( i => i.data === id).key;
-            this.selPrefCostTypeGroup = {};
-            this.selPrefCostTypeGroup[key] = true;
+            if (this.project.prefCostTypeGroup != null) {
+               let id = this.project.prefCostTypeGroup.id;
+               let key = this.prefCostTypeGroupTree.find(i => i.data === id).key;
+               this.selPrefCostTypeGroup = {};
+               this.selPrefCostTypeGroup[key] = true;
+            } else {
+               this.project.prefCostTypeGroup = {};
+            }
             // -- prefAgentGroupTree
             this.prefAgentGroupTree = JSON.parse(this.project.prefAgentGroupTree);
-            id = this.project.prefAgentGroup.id;
-            key = this.prefAgentGroupTree.find( i => i.data === id).key;
-            this.selPrefAgentGroup = {};
-            this.selPrefAgentGroup[key] = true;
+            if (this.project.prefAgentGroup != null) {
+               id = this.project.prefAgentGroup.id;
+               key = this.prefAgentGroupTree.find(i => i.data === id).key;
+               this.selPrefAgentGroup = {};
+               this.selPrefAgentGroup[key] = true;
+            } else {
+               this.project.prefAgentGroup = {};
+            }
             // -- logIntervalList
             this.logIntervalList = JSON.parse(this.project.logIntervalList);
             // -- aclList
