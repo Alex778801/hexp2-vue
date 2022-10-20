@@ -6,13 +6,12 @@
 <!-- Верхняя плашка -->
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
-         <!-- Путь    -->
+<!-- Путь    -->
          <span class="fa fa-file-code text-primary text-3xl"/>
          <span class="text-primary ml-2"> [{{project.id}}] {{project.path}}{{project.name}}</span>
       </template>
-      <template #end>
-      </template>
    </Toolbar>
+
 
 <!-- Поля  -->
    <Fieldset legend="Поля"  class="mt-3">
@@ -38,17 +37,19 @@
          </TreeSelect>
       </div>
 <!--  Интервал журнала    -->
-      <div class="field" style="max-width: 15rem;">
+      <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntv" class="text-primary"> Интервал журнала </label> <br>
          <Dropdown id="prefFinOperLogIntv" v-model="project.prefFinOperLogIntv" :options="logIntervalList" optionLabel="label" optionValue="id" placeholder="интервал..." />
 <!--  Параметр интервала журнала    -->
       </div>
-      <div class="field" style="max-width: 15rem;">
+      <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntvN" class="text-primary"> Параметр интеравала журнала </label>
          <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons :min="1" :max="1000"/>
       </div>
    </Fieldset>
 
+
+<!-- Списки контроля доступа  -->
    <Fieldset legend="Контроль доступа" class="mt-3">
 <!--  Владелец    -->
       <div class="field">
@@ -76,6 +77,16 @@
          <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
       </div>
    </Fieldset>
+
+
+<!-- Нижняя панель инструментов -->
+   <Toolbar class="m-2 p-2">
+      <template #end>
+         <!--  Кнопки действий       -->
+         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" @click="save()"/>
+         <Button label="Отмена" icon="fa fa-ban" class="mr-2 p-button-danger" @click="cancel()"/>
+      </template>
+   </Toolbar>
 
 </div>
 </template>
@@ -109,7 +120,7 @@ export default {
       }
    },
 
-   created() {
+   mounted() {
       // Запрос данных
       const itemQ = gql(`
             query($id: Int!) {
@@ -155,7 +166,19 @@ export default {
             this.acl_report= JSON.parse(this.project.acl).report;
       }).catch( (error) => authUtils.err(error) );
       // --
-   }
+   },
+
+   methods: {
+      // Кнопка Сохранить
+      save() {
+         this.$router.go(-1);
+      },
+      // Кнопка Отмена
+      cancel() {
+         this.$router.go(-1);
+      }
+   },
+
 }
 </script>
 
@@ -189,7 +212,7 @@ export default {
 
 .field * {
    width: 100%;
-   max-width: 30rem;
+   max-width: 50rem;
 }
 
 </style>

@@ -5,7 +5,7 @@
       model =                     "costtypes"
       modelQ =                    "query { costtypes { id, pid, grp, ord, name, out, color, } }"
       urlEditGroup =              ""
-      urlEditElement =            "/costtype/"
+      urlEditElement =            "/costtype"
       urlEnterElement =           ""
    />
 </template>

@@ -140,16 +140,9 @@ export default {
       // Строка запроса для получения справочника
       modelQ: String,
       // URL операций
-      urlEnterElement: String,
       urlEditGroup: String,
       urlEditElement: String,
-      urlCreateNewGroup: String,
-      urlCreateNewElement: String,
-      urlRenameGroup: String,
-      urlClone: String,
-      urlDelete: String,
-      urlChangeOrder: String,
-      urlChangeParent: String,
+      urlEnterElement: String,
       // Какую группу открыть по умолчанию - URL параметр
       startPid: String,
       // Режим редактирования по умолчанию - URL параметр
@@ -350,8 +343,7 @@ export default {
          else {
             // Войти в элемент
             if (this.urlEnterElement !== '')
-               // @ts-ignore:
-               openWindow(`${this.urlEnterElement}/${item.id}`);
+               this.$router.push({ path: `${this.urlEnterElement}/${item.id}` })
          }
       },
 
@@ -398,7 +390,7 @@ export default {
          } else {
             // Редактировать элемент
             if (this.urlEditElement !== '') {
-            //  !!!!!!
+               this.$router.push({ path: `${this.urlEditElement}/${item.id}` })
             }
          }
       },
