@@ -2,7 +2,7 @@
    <Toast />
    <MainMenu v-if="loggedIn" />
    <router-view v-if="loggedIn" />
-<!--   <AuthDlg v-if="!loggedIn" />-->
+   <AuthDlg v-if="!loggedIn" />
 </template>
 
 <script>
@@ -42,7 +42,7 @@ export default {
       // Подписка на уведомления авторизации
       authUtils.subscribeNotification(this.authNotif);
       // !!!!!!!!!!!! Автологин
-      authUtils.login('admin', '111');
+      // authUtils.login('admin', '111');
    },
 
    methods: {
