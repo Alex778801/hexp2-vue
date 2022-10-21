@@ -28,7 +28,10 @@
          <label for="isOutcome" class="pl-2"> Расходная статья </label>
       </div>
 <!--  Цвет    -->
-      <div class="field">
+      <div class="field1 mt-3">
+         <ColorPicker id="color" v-model="costType.color" />
+         <InputText v-model="costType.color" size="10" class="text-center ml-2"/>
+         <label for="color" class="ml-2"> Цвет плашки </label>
       </div>
    </Fieldset>
 
@@ -136,7 +139,7 @@ export default {
                id: this.costType.id,
                name: this.costType.name,
                isOutcome: this.costType.isOutcome,
-               color: this.costType.color,
+               color: `#${this.costType.color}`,
                owner: this.costType.owner,
             },
             fetchPolicy: "no-cache"

@@ -31,6 +31,7 @@ import Fieldset from 'primevue/fieldset';
 import TreeSelect from 'primevue/treeselect';
 import InputNumber from 'primevue/inputnumber';
 import MultiSelect from 'primevue/multiselect';
+import ColorPicker from 'primevue/colorpicker';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -149,5 +150,6 @@ createApp(App)
     .component('TreeSelect', TreeSelect)
     .component('InputNumber', InputNumber)
     .component('MultiSelect', MultiSelect)
+    .component('ColorPicker', ColorPicker)
     .mount('#app');
 
