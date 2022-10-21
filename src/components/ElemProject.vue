@@ -62,17 +62,12 @@
          <label for="acl_read" class="text-primary"> Чтение </label>
          <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
       </div>
-<!--  Чтение O_MOD   -->
+<!--  Изменение MOD   -->
       <div class="field">
-         <label for="acl_o_mod" class="text-primary"> Модификация владельцем </label>
-         <MultiSelect id="acl_o_mod" v-model="acl_o_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
+         <label for="acl_o_mod" class="text-primary"> Модификация </label>
+         <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
       </div>
-<!--  Чтение A_MOD   -->
-      <div class="field">
-         <label for="acl_read" class="text-primary"> Модификация НЕ владельцем </label>
-         <MultiSelect id="acl_a_mod" v-model="acl_a_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
-      </div>
-<!--  Чтение REPORT  -->
+<!--  Отчеты REPORT  -->
       <div class="field">
          <label for="acl_read" class="text-primary"> Построение отчетов </label>
          <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
@@ -120,8 +115,7 @@ export default {
          logIntervalList: null,
          aclList: null,
          acl_read: null,
-         acl_a_mod: null,
-         acl_o_mod: null,
+         acl_mod: null,
          acl_report: null,
          // --
          dataChanged: false,
@@ -139,8 +133,7 @@ export default {
       selPrefCostTypeGroup()  { this.dataChanged = true; },
       selPrefAgentGroup()     { this.dataChanged = true; },
       acl_read()              { this.dataChanged = true; },
-      acl_a_mod()             { this.dataChanged = true; },
-      acl_o_mod()             { this.dataChanged = true; },
+      acl_mod()               { this.dataChanged = true; },
       acl_report()            { this.dataChanged = true; },
       // --
    },
@@ -195,8 +188,7 @@ export default {
             // -- aclList
             this.aclList = JSON.parse(this.project.aclList);
             this.acl_read = JSON.parse(this.project.acl).read;
-            this.acl_o_mod= JSON.parse(this.project.acl).o_mod;
-            this.acl_a_mod = JSON.parse(this.project.acl).a_mod;
+            this.acl_mod= JSON.parse(this.project.acl).mod;
             this.acl_report= JSON.parse(this.project.acl).report;
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => { this.dataChanged = false }, 10);
@@ -226,9 +218,8 @@ export default {
          // -- acl
          this.project.acl = JSON.stringify({
             'read': this.acl_read,
-            'o_mod': this.acl_o_mod,
-            'a_mod': this.acl_a_mod,
-            'acl_report': this.acl_report,
+            'mod': this.acl_mod,
+            'report': this.acl_report,
          });
          // -- Мутация - запись изменений
          const updateM = gql(`
