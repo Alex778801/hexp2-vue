@@ -173,8 +173,8 @@ export default {
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
             if (this.project.prefCostTypeGroup != null) {
-               let id = this.project.prefCostTypeGroup.id;
-               let key = this.prefCostTypeGroupTree.find(i => i.data === id).key;
+               const id = this.project.prefCostTypeGroup.id;
+               const key = this.prefCostTypeGroupTree.find(i => i.data === id).key;
                this.selPrefCostTypeGroup = {};
                this.selPrefCostTypeGroup[key] = true;
             } else {
@@ -183,8 +183,8 @@ export default {
             // -- prefAgentGroupTree
             this.prefAgentGroupTree = JSON.parse(this.project.prefAgentGroupTree);
             if (this.project.prefAgentGroup != null) {
-               id = this.project.prefAgentGroup.id;
-               key = this.prefAgentGroupTree.find(i => i.data === id).key;
+               const id = this.project.prefAgentGroup.id;
+               const key = this.prefAgentGroupTree.find(i => i.data === id).key;
                this.selPrefAgentGroup = {};
                this.selPrefAgentGroup[key] = true;
             } else {
@@ -208,21 +208,28 @@ export default {
       // Кнопка Сохранить
       async save() {
          // -- prefCostTypeGroupTree
-         let firstKey = Object.keys(this.selPrefCostTypeGroup)[0];
-         let id = this.prefCostTypeGroupTree.find(i => i.key === firstKey).data;
-         this.project.prefCostTypeGroup.id = id;
+         if (this.selPrefCostTypeGroup != null) {
+            const firstKey = Object.keys(this.selPrefCostTypeGroup)[0];
+            const id = this.prefCostTypeGroupTree.find(i => i.key === firstKey).data;
+            this.project.prefCostTypeGroup.id = id;
+         } else {
+            this.project.prefCostTypeGroup.id = -1;
+         }
          // -- prefAgentGroupTree
-         firstKey = Object.keys(this.selPrefAgentGroup)[0];
-         id = this.prefAgentGroupTree.find(i => i.key === firstKey).data;
-         this.project.prefAgentGroup.id = id;
+         if (this.selPrefAgentGroup != null) {
+            const firstKey = Object.keys(this.selPrefAgentGroup)[0];
+            const id = this.prefAgentGroupTree.find(i => i.key === firstKey).data;
+            this.project.prefAgentGroup.id = id;
+         } else {
+            this.project.prefAgentGroup.id = -1;
+         }
          // -- acl
          this.project.acl = JSON.stringify({
             'read': this.acl_read,
-            'acl_o_mod': this.acl_o_mod,
-            'acl_a_mod': this.acl_a_mod,
+            'o_mod': this.acl_o_mod,
+            'a_mod': this.acl_a_mod,
             'acl_report': this.acl_report,
          });
-
          // -- Мутация - запись изменений
          const updateM = gql(`
                mutation ($id: Int!, $name: String!, $prefCostTypeGroup: Int!, $prefAgentGroup: Int!,

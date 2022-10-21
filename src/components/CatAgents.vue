@@ -1,7 +1,7 @@
 <template>
    <CatListComp
-      :startPid =                 "get.parentId"
-      :startEditMode =            "get.editMode"
+      :startPid =                 "query.parentId"
+      :startEditMode =            "query.editMode"
       model =                     "agent"
       modelQ =                    "query { agents { id, pid, grp, ord, name, } }"
       urlEditGroup =              ""
@@ -23,7 +23,7 @@ export default {
 
    data() {
       return {
-         get: this.$route.query,
+         query: this.$route.query,
       }
    }
 }

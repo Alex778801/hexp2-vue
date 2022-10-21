@@ -2,7 +2,7 @@
    <Toast />
    <MainMenu v-if="loggedIn" />
    <router-view v-if="loggedIn" />
-   <AuthDlg v-if="!loggedIn" />
+   <AuthDlg v-if="!loggedIn"/>
 </template>
 
 <script>

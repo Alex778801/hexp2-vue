@@ -25,7 +25,13 @@ export function fErr(msg) {
 
 // Извлечь логическое значение из GET параметра URL
 export function boolFromUrlParam(value) {
-   return value !== undefined;
+   if (value !== undefined) {
+      if (value !== null)
+         return value.toLowerCase() === 'true'
+      else
+         return true
+   } else
+      return false
 }
 
 // Извлечь численное значение из GET параметра URL

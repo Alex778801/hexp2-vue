@@ -1,7 +1,7 @@
 <template>
    <CatListComp
-      :startPid =                 "get.parentId"
-      :startEditMode =            "get.editMode"
+      :startPid =                 "query.parentId"
+      :startEditMode =            "query.editMode"
       model =                     "costtype"
       modelQ =                    "query { costtypes { id, pid, grp, ord, name, out, color, } }"
       urlEditGroup =              ""
@@ -23,7 +23,7 @@ export default {
 
    data() {
       return {
-         get: this.$route.query,
+         query: this.$route.query,
       }
    }
 }

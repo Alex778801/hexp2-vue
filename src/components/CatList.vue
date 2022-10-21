@@ -296,7 +296,7 @@ export default {
 
       // Получить справочник
       async fetchList() {
-         clog('fetchList');
+         // clog('fetchList');
          // Запрос справочника
          const listQ = gql(this.modelQ);
          await apolloClient.query({query: listQ, fetchPolicy: "no-cache"}).then((response) => {
@@ -315,8 +315,9 @@ export default {
 
       // Обновить историю браузера
       updateHistory() {
-          let curPureUrl = window.location.href.split('?')[0];
-          window.history.replaceState(null, null, `${curPureUrl}?parentId=${this.curPid}${this.editMode ? '&editMode' : ''}`);
+          // let curPureUrl = window.location.href.split('?')[0];
+          // window.history.replaceState(null, null, `${curPureUrl}?parentId=${this.curPid}${this.editMode ? '&editMode' : ''}`);
+          this.$router.push({query: {'parentId': this.curPid, 'editMode': this.editMode}});
       },
 
       // Перейти на уровень вверх
