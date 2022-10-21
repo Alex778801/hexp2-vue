@@ -19,14 +19,16 @@
 <!--  Имя -->
       <div class="field">
          <label for="name" class="text-primary"> Имя </label>
-         <InputText id="name" type="username" aria-describedby="name-help" v-model="project.name"/>
+         <InputText id="name" type="username" aria-describedby="name-help" v-model="project.name"
+                    :disabled="!project.canMod" />
       </div>
 <!--  Группа статей    -->
       <div class="field">
          <label for="prefCostTypeGroup" class="text-primary"> Группа статей </label> <br>
          <TreeSelect id="prefCostTypeGroup" placeholder="статьи..."
                      v-model="selPrefCostTypeGroup"
-                     :options="prefCostTypeGroupTree" >
+                     :options="prefCostTypeGroupTree"
+                     :disabled="!project.CanMod">
          </TreeSelect>
       </div>
 <!--  Группа агенов    -->
@@ -34,18 +36,21 @@
          <label for="prefAgentGroup" class="text-primary"> Группа агентов </label> <br>
          <TreeSelect id="prefAgentGroup" placeholder="агенты..."
                      v-model="selPrefAgentGroup"
-                     :options="prefAgentGroupTree" >
+                     :options="prefAgentGroupTree"
+                     :disabled="!project.canMod">
          </TreeSelect>
       </div>
 <!--  Интервал журнала    -->
       <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntv" class="text-primary"> Интервал журнала </label> <br>
-         <Dropdown id="prefFinOperLogIntv" v-model="project.prefFinOperLogIntv" :options="logIntervalList" optionLabel="label" optionValue="id" placeholder="интервал..." />
+         <Dropdown id="prefFinOperLogIntv" v-model="project.prefFinOperLogIntv" :options="logIntervalList" optionLabel="label" optionValue="id" placeholder="интервал..."
+                   :disabled="!project.canMod"/>
 <!--  Параметр интервала журнала    -->
       </div>
       <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntvN" class="text-primary"> Параметр интеравала журнала </label>
-         <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons :min="1" :max="1000"/>
+         <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons :min="1" :max="1000"
+                      :disabled="!project.canMod"/>
       </div>
    </Fieldset>
 
@@ -55,23 +60,26 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-<!--         <InputText id="owner" type="text" aria-describedby="name-help" v-model="project.owner" :disabled="project.owner !== 'admin'"/>-->
-         <Dropdown id="owner" v-model="owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
+         <Dropdown id="owner" v-model="project.owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+                   :disabled="!project.canMod"/>
       </div>
 <!--  Чтение READ    -->
       <div class="field">
-         <label for="acl_read" class="text-primary"> Чтение </label>
-         <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
+         <label for="acl_read" class="text-primary"> Чтение фин операций</label>
+         <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+                      :disabled="!project.canMod"/>
       </div>
 <!--  Изменение MOD   -->
       <div class="field">
-         <label for="acl_o_mod" class="text-primary"> Модификация </label>
-         <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
+         <label for="acl_o_mod" class="text-primary"> Модификация фин операций</label>
+         <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+                      :disabled="!project.canMod"/>
       </div>
 <!--  Отчеты REPORT  -->
       <div class="field">
-         <label for="acl_read" class="text-primary"> Построение отчетов </label>
-         <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
+         <label for="acl_read" class="text-primary"> Построение отчетов фин операций </label>
+         <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+                      :disabled="!project.canMod"/>
       </div>
    </Fieldset>
 
@@ -114,7 +122,6 @@ export default {
          prefAgentGroupTree: null,
          selPrefAgentGroup:null,
          logIntervalList: null,
-         owner: null,
          aclListOwner: null,
          aclList: null,
          acl_read: null,
@@ -138,7 +145,6 @@ export default {
       acl_read()              { this.dataChanged = true; },
       acl_mod()               { this.dataChanged = true; },
       acl_report()            { this.dataChanged = true; },
-      owner()                 { this.dataChanged = true; },
       // --
    },
 
@@ -148,16 +154,15 @@ export default {
             query($id: Int!) {
                project(id: $id) {
                   id, name, path,
-                  prefAgentGroup { id, name, },
                   prefCostTypeGroup { id, name, out, color, },
+                  prefCostTypeGroupTree,
+                  prefAgentGroup { id, name, },
+                  prefAgentGroupTree,
                   prefFinOperLogIntv,
                   prefFinOperLogIntvN,
-                  owner,
-                  acl,
-                  prefCostTypeGroupTree,
-                  prefAgentGroupTree,
                   logIntervalList,
-                  aclList,
+                  owner, acl, aclList,
+                  canMod,
                }
             }
       `);
@@ -191,9 +196,6 @@ export default {
             this.logIntervalList = JSON.parse(this.project.logIntervalList);
             // -- owner
             this.aclListOwner = JSON.parse(this.project.aclList).slice(2);
-
-            this.owner = String(this.project.owner);
-
             // -- aclList
             this.aclList = JSON.parse(this.project.aclList);
             this.acl_read = JSON.parse(this.project.acl).read;

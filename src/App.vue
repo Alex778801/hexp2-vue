@@ -43,6 +43,7 @@ export default {
       authUtils.subscribeNotification(this.authNotif);
       // !!!!!!!!!!!! Автологин
       authUtils.login('admin', '111');
+      // authUtils.login('user_test', '222');
    },
 
    methods: {
