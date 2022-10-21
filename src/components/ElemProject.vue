@@ -20,7 +20,7 @@
       <div class="field">
          <label for="name" class="text-primary"> Имя </label>
          <InputText id="name" type="username" aria-describedby="name-help" v-model="project.name"
-                    :disabled="!project.canMod" />
+                    :disabled="project.readOnly" />
       </div>
 <!--  Группа статей    -->
       <div class="field">
@@ -28,7 +28,7 @@
          <TreeSelect id="prefCostTypeGroup" placeholder="статьи..."
                      v-model="selPrefCostTypeGroup"
                      :options="prefCostTypeGroupTree"
-                     :disabled="!project.CanMod">
+                     :disabled="project.readOnly">
          </TreeSelect>
       </div>
 <!--  Группа агенов    -->
@@ -37,20 +37,20 @@
          <TreeSelect id="prefAgentGroup" placeholder="агенты..."
                      v-model="selPrefAgentGroup"
                      :options="prefAgentGroupTree"
-                     :disabled="!project.canMod">
+                     :disabled="project.readOnly">
          </TreeSelect>
       </div>
 <!--  Интервал журнала    -->
       <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntv" class="text-primary"> Интервал журнала </label> <br>
          <Dropdown id="prefFinOperLogIntv" v-model="project.prefFinOperLogIntv" :options="logIntervalList" optionLabel="label" optionValue="id" placeholder="интервал..."
-                   :disabled="!project.canMod"/>
+                   :disabled="project.readOnly"/>
 <!--  Параметр интервала журнала    -->
       </div>
       <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntvN" class="text-primary"> Параметр интеравала журнала </label>
          <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons :min="1" :max="1000"
-                      :disabled="!project.canMod"/>
+                      :disabled="project.readOnly"/>
       </div>
    </Fieldset>
 
@@ -61,25 +61,25 @@
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
          <Dropdown id="owner" v-model="project.owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
-                   :disabled="!project.canMod"/>
+                   :disabled="project.readOnly"/>
       </div>
 <!--  Чтение READ    -->
       <div class="field">
          <label for="acl_read" class="text-primary"> Чтение фин операций</label>
          <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
-                      :disabled="!project.canMod"/>
+                      :disabled="project.readOnly"/>
       </div>
 <!--  Изменение MOD   -->
       <div class="field">
          <label for="acl_o_mod" class="text-primary"> Модификация фин операций</label>
          <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
-                      :disabled="!project.canMod"/>
+                      :disabled="project.readOnly"/>
       </div>
 <!--  Отчеты REPORT  -->
       <div class="field">
          <label for="acl_read" class="text-primary"> Построение отчетов фин операций </label>
          <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
-                      :disabled="!project.canMod"/>
+                      :disabled="project.readOnly"/>
       </div>
    </Fieldset>
 
@@ -92,7 +92,7 @@
       </template>
       <template #end>
 <!--  Кнопки действий       -->
-         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" @click="save()"/>
+         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" :disabled="project.readOnly" @click="save()"/>
          <Button label="Отмена" icon="fa fa-ban" class="mr-2 p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
@@ -162,7 +162,7 @@ export default {
                   prefFinOperLogIntvN,
                   logIntervalList,
                   owner, acl, aclList,
-                  canMod,
+                  readOnly,
                }
             }
       `);
