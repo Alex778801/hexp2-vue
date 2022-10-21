@@ -141,7 +141,7 @@ export default {
             this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
-         // this.$router.go(-1);
+         this.$router.go(-1);
       },
       // Кнопка Отмена
       cancel() {

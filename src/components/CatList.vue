@@ -153,6 +153,8 @@ export default {
       return {
          // Пункты контекстного меню объекта каталога
          itemMenuContent: [
+            { label: 'Редактировать', icon: 'fa fa-pen', command:() => { this.itemMenu_editItem() } },
+            { separator: true },
             { label: 'Вверх', icon: 'fa fa-arrow-up',    command:() => { this.itemMenu_changeOrder(-1) } },
             { label: 'Вниз', icon: 'fa fa-arrow-down',   command:() => { this.itemMenu_changeOrder(1) } },
             { label: 'Удалить', icon: 'fa fa-trash',     command:() => { this.itemMenu_delete() } },
@@ -255,10 +257,10 @@ export default {
 
       // Контекстное меню 2
       itemMenuContextClick(item) {
-         if (this.editMode) {
+         // if (this.editMode) {
             this.menuFocusedItem = item
             this.$refs.itemMenuContext.show(event);
-         }
+         // }
       },
 
       // Сформировать путь текущей группы
@@ -671,7 +673,12 @@ export default {
          this.clipboard = [];
          this.clipboard.push(this.menuFocusedItem);
          this.clipMode = mode;
-      }
+      },
+
+      // Меню объекта - редактировать
+      itemMenu_editItem() {
+         this.itemEdit(this.menuFocusedItem);
+      },
    }
 }
 </script>
