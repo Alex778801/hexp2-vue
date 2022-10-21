@@ -7,7 +7,7 @@ import ElemProject      from './components/ElemProject.vue';
 import CatCostTypes     from './components/CatCostTypes.vue';
 import ElemCostType     from './components/ElemCostType.vue';
 import CatAgents        from './components/CatAgents.vue';
-// import ElemAgent        from './components/ElemAgent.vue';
+import ElemAgent        from './components/ElemAgent.vue';
 // import LogFinOpers      from './components/LogFinOpers.vue';
 // import FinOper          from './components/FinOper.vue';
 import Settings from "@/components/Settings";
@@ -20,7 +20,7 @@ export default createRouter({
         { path: '/cat-costtypes',   component: CatCostTypes, meta: { title: 'Статьи'} },
         { path: '/costtype/:id',    component: ElemCostType, meta: { title: 'Статья'} },
         { path: '/cat-agents',      component: CatAgents, meta: { title: 'Агенты'} },
-        // { path: '/agent/:id',       component: ElemAgent, meta: { title: 'Агент'} },
+        { path: '/agent/:id',       component: ElemAgent, meta: { title: 'Агент'} },
         // { path: '/log-finopers/',   component: LogFinOpers, meta: { title: 'Журнал операций'} },
         // { path: '/finoper/',        component: FinOper, meta: { title: 'Операция'} },
         { path: '/settings',        component: Settings, meta: { title: 'Настройки'} },
