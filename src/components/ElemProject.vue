@@ -55,7 +55,8 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <InputText id="owner" type="text" aria-describedby="name-help" v-model="project.owner" :disabled="project.owner !== 'admin'"/>
+<!--         <InputText id="owner" type="text" aria-describedby="name-help" v-model="project.owner" :disabled="project.owner !== 'admin'"/>-->
+         <Dropdown id="owner" v-model="owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..." />
       </div>
 <!--  Чтение READ    -->
       <div class="field">
@@ -113,6 +114,8 @@ export default {
          prefAgentGroupTree: null,
          selPrefAgentGroup:null,
          logIntervalList: null,
+         owner: null,
+         aclListOwner: null,
          aclList: null,
          acl_read: null,
          acl_mod: null,
@@ -135,6 +138,7 @@ export default {
       acl_read()              { this.dataChanged = true; },
       acl_mod()               { this.dataChanged = true; },
       acl_report()            { this.dataChanged = true; },
+      owner()                 { this.dataChanged = true; },
       // --
    },
 
@@ -185,6 +189,11 @@ export default {
             }
             // -- logIntervalList
             this.logIntervalList = JSON.parse(this.project.logIntervalList);
+            // -- owner
+            this.aclListOwner = JSON.parse(this.project.aclList).slice(2);
+
+            this.owner = String(this.project.owner);
+
             // -- aclList
             this.aclList = JSON.parse(this.project.aclList);
             this.acl_read = JSON.parse(this.project.acl).read;

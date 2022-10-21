@@ -15,8 +15,10 @@ export default createRouter({
         { path: '/cat-projects',    component: CatProjects, meta: { title: 'Проекты'}, alias: '/' },
         { path: '/project/:id',     component: ElemProject, meta: { title: 'Проект'} },
         { path: '/cat-costtypes',   component: CatCostTypes, meta: { title: 'Статьи'} },
+        // { path: '/costtype/:id',    component: ElemCostType, meta: { title: 'Статья'} },
         { path: '/cat-agents',      component: CatAgents, meta: { title: 'Агенты'} },
-        // { path: '/log-finopers',    component: LogFinOpers, meta: { title: 'Операции'} },
+        // { path: '/log-finopers/',   component: LogFinOpers, meta: { title: 'Журнал операций'} },
+        // { path: '/finoper/',        component: FinOper, meta: { title: 'Операция'} },
         { path: '/settings',        component: Settings, meta: { title: 'Настройки'} },
     ]
 })
