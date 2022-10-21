@@ -16,24 +16,28 @@
    <div style="padding-bottom: 9rem;" :class="{'columns2': use2columns}">
       <div
            v-for="item in fList" :key="item.id"
-           :draggable="editMode"
-           @dragstart="dragStart($event, item)"
-           @dragend="dragEnd($event, item)"
-           @drop="dragDrop($event, item)"
-           @dragover.prevent
-           @dragenter.prevent
       >
          <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column">
-   <!--           Чек    -->
-            <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
-   <!--           Редактирование    -->
-            <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
-   <!--           Иконка и имя    -->
-            <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
-               <i class="fa ml-3 mr-2" :class="item.grp ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
-               <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
-            </span>
-   <!--           Кнопка меню    -->
+<!--        Слой для драга    -->
+            <div class="w-10 h-full" style="height: 4rem; display: flex; align-items: center;"
+                :draggable="editMode"
+                @dragstart="dragStart($event, item)"
+                @dragend="dragEnd($event, item)"
+                @drop="dragDrop($event, item)"
+                @dragover.prevent
+                @dragenter.prevent
+            >
+               <!--  Чек  -->
+               <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
+               <!--  Редактирование  -->
+               <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
+               <!--  Иконка и имя  -->
+               <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
+                  <i class="fa ml-3 mr-2" :class="item.grp ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
+                  <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
+               </span>
+            </div>
+            <!--  Кнопка меню  -->
             <i class="fa fa-grip-lines text-primary mr-3" style="font-size: 1.5rem; margin-left: auto" v-if="editMode"
                @click="itemMenuToggle(item)" aria-haspopup="true" aria-controls="itemMenu"></i>
          </div>
