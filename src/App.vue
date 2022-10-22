@@ -73,6 +73,7 @@ body {
    max-width: var(--screen-width) !important;
 }
 
+/* Нижняя панель инструментов */
 .bottom-toolbar {
    position: fixed;
    width: 100%;
@@ -84,6 +85,7 @@ body {
    margin-right: auto;
 }
 
+/* Верхняя информационная плашка */
 .top-infobar {
    background-color: var(--primary-100);
    position: sticky;
@@ -91,6 +93,8 @@ body {
    z-index: 1000;
 }
 
+
+/* Типовые кнопки различной ширины */
 button {
    padding-left: 1.2rem !important;
    padding-right: 1.2rem !important;
@@ -106,8 +110,20 @@ button {
    padding-right: 2.1rem !important;
 }
 
+
+/* Кнопка с подстветкой - отображать режим */
 .EnBtn {
    color: var(--yellow-300);
+}
+
+/* Мигающая кнопка */
+@keyframes glowing {
+   0% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
+   50% { background-color: var(--primary-100); box-shadow: 0 0 20px var(--primary-100); }
+   100% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
+}
+.glowBtn {
+   animation: glowing 200ms 1;
 }
 
 </style>

@@ -704,13 +704,4 @@ export default {
       column-span: none;
    }
 
-   @keyframes glowing {
-      0% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
-      50% { background-color: var(--primary-100); box-shadow: 0 0 20px var(--primary-100); }
-      100% { background-color: var(--primary-600); box-shadow: 0 0 5px var(--primary-600); }
-   }
-   .glowBtn {
-      animation: glowing 200ms 1;
-   }
-
 </style>
