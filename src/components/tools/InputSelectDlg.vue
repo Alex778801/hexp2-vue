@@ -8,7 +8,6 @@
       <Dropdown v-model="result" :options="options" optionLabel="name" optionValue="id" :placeholder="placeholder" class="w-100"/>
       <small v-if="errEmpty" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
 
-
       <template #footer>
          <Button label="Отмена" icon="pi pi-times" class="p-button-text p-button-sm" @click="cancel()"/>
          <Button label="ОК" icon="pi pi-check" class="p-button-sm" @click="ok()"/>
@@ -18,7 +17,7 @@
 </template>
 
 
-<script lang="ts">
+<script>
 
 export default {
    name: 'InputSelectDlg',

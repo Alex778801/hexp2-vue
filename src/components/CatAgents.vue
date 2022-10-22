@@ -1,5 +1,5 @@
 <template>
-   <CatListComp
+   <CatList
       :startPid =                 "query.parentId"
       :startEditMode =            "query.editMode"
       model =                     "agent"
@@ -12,13 +12,13 @@
 
 <script>
 
-import CatListComp from '@/components/CatList.vue'
+import CatList from '@/components/CatList.vue'
 
 export default {
    name: 'CatAgents',
 
    components: {
-      CatListComp
+      CatList
    },
 
    data() {

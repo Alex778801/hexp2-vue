@@ -129,7 +129,7 @@ import {authUtils} from "@/components/tools/auth-utils";
 import {settingsUtils} from "@/components/tools/settings-utils";
 
 export default {
-   name: 'CatListComp',
+   name: 'CatList',
 
    components: {
       InputTextDlg,
@@ -188,7 +188,7 @@ export default {
          clipMode: '',
          // Мигание кнопки обновление при обновлении каталога
          glowRefreshBtn: false,
-         //
+         // Мигание кнопки директории - на уровень вверх
          glowDirBtn: false,
       }
    },
