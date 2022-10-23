@@ -68,41 +68,41 @@
 
 
 
-<!-- Нижняя панель инструментов        -->
+<!-- Нижняя панель инструментов                 -->
    <div class="bottom-toolbar footer1">
       <Toolbar class="mx-1 p-2 gap-2 justify-content-evenly">
          <template #start>
             <div class="p-inputgroup mr-2">
-<!--           Кнопка Календарь   -->
+<!--           Кнопка Календарь                 -->
                <Button icon="fa fa-calendar-alt" @click="calendar()"/>
-<!--           Кнопка Сортировка         -->
+<!--           Кнопка Сортировка                -->
                <Button icon="fa fa-sort-amount-up" class="text-center w-9rem" aria-haspopup="true" aria-controls="sort_menu"
                        :label="sortMenuContent[sortMode].label" @click="sortMenuToggle"/>
                <Menu id="sortMenu" ref="sortMenu" :model="sortMenuContent" :popup="true" />
             </div>
             <div class="p-inputgroup mr-2">
-<!--           Кнопка Инфо   -->
+<!--           Кнопка Инфо                      -->
                <Button icon="fa fa-info-circle" @click="infoBtn()"/>
-<!--           Кнопка Бюджет   -->
+<!--           Кнопка Бюджет                    -->
                <Button icon="fa fa-usd-circle" @click="budgetBtn()"/>
-<!--           Кнопка Отчеты  -->
+<!--           Кнопка Отчеты                    -->
                <Button icon="fa fa-chart-line" aria-haspopup="true" aria-controls="reportMenu" @click="reportMenuToggle"/>
                <Menu id="reportMenu" ref="reportMenu" :model="reportMenuContent" :popup="true" />
             </div>
          </template>
          <template #end>
             <div class="p-inputgroup">
-<!--        Быстрый фильтр             -->
+<!--           Быстрый фильтр                   -->
                <InputText placeholder="быстрый фильтр" style="width: 12em" v-model="qFilter"/>
-<!--        Кнопка Сброс быстрого      -->
+<!--           Кнопка Сброс быстрого abkmnhf    -->
                <Button icon="fa fa-times" @click="qFilter=''"/>
             </div>
             <div class="p-inputgroup ml-2">
-<!--        Кнопка Обновить            -->
+<!--           Кнопка Обновить                  -->
                <Button icon="fa fa-sync" :class="{'glowBtn': glowRefreshBtn}" @click="fetchList()"/>
             </div>
             <div class="p-inputgroup ml-2">
-               <!--           Кнопка Новая операция   -->
+<!--           Кнопка Новая операция            -->
                <Button icon="fa fa-file-plus" class="butWide2" @click="newFinOperBtn()"/>
             </div>
          </template>
@@ -127,20 +127,21 @@
 
 /* eslint-disable */
 
+import gql from "graphql-tag";
+
 const axios = require('axios');
 // axios.defaults.xsrfCookieName = 'csrftoken';
 // axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
+
+import moment           from "moment"
+import { apolloClient } from "@/apollo-config";
 import InputTextDlg     from "./tools/InputTextDlg.vue";
 import ConfirmDlg       from "./tools/ConfirmDlg.vue";
 import DateIntervalDlg  from "./tools/DateIntervalDlg.vue";
 import InputSelectDlg   from "./tools/InputSelectDlg.vue";
-
-import {
-   clog,
-   fErr,
-   isMobile,
-} from './tools/vue-utils';
+import { authUtils }    from "./tools/auth-utils";
+import {clog, fErr, isMobile, ns,} from './tools/vue-utils';
 
 export default {
    name: 'LogFinOpers',
@@ -174,12 +175,12 @@ export default {
          ],
          // Период авто обновления
          autoFetchInterval: 60000,
-         // Проект
+         // Проект ИД
          projectId: Number(this.$route.params.id),
-         // Журнал операций
-         list: [],
          // Проект
          project: {},
+         // Журнал операций
+         list: [],
          // Дата начала
          tsBegin: "*",
          // Дата конца
@@ -194,18 +195,16 @@ export default {
    },
 
    mounted() {
-      // // Локаль
-      // moment.locale("RU");
-      // // Какой проект открыть
-      // this.projectId = this.params.projectId;
-      // // Получить журнал
-      // this.fetchList();
-      // // При изменении Видимости приложения
-      // document.addEventListener('visibilitychange', () => {
-      //     if (!document.hidden) {
-      //         this.fetchList();
-      //     }
-      // }, false)
+      // Локаль
+      moment.locale("RU");
+      // Получить журнал
+      this.fetchList();
+      // При изменении Видимости приложения
+      document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+              this.fetchList();
+          }
+      }, false)
       // Авто обновление журнала по таймеру
       // setInterval(() => {
       //    this.glowRefreshBtn = true;
@@ -223,17 +222,17 @@ export default {
          const fList = this.list.filter( item => this.qFilterFunc(item) )
          fList.forEach( item => {
             if (item.out) {
-                sumOutcome += item.sum;
-                cntrOutcome += 1;
+               sumOutcome += item.sum;
+               cntrOutcome += 1;
             } else {
-                sumIncome += item.sum;
-                cntrIncome += 1;
+               sumIncome += item.sum;
+               cntrIncome += 1;
             }
          });
-        sumIncome = this.frmSum(sumIncome);
-        sumOutcome = this.frmSum(sumOutcome);
-        cntrIncome = this.frmSum(cntrIncome);
-        cntrOutcome = this.frmSum(cntrOutcome);
+         sumIncome = this.frmSum(sumIncome);
+         sumOutcome = this.frmSum(sumOutcome);
+         cntrIncome = this.frmSum(cntrIncome);
+         cntrOutcome = this.frmSum(cntrOutcome);
          return `<strong><span class="SumIncome"> ${sumIncome} (${cntrIncome})</span> &nbsp &nbsp <span class="SumOutcome">${sumOutcome} (${cntrOutcome})</span></strong>`;
       },
       // Мобильный/декстопный браузер?
@@ -255,7 +254,6 @@ export default {
          this.$refs.reportMenu.toggle(event);
       },
 
-
       // Форматирование суммы
       frmSum(sum) {
          return new Intl.NumberFormat('ru-RU').format(sum);
@@ -276,10 +274,10 @@ export default {
          if (this.qFilter === "") return true;
          else {
             const reg = new RegExp(this.qFilter, "i");
-            return (reg.test(item.notes)
-                    || reg.test(item.agf)
-                    || reg.test(item.agt)
-                    || reg.test(item.ct)
+            return (reg.test(ns(item.notes))
+                    || reg.test(ns(item.agentFrom))
+                    || reg.test(ns(item.agentTo.name))
+                    || reg.test(ns(item.costType.name))
                     );
          }
       },
@@ -297,28 +295,28 @@ export default {
             // Статья
             case 1:
                this.list.sort( (a, b) => {
-                  if (a.cto == b.cto ) return b.ts - a.ts;
-                  else return a.cto - b.cto;
+                  if (a.costType.ord === b.costType.ord ) return b.ts - a.ts;
+                  else return a.costType.ord - b.costType.ord;
                });
                break;
             // Аг Откуда
             case 2:
                this.list.sort( (a, b) => {
-                  if (a.cto == b.cto ) return b.ts - a.ts;
-                  else return a.agFo - b.agFo;
+                  if (a.agentFrom.ord === b.agentFrom.ord ) return b.ts - a.ts;
+                  else return a.agentFrom.ord - b.agentFrom.ord;
                });
                break;
             // Аг Куда
             case 3:
                this.list.sort( (a, b) => {
-                  if (a.cto == b.cto ) return b.ts - a.ts;
-                  else return a.agTo - b.agTo;
+                  if (a.agentTo.ord === b.agentTo.ord ) return b.ts - a.ts;
+                  else return a.agentTo.ord - b.agentTo.ord;
                });
                break;
-            // Автор
+            // Владелец
             case 4:
                this.list.sort( (a, b) => {
-                  if (a.user == b.user) return b.ts - a.ts;
+                  if (a.user === b.user) return b.ts - a.ts;
                   else if (a.user > b.user) return 1;
                       else return -1;
                });
@@ -352,17 +350,41 @@ export default {
       },
 
       // Получить справочник
-      fetchList() {
-         axios.get(`/finopers/log/getdata?projid=${this.projectId}&tsbegin=${this.tsBegin}&tsend=${this.tsEnd}&sort=${this.sortMode}`).then( (response) => {
-            // Преобразуем json в массив
-            // clog(response.data);
-            this.list = response.data['finopers'];
-            this.project = response.data['proj'];
+      async fetchList() {
+         clog('fetchList - finopes');
+         // Запрос журнала
+         const listQ = gql(`
+            query ($projectId: Int!) {
+               project(id: $projectId) {
+                  id, name, path,
+               },
+               finopers(projectId: $projectId) {
+                  id,
+                  ts,
+                  costType { id, name, ord, out, color },
+                  agentFrom { id, name, ord },
+                  agentTo { id, name, ord },
+                  user,
+                  ucol,
+                  amount,
+                  notes,
+                  pq,
+              }
+            }
+         `);
+         await apolloClient.query({
+               query: listQ,
+               variables: {
+                  projectId: this.projectId
+               },
+               fetchPolicy: "no-cache"
+            }).then((response) => {
+            // Копируем данные из ответа
+            this.project = response.data.project;
+            this.list = [...response.data.finopers];
             // Сортировка
             this.sortList();
-            // Отключим мигание кнопки обнолвения
-            setTimeout( ()=> { this.glowRefreshBtn = false }, Math.round(this.autoFetchInterval/2) );
-         }).catch( (error) => fErr(error) );
+         }).catch((error) => authUtils.err(error));
       },
 
       // Открыть внешнюю ссылку

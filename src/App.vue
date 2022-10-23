@@ -13,6 +13,8 @@ import { authUtils } from "@/components/tools/auth-utils";
 import AuthDlg from "@/components/tools/AuthDlg";
 import MainMenu from "@/components/MainMenu";
 
+const { schema } = require('/schema.json');
+
 export default {
    name: 'App',
 

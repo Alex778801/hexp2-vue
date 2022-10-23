@@ -66,3 +66,13 @@ export var checkboxMobileFixMixin = {
       },
   }
 }
+
+// Обработка null значений для строки
+export function ns(val) {
+   return (val === null ? '' : val);
+}
+
+// Обработка null значений для числа
+export function nn(val) {
+   return val === null ? 0 : val;
+}
