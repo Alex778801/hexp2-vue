@@ -109,7 +109,7 @@
    <DateIntervalDlg child ref="dateIntervalDlg" />
 
 <!-- Диалог выбора проекта для переноса операции  -->
-   <InputSelectDlg ref="selectProjectDlg" />
+   <InputSelectTreeDlg ref="selectProjectDlg" />
 
 </template>
 
@@ -124,20 +124,20 @@ const axios = require('axios');
 // axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
 
-import moment           from "moment"
-import { apolloClient } from "@/apollo-config";
-import InputTextDlg     from "./tools/InputTextDlg.vue";
-import ConfirmDlg       from "./tools/ConfirmDlg.vue";
-import DateIntervalDlg  from "./tools/DateIntervalDlg.vue";
-import InputSelectDlg   from "./tools/InputSelectDlg.vue";
-import { authUtils }    from "./tools/auth-utils";
+import moment              from "moment"
+import { apolloClient }    from "@/apollo-config";
+import InputTextDlg        from "./tools/InputTextDlg.vue";
+import ConfirmDlg          from "./tools/ConfirmDlg.vue";
+import DateIntervalDlg     from "./tools/DateIntervalDlg.vue";
+import InputSelectTreeDlg  from "./tools/InputSelectTreeDlg.vue";
+import { authUtils }       from "./tools/auth-utils";
 import { clog, fErr, isMobile, } from './tools/vue-utils';
 
 export default {
    name: 'LogFinOpers',
 
    components: {
-      InputSelectDlg,
+      InputSelectTreeDlg,
       InputTextDlg,
       ConfirmDlg,
       DateIntervalDlg,
@@ -396,31 +396,41 @@ export default {
       },
 
       // Переместить операцию в другой проект
-      moveItem(item) {
-         axios.get("/projects/gettree")
-            .then( (response) => {
-               // Подготовка списка выбора
-               const options = [{}];
-               response.data.forEach( proj => {
-                  if (proj.id === this.projectId)
-                     return;
-                  options.push({'id': proj.id, 'name': proj.name});
-               });
-               // Диалог выбора проекта
-               this.$refs.selectProjectDlg.show(
-                  'Выберите целевой проект для переноса:',
-                  'список проектов...',
-                   options,
-                  result => {
-                     // Запрос к серверу на перенос проекта
-                     axios.get(`/finopers/moveoper/${item.id}/${result}`
-                     ).then( (response) => {
-                        clog(response);
-                        this.fetchList();
-                     }).catch( (error) => console.log(error) )
-               });
-               // --
-         }).catch( (error) => console.log(error) )
+      async itemChangeProject() {
+         // Запрос журнала
+         const treeQ = gql(`
+            #graphql
+            query {
+                projectsTree
+            }
+         `);
+         await apolloClient.query({
+            query: treeQ,
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            // Подготовка списка выбора
+            const options = JSON.parse(response.data.projectsTree);
+            // Диалог выбора проекта
+            this.$refs.selectProjectDlg.show(
+                'Выберите целевой проект для переноса:',
+                'список проектов...',
+                options,
+                result => {
+                   // Запрос к серверу на перенос проекта
+                   clog(result, options);
+                   const firstKey = Object.keys(result)[0];
+
+                   let curObj = options
+                   firstKey.split('-').forEach( k => {
+                      curObj = curPbj.children[`${k}`]
+                   })
+                  clog(curObj);
+
+                   const id = options.find(i => i.key === firstKey).data;
+                   clog(id);
+                });
+            // --
+         }).catch((error) => console.log(error))
       },
 
       // Копировать операцию

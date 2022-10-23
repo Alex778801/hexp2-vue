@@ -2,8 +2,8 @@
    <CatList
       :startPid =                 "query.parentId"
       :startEditMode =            "query.editMode"
-      model =                     "costtype"
-      modelQ =                    "query { costtypes { id, pid, grp, ord, name, out, color, } }"
+      model =                     "costType"
+      modelQ =                    "query { costTypes { id, pid, grp, ord, name, out, color, } }"
       urlEditGroup =              ""
       urlEditElement =            "/costtype"
       urlEnterElement =           ""
