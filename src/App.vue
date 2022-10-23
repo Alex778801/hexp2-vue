@@ -61,8 +61,14 @@ export default {
 <style>
 
 :root {
+   /* Ширина главного экрана*/
    --screen-width: 100em;
+   /* Базовый размер шрифта для масштабирования интерфейса */
    --base-font-size: 0.9em;
+   /* Цвет суммы прихода */
+   --incomeColor: #116223;
+   /* Цвет суммы расхода */
+   --outcomeColor: #8a2128;
 }
 
 html {
@@ -95,7 +101,6 @@ body {
    z-index: 1000;
 }
 
-
 /* Типовые кнопки различной ширины */
 button {
    padding-left: 1.2rem !important;
@@ -126,6 +131,16 @@ button {
 }
 .glowBtn {
    animation: glowing 200ms 1;
+}
+
+/* Цвет суммы прихода */
+.SumIncomeColor {
+   color: var(--incomeColor) !important;
+}
+
+/* Цвет суммы расхода */
+.SumOutcomeColor {
+   color: var(--outcomeColor) !important;
 }
 
 </style>

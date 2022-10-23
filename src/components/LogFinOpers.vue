@@ -4,7 +4,7 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь, имя проекта   -->
-         <span class="text-primary font-bold ml-3 my-1">{{project.path}}{{project.name}}</span>
+         <span class="text-primary font-bold my-1">{{project.path}}{{project.name}}</span>
       </template>
       <template #end>
          <!-- Сводка по фильтру   -->
@@ -468,17 +468,6 @@ export default {
 
 <style  lang="scss" scoped>
 
-$incomeColor: #116223;
-$outcomeColor: #8a2128;
-
-.SumIncomeColor {
-   color: #116223 !important;
-}
-
-.SumOutcomeColor {
-   color: #8a2128 !important;
-}
-
 .DesktopItemContainer {
    width: 100%;
    display: grid;
@@ -507,11 +496,11 @@ $outcomeColor: #8a2128;
       text-align: end;
       font-size: 1.2rem;
       font-weight: bold;
-      color: $outcomeColor;
+      color: var(--outcomeColor);
    }
 
    .Income {
-      color: $incomeColor !important;
+      color: var(--incomeColor) !important;
    }
 
    .Ts {
