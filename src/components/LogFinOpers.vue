@@ -12,8 +12,6 @@
       </template>
    </Toolbar>
 
-
-
 <!-- Содержимое -->
    <div class="mx-1">
       <div class="item"
@@ -21,24 +19,20 @@
            v-show="qFilterFunc(item)"
       >
 <!--     Мобильная версия    -->
-         <div v-if="isMobile" class="MobileItemContainer">
-               <div class="M_CBox" :style="{'background-color': item.color}"></div>
-               <div class="M_Sum" :class="{'SumIncome': !item.out}"> {{ frmSum(item.sum) }} </div>
-               <div class="M_Date"> {{ frmTs(item.ts) }} <span class="M_User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
-               <div class="M_Notes"> {{ item.notes }} </div>
-               <div class="M_Photo">
-                  <i class="fas fa-camera" :hidden="item.pq===0"></i>
+         <div v-if="isMobile" class="MobileItemContainer M_OperBody">
+               <div class="ColorBox" :style="{'background-color': item.costType?.color}"></div>
+               <div class="Amount" :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
+               <div class="Ts">{{ frmTs(item.ts) }}<span class="User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
+               <div class="Notes">{{ item.notes }}</div>
+               <div class="Photo">
+                  <i class="fas fa-camera" v-if="item.pq>0"></i>
                </div>
-               <div class="M_ActMenu">
-                   <i class="fas fa-ellipsis-h-alt" data-bs-toggle="dropdown"></i>
-                   <ul class="dropdown-menu" style="background-color: #d2eef4">
-                       <li><button class="dropdown-item text-primary" type="button" @click="moveItem(item)"> <i class="fas fa-arrow-right"></i> Переместить</button></li>
-                       <li><button class="dropdown-item text-primary" type="button" @click="copyItem(item)"> <i class="fas fa-copy"></i> Копировать</button></li>
-                       <li><button class="dropdown-item text-primary" type="button" @click="deleteItem(item)"> <i class="fas fa-trash"></i> Удалить</button></li>
-                   </ul>
+               <div class="Menu" @click="itemContextMenuToggle(item)">
+                  <i class="fas fa-ellipsis-h-alt"></i>
                </div>
-               <div class="M_CostType" :class="{'SumIncome': !item.out}"> {{ item.ct }} </div>
-               <div class="M_Agent"><div class="M_Agent_Child"> {{ item.agF }} <br><span class="M_AgentTo"> {{ item.agT }} </span></div></div>
+               <div class="CostType" :class="{'SumIncome': !item.costType?.out}">{{ item.costType?.name }}</div>
+               <div class="AgentFrom">{{ item.agentFrom?.name }}</div>
+               <div class="AgentTo">{{ item.agentTo?.name }}</div>
          </div>
 
 <!--     Десктопная версия    -->
@@ -47,7 +41,7 @@
             <div class="ColorBox" :style="{'background-color': item.costType?.color}">
                <i class="fas fa-camera Photo" v-if="item.pq>0"/>
             </div>
-            <div class="Amount " :class="{'Income': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
+            <div class="Amount " :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
             <div class="Ts">{{ frmTs2(item.ts) }}</div>
             <div class="CostType " :class="{'Income': !item.costType?.out}">{{ item.costType?.name }}</div>
             <div class="AgentFrom">{{ item.agentFrom?.name }}<br><span class="AgentTo">{{ item.agentTo?.name }}</span></div>
@@ -58,7 +52,7 @@
       </div>
    </div>
 
-<!-- Нижняя панель инструментов                 -->
+<!-- Нижняя панель инструментов         -->
    <div class="bottom-toolbar footer1">
       <Toolbar class="mx-1 p-2 gap-2 justify-content-evenly">
          <template #start>
@@ -171,7 +165,7 @@ export default {
          ],
          // Контекстное меню фин операции
          itemContextMenuContent: [
-            { label: 'Переместить', icon: 'fa fa-arrow-down',  command:() => { this.itemChangeProject() } },
+            { label: 'Переместить', icon: 'fa fa-arrow-right',  command:() => { this.itemChangeProject() } },
             { label: 'Копировать', icon: 'fa fa-copy',         command:() => { this.itemCopy() } },
             { label: 'Удалить', icon: 'fa fa-trash',           command:() => { this.itemDelete() } },
          ],
@@ -398,18 +392,6 @@ export default {
          }).catch((error) => authUtils.err(error));
       },
 
-      // Открыть внешнюю ссылку
-      openWin(link) {
-         // @ts-ignore
-         openWindow(link);
-      },
-
-      // Закрыть журнал
-      closeWin() {
-         // @ts-ignore
-         closeWindow();
-      },
-
       // Переместить операцию в другой проект
       moveItem(item) {
          axios.get("/projects/gettree")
@@ -499,14 +481,10 @@ export default {
       color: var(--outcomeColor);
    }
 
-   .Income {
-      color: var(--incomeColor) !important;
-   }
-
    .Ts {
       text-align: center;
       font-size: 1rem;
-      color: darkgray;
+      color: var(--surface-500);
    }
 
    .CostType {
@@ -541,141 +519,111 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
    }
-
 }
 
 .MobileItemContainer {
-
-}
-
-
-
-
-.M_CBox {
-   position: absolute;
-   left: 0em;
-   bottom: 0em;
-   width: 1em;
-   height: 100%;
-}
-
-.M_Sum {
-   text-align: start;
-   /*background: orange;*/
-   font-size: 1.2em;
-   font-weight: bold;
-   color: #8a2128;
-   position: absolute;
-   left: 1.4em;
-   top: 0.2em;
-}
-
-.M_Date {
-   text-align: start;
-   /*background: orange;*/
-   font-size: 0.85em;
-   color: darkgray;
-   position: absolute;
-   left: 2em;
-   top: 2.4em;
-}
-
-.M_User {
-   color: #75dfff;
-}
-
-.M_Notes {
-   text-align: start;
-   /*background: orange;*/
-   font-size: 0.85em;
-   font-style: italic;
-   color: #595959;
-   position: absolute;
-   left: 3.2em;
-   top: 4.4em;
-   line-height: 1.1em;
-   width: 85%;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
-}
-
-.M_Photo {
-   text-align: start;
-   /*background: orange;*/
-   font-size: 0.85em;
-   color: lightgray;
-   text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
-   position: absolute;
-   left: 0.6em;
-   top: 3.6em;
-}
-
-.M_ActMenu {
-   text-align: center;
-   /*background: orange;*/
-   font-size: 1em;
-   font-weight: bold;
-   color: #dde9f3;
-   position: absolute;
-   z-index: 1;
-   left: 50%;
-   transform: translate(-50%, 0%);
-   top: -0.2em;
-}
-
-
-.M_CostType {
-   text-align: end;
-   /*background: orange;*/
-   font-size: 1em;
-   font-weight: bold;
-   color: black;
-   position: absolute;
-   right: 1em;
-   top: 0.2em;
-}
-
-.M_Agent {
-   text-align: end;
-   /*background: orange;*/
-   font-size: 0.8em;
-   line-height: 110%;
-   font-weight: bold;
-   color: darkgray;
-   position: absolute;
-   right: 1em;
-   top: 2.2em;
-
-   height: 2em;
-   display: table;
-}
-
-.M_Agent_Child {
-   display: table-cell;
-   vertical-align: middle;
-}
-
-.M_AgentTo {
-   font-weight: normal;
-}
-
-
-.M_BLine {
-   text-align: end;
-   /*background: orange;*/
-   font-size: 0.9em;
-   font-weight: bold;
-   color: darkgray;
-   position: absolute;
-   left: 0em;
-   top: 4.6em;
-   width: 100%;
-}
-
-.M_OperBody {
    position: relative;
-   height: 5.2em;
+   height: 5.2rem;
+   border-bottom: 0.1rem solid var(--surface-300);
+
+   .ColorBox {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 1rem;
+      height: 100%;
+   }
+
+   .Amount {
+      text-align: start;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #8a2128;
+      position: absolute;
+      left: 1.4rem;
+      top: 0.3rem;
+   }
+
+   .Ts {
+      text-align: start;
+      font-size: 0.95rem;
+      color: var(--surface-500);
+      position: absolute;
+      left: 2rem;
+      top: 2.2rem;
+   }
+
+   .User {}
+
+   .Notes {
+      text-align: start;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--surface-700);
+      position: absolute;
+      left: 3.2rem;
+      top: 3.7rem;
+      line-height: 1.1rem;
+      width: 85%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+   }
+
+   .Photo {
+      text-align: start;
+      font-size: 1rem;
+      color: lightgray;
+      text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+      position: absolute;
+      left: 0.6rem;
+      top: 3.2rem;
+   }
+
+   .Menu {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary-100);
+      position: absolute;
+      left: 50%;
+      top: 0;
+   }
+
+   .CostType {
+      text-align: end;
+      font-size: 1rem;
+      font-weight: bold;
+      color: black;
+      position: absolute;
+      right: 1rem;
+      top: 0.3rem;
+   }
+
+   .AgentFrom {
+      text-align: end;
+      font-size: 0.9rem;
+      line-height: 110%;
+      font-weight: bold;
+      color: var(--surface-500);
+      position: absolute;
+      right: 1rem;
+      top: 2rem;
+      height: 2rem;
+      display: table;
+   }
+
+   .AgentTo {
+      text-align: end;
+      font-size: 0.9rem;
+      line-height: 110%;
+      color: var(--surface-500);
+      position: absolute;
+      right: 1rem;
+      top: 3.1rem;
+      height: 2rem;
+      display: table;
+   }
 }
 
 </style>
