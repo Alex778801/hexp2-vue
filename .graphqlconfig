@@ -1,14 +1,14 @@
 {
   "name": "Untitled GraphQL Schema",
-  "schemaPath": "schema.graphql",
+  "schemaPath": "schema.json",
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "http://127.0.0.1:8000/gp/",
+        "url": "http://localhost:8080/gp/",
         "headers": {
           "user-agent": "JS GraphQL"
         },
-        "introspect": false
+        "introspect": true
       }
     }
   }

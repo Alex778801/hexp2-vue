@@ -359,6 +359,7 @@ export default {
          clog('fetchList - finopes');
          // Запрос журнала
          const listQ = gql(`
+            #graphql
             query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
                project(id: $projectId) {
                   id, name, path,
