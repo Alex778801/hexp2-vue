@@ -4,25 +4,24 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь, имя проекта   -->
-         <span class="text-primary font-bold ml-2">{{project.path}}{{project.name}}</span>
+         <span class="text-primary font-bold ml-3 my-1">{{project.path}}{{project.name}}</span>
       </template>
       <template #end>
          <!-- Сводка по фильтру   -->
-         <div class="" style="background-color: #edfbff; color: #70aaef" v-show="qFilter.length > 0" v-html="qFilterTips"></div>
+         <div v-show="qFilter.length > 0" v-html="qFilterTips"></div>
       </template>
    </Toolbar>
 
 
 
 <!-- Содержимое -->
-   <div class="container-fluid" style="padding-bottom: 18em; min-height: 50em">
+   <div class="mx-1">
       <div class="item"
            v-for="item in list" :key="item.id"
            v-show="qFilterFunc(item)"
       >
 <!--     Мобильная версия    -->
-         <div v-if="isMobile" class="OperCont row align-items-center text-center border-bottom" @dblclick="openWin(`/finopers/oper/-1/${item.id}`)">
-            <div class="M_OperBody col-12">
+         <div v-if="isMobile" class="MobileItemContainer">
                <div class="M_CBox" :style="{'background-color': item.color}"></div>
                <div class="M_Sum" :class="{'SumIncome': !item.out}"> {{ frmSum(item.sum) }} </div>
                <div class="M_Date"> {{ frmTs(item.ts) }} <span class="M_User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
@@ -40,33 +39,24 @@
                </div>
                <div class="M_CostType" :class="{'SumIncome': !item.out}"> {{ item.ct }} </div>
                <div class="M_Agent"><div class="M_Agent_Child"> {{ item.agF }} <br><span class="M_AgentTo"> {{ item.agT }} </span></div></div>
-            </div>
          </div>
+
 <!--     Десктопная версия    -->
-         <div v-else class="OperCont row align-items-center text-center border-bottom" @dblclick="openWin(`/finopers/oper/-1/${item.id}`)">
-            <div class="D_CBox col-1" :style="{'background-color': item.color}">
-               <i class="D_Photo fas fa-camera" :hidden="item.pq===0"></i>
+<!--         <div v-else class="D_container" @click="$router.push({ path: `/finoper/${item.id}`})" >-->
+         <div v-else class="DesktopItemContainer" @contextmenu="itemContextMenuToggle(item)" aria-haspopup="true">
+            <div class="ColorBox" :style="{'background-color': item.costType?.color}">
+               <i class="fas fa-camera Photo" v-if="item.pq>0"/>
             </div>
-            <div class="D_Sum col-1" :class="{'SumIncome': !item.out}"> {{ frmSum(item.sum) }} </div>
-            <div class="D_Date col-2"> {{ frmTs2(item.ts) }} </div>
-            <div class="D_CostType col-2" :class="{'SumIncome': !item.out}"> {{ item.ct }} </div>
-            <div class="D_Agent col-2"> {{ item.agF }} <br><span class="D_AgentTo"> {{ item.agT }}</span></div>
-            <div class="D_User col-1" :style="{'color': item.ucol}"> {{ item.user }} <br>
-                <button class="btn btn-outline-info dropdown-toggle" type="button"
-                        data-bs-toggle="dropdown" style="font-size: 0.5em">...</button>
-                <ul class="dropdown-menu" style="background-color: #d2eef4">
-                    <li><button class="dropdown-item text-primary" type="button" @click="moveItem(item)"> <i class="fas fa-arrow-right"></i> Переместить</button></li>
-                    <li><button class="dropdown-item text-primary" type="button" @click="copyItem(item)"> <i class="fas fa-copy"></i> Копировать</button></li>
-                    <li><button class="dropdown-item text-primary" type="button" @click="deleteItem(item)"> <i class="fas fa-trash"></i> Удалить</button></li>
-                </ul>
-            </div>
-            <div class="D_Notes col-3"> {{ item.notes }} </div>
+            <div class="Amount " :class="{'Income': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
+            <div class="Ts">{{ frmTs2(item.ts) }}</div>
+            <div class="CostType " :class="{'Income': !item.costType?.out}">{{ item.costType?.name }}</div>
+            <div class="AgentFrom">{{ item.agentFrom?.name }}<br><span class="AgentTo">{{ item.agentTo?.name }}</span></div>
+            <div class="User" :style="{'color': item.ucol}">{{ item.user }}</div>
+            <div class="Notes">{{ item.notes }}</div>
          </div>
 <!--     --    -->
       </div>
    </div>
-
-
 
 <!-- Нижняя панель инструментов                 -->
    <div class="bottom-toolbar footer1">
@@ -89,6 +79,10 @@
                <Button icon="fa fa-chart-line" aria-haspopup="true" aria-controls="reportMenu" @click="reportMenuToggle"/>
                <Menu id="reportMenu" ref="reportMenu" :model="reportMenuContent" :popup="true" />
             </div>
+            <div class="p-inputgroup mr-2">
+<!--           Кнопка Новая операция            -->
+               <Button icon="fa fa-file-plus" class="butWide2" @click="newFinOperBtn()"/>
+            </div>
          </template>
          <template #end>
             <div class="p-inputgroup">
@@ -100,14 +94,16 @@
             <div class="p-inputgroup ml-2">
 <!--           Кнопка Обновить                  -->
                <Button icon="fa fa-sync" :class="{'glowBtn': glowRefreshBtn}" @click="fetchList()"/>
-            </div>
-            <div class="p-inputgroup ml-2">
-<!--           Кнопка Новая операция            -->
-               <Button icon="fa fa-file-plus" class="butWide2" @click="newFinOperBtn()"/>
+<!--           Кнопка Закрыть                  -->
+               <Button icon="fa fa-window-close" :class="{'glowBtn': glowRefreshBtn}" @click="this.$router.go(-1)"/>
             </div>
          </template>
       </Toolbar>
    </div>
+
+<!-- Контекстное меню объекта каталога  -->
+   <Menu id="itemContextMenu" ref="itemContextMenu" :model="itemContextMenuContent" :popup="true" />
+   <ContextMenu ref="itemContextMenu" :model="itemContextMenuContent" />
 
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />
@@ -161,18 +157,26 @@ export default {
          // Режимы сортировки
          sortModeCaptions: ["Дата", "Статья", "Аг Откуда", "Аг Куда", "Автор"],
          sortMenuContent: [
-            { label: 'Дата', command:() =>      { this.sortList(0) } },
-            { label: 'Статья', command:() =>    { this.sortList(1) } },
-            { label: 'Аг Откуда', command:() => { this.sortList(2) } },
-            { label: 'Аг Куда', command:() =>   { this.sortList(3) } },
-            { label: 'Автор', command:() =>     { this.sortList(4) } },
+            { label: 'Дата',        command:() => { this.sortList(0) } },
+            { label: 'Статья',      command:() => { this.sortList(1) } },
+            { label: 'Аг Откуда',   command:() => { this.sortList(2) } },
+            { label: 'Аг Куда',     command:() => { this.sortList(3) } },
+            { label: 'Автор',       command:() => { this.sortList(4) } },
          ],
          // Отчеты
          reportMenuContent: [
-            { label: 'Отчет 1 (бюджет)', command:() =>      { this.report(1) } },
-            { label: 'Отчет 2 (расходы)', command:() =>      { this.report(2) } },
-            { label: 'Отчет 3 (комплекс)', command:() =>      { this.report(3) } },
+            { label: 'Отчет 1 (бюджет)',     command:() => { this.report(1) } },
+            { label: 'Отчет 2 (расходы)',    command:() => { this.report(2) } },
+            { label: 'Отчет 3 (комплекс)',   command:() => { this.report(3) } },
          ],
+         // Контекстное меню фин операции
+         itemContextMenuContent: [
+            { label: 'Переместить', icon: 'fa fa-arrow-down',  command:() => { this.itemChangeProject() } },
+            { label: 'Копировать', icon: 'fa fa-copy',         command:() => { this.itemCopy() } },
+            { label: 'Удалить', icon: 'fa fa-trash',           command:() => { this.itemDelete() } },
+         ],
+         // Фин операция, на которой вызвано контекстное меню
+         itemContextMenuFocus: {},
          // Период авто обновления
          autoFetchInterval: 60000,
          // Проект ИД
@@ -221,11 +225,11 @@ export default {
          let cntrOutcome = 0;
          const fList = this.list.filter( item => this.qFilterFunc(item) )
          fList.forEach( item => {
-            if (item.out) {
-               sumOutcome += item.sum;
+            if (item.costType.out) {
+               sumOutcome += Number(item.amount);
                cntrOutcome += 1;
             } else {
-               sumIncome += item.sum;
+               sumIncome += Number(item.amount);
                cntrIncome += 1;
             }
          });
@@ -233,7 +237,7 @@ export default {
          sumOutcome = this.frmSum(sumOutcome);
          cntrIncome = this.frmSum(cntrIncome);
          cntrOutcome = this.frmSum(cntrOutcome);
-         return `<strong><span class="SumIncome"> ${sumIncome} (${cntrIncome})</span> &nbsp &nbsp <span class="SumOutcome">${sumOutcome} (${cntrOutcome})</span></strong>`;
+         return `<strong><span class="SumIncomeColor"> ${sumIncome} (${cntrIncome})</span> &nbsp &nbsp <span class="SumOutcomeColor">${sumOutcome} (${cntrOutcome})</span></strong>`;
       },
       // Мобильный/декстопный браузер?
       isMobile() {
@@ -253,6 +257,12 @@ export default {
       // Меню отчетов
       reportMenuToggle(event) {
          this.$refs.reportMenu.toggle(event);
+      },
+
+      // Контекстное меню фин операции
+      itemContextMenuToggle(item) {
+         this.itemContextMenuFocus = item
+         this.$refs.itemContextMenu.show(event);
       },
 
       // Форматирование суммы
@@ -456,15 +466,227 @@ export default {
 </script>
 
 
-<style scoped>
+<style  lang="scss" scoped>
 
-   @keyframes glowing {
-      0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-      50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
-      100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+$incomeColor: #116223;
+$outcomeColor: #8a2128;
+
+.SumIncomeColor {
+   color: #116223 !important;
+}
+
+.SumOutcomeColor {
+   color: #8a2128 !important;
+}
+
+.DesktopItemContainer {
+   width: 100%;
+   display: grid;
+   grid-template-columns: 1fr 2fr 3fr 4fr 4fr 2fr 7fr;
+   border-bottom: 0.1rem solid var(--surface-300);
+   min-height: 4.25rem;
+   align-items: center;
+
+   * {
+      padding: 0.4rem 0.4rem;
    }
-   .glowBtn {
-      animation: glowing 1300ms 1;
+
+   .ColorBox {
+      height: 100%;
+      text-align: center;
    }
+
+   .Photo {
+      margin-top: 0.6rem;
+      color: var(--text-color);
+      text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+   }
+
+   .Amount {
+      margin-right: 1rem;
+      text-align: end;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: $outcomeColor;
+   }
+
+   .Income {
+      color: $incomeColor !important;
+   }
+
+   .Ts {
+      text-align: center;
+      font-size: 1rem;
+      color: darkgray;
+   }
+
+   .CostType {
+      text-align: start;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--text-color);
+   }
+
+   .AgentFrom {
+      text-align: start;
+      font-size: 1rem;
+      font-weight: bolder;
+      color: var(--surface-600);
+   }
+
+   .AgentTo {
+      font-weight: normal;
+   }
+
+   .User {
+      text-align: center;
+      font-size: 0.9rem;
+   }
+
+   .Notes {
+      text-align: start;
+      font-size: 0.95rem;
+      color: var(--surface-700);;
+      line-height: 1.1rem;
+      max-height: 3.3em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+   }
+
+}
+
+.MobileItemContainer {
+
+}
+
+
+
+
+.M_CBox {
+   position: absolute;
+   left: 0em;
+   bottom: 0em;
+   width: 1em;
+   height: 100%;
+}
+
+.M_Sum {
+   text-align: start;
+   /*background: orange;*/
+   font-size: 1.2em;
+   font-weight: bold;
+   color: #8a2128;
+   position: absolute;
+   left: 1.4em;
+   top: 0.2em;
+}
+
+.M_Date {
+   text-align: start;
+   /*background: orange;*/
+   font-size: 0.85em;
+   color: darkgray;
+   position: absolute;
+   left: 2em;
+   top: 2.4em;
+}
+
+.M_User {
+   color: #75dfff;
+}
+
+.M_Notes {
+   text-align: start;
+   /*background: orange;*/
+   font-size: 0.85em;
+   font-style: italic;
+   color: #595959;
+   position: absolute;
+   left: 3.2em;
+   top: 4.4em;
+   line-height: 1.1em;
+   width: 85%;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.M_Photo {
+   text-align: start;
+   /*background: orange;*/
+   font-size: 0.85em;
+   color: lightgray;
+   text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+   position: absolute;
+   left: 0.6em;
+   top: 3.6em;
+}
+
+.M_ActMenu {
+   text-align: center;
+   /*background: orange;*/
+   font-size: 1em;
+   font-weight: bold;
+   color: #dde9f3;
+   position: absolute;
+   z-index: 1;
+   left: 50%;
+   transform: translate(-50%, 0%);
+   top: -0.2em;
+}
+
+
+.M_CostType {
+   text-align: end;
+   /*background: orange;*/
+   font-size: 1em;
+   font-weight: bold;
+   color: black;
+   position: absolute;
+   right: 1em;
+   top: 0.2em;
+}
+
+.M_Agent {
+   text-align: end;
+   /*background: orange;*/
+   font-size: 0.8em;
+   line-height: 110%;
+   font-weight: bold;
+   color: darkgray;
+   position: absolute;
+   right: 1em;
+   top: 2.2em;
+
+   height: 2em;
+   display: table;
+}
+
+.M_Agent_Child {
+   display: table-cell;
+   vertical-align: middle;
+}
+
+.M_AgentTo {
+   font-weight: normal;
+}
+
+
+.M_BLine {
+   text-align: end;
+   /*background: orange;*/
+   font-size: 0.9em;
+   font-weight: bold;
+   color: darkgray;
+   position: absolute;
+   left: 0em;
+   top: 4.6em;
+   width: 100%;
+}
+
+.M_OperBody {
+   position: relative;
+   height: 5.2em;
+}
 
 </style>
