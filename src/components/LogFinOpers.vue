@@ -180,9 +180,9 @@ export default {
          // Журнал операций
          list: [],
          // Дата начала
-         tsBegin: "*",
+         tsBegin: -1,
          // Дата конца
-         tsEnd: "*",
+         tsEnd: -1,
          // Режим сортировки
          sortMode: 0,
          // Быстрый фильтр
@@ -300,21 +300,21 @@ export default {
             // Статья
             case 1:
                this.list.sort( (a, b) => {
-                  if (a.costType?.ord === b.costType?.ord ) return b.ts - a.ts;
+                  if (a.costType?.ord === b.costType?.ord) return b.ts - a.ts;
                   else return a.costType?.ord - b.costType?.ord;
                });
                break;
             // Аг Откуда
             case 2:
                this.list.sort( (a, b) => {
-                  if (a.agentFrom?.ord === b.agentFrom?.ord ) return b.ts - a.ts;
-                  else return a.agentFrom?.ord - b?.agentFrom.ord;
+                  if (a.agentFrom?.ord === b.agentFrom?.ord) return b.ts - a.ts;
+                  else return a.agentFrom?.ord - b.agentFrom?.ord;
                });
                break;
             // Аг Куда
             case 3:
                this.list.sort( (a, b) => {
-                  if (a.agentTo?.ord === b.agentTo?.ord ) return b.ts - a.ts;
+                  if (a.agentTo?.ord === b.agentTo?.ord) return b.ts - a.ts;
                   else return a.agentTo?.ord - b.agentTo?.ord;
                });
                break;
@@ -332,7 +332,7 @@ export default {
       // Выбрать временной интервал журнала
       calendar() {
          // Сформируем начальный временной интервал
-         if (this.tsBegin === '*' || this.tsEnd === '*') {
+         if (this.tsBegin === -1 || this.tsEnd === -1) {
             const start = this.list[0].ts;
             let min = start, max = start;
             this.list.forEach(i => {
@@ -359,11 +359,11 @@ export default {
          clog('fetchList - finopes');
          // Запрос журнала
          const listQ = gql(`
-            query ($projectId: Int!) {
+            query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
                project(id: $projectId) {
                   id, name, path,
                },
-               finopers(projectId: $projectId) {
+               finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
                   id,
                   ts,
                   costType { id, name, ord, out, color },
@@ -380,7 +380,9 @@ export default {
          await apolloClient.query({
                query: listQ,
                variables: {
-                  projectId: this.projectId
+                  projectId: this.projectId,
+                  tsBegin: this.tsBegin,
+                  tsEnd: this.tsEnd,
                },
                fetchPolicy: "no-cache"
             }).then((response) => {
@@ -468,7 +470,7 @@ export default {
    }
 
    .Photo {
-      margin-top: 0.6rem;
+      margin-top: 0.8rem;
       color: var(--text-color);
       text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
    }
