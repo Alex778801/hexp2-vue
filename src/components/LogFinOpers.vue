@@ -141,7 +141,7 @@ import ConfirmDlg       from "./tools/ConfirmDlg.vue";
 import DateIntervalDlg  from "./tools/DateIntervalDlg.vue";
 import InputSelectDlg   from "./tools/InputSelectDlg.vue";
 import { authUtils }    from "./tools/auth-utils";
-import {clog, fErr, isMobile, ns,} from './tools/vue-utils';
+import { clog, fErr, isMobile, } from './tools/vue-utils';
 
 export default {
    name: 'LogFinOpers',
@@ -249,6 +249,7 @@ export default {
       sortMenuToggle(event) {
          this.$refs.sortMenu.toggle(event);
       },
+
       // Меню отчетов
       reportMenuToggle(event) {
          this.$refs.reportMenu.toggle(event);
@@ -274,10 +275,10 @@ export default {
          if (this.qFilter === "") return true;
          else {
             const reg = new RegExp(this.qFilter, "i");
-            return (reg.test(ns(item.notes))
-                    || reg.test(ns(item.agentFrom))
-                    || reg.test(ns(item.agentTo.name))
-                    || reg.test(ns(item.costType.name))
+            return (reg.test(item.notes)
+                    || reg.test(item.agentFrom?.name)
+                    || reg.test(item.agentTo?.name)
+                    || reg.test(item.costType?.name)
                     );
          }
       },
@@ -295,22 +296,22 @@ export default {
             // Статья
             case 1:
                this.list.sort( (a, b) => {
-                  if (a.costType.ord === b.costType.ord ) return b.ts - a.ts;
-                  else return a.costType.ord - b.costType.ord;
+                  if (a.costType?.ord === b.costType?.ord ) return b.ts - a.ts;
+                  else return a.costType?.ord - b.costType?.ord;
                });
                break;
             // Аг Откуда
             case 2:
                this.list.sort( (a, b) => {
-                  if (a.agentFrom.ord === b.agentFrom.ord ) return b.ts - a.ts;
-                  else return a.agentFrom.ord - b.agentFrom.ord;
+                  if (a.agentFrom?.ord === b.agentFrom?.ord ) return b.ts - a.ts;
+                  else return a.agentFrom?.ord - b?.agentFrom.ord;
                });
                break;
             // Аг Куда
             case 3:
                this.list.sort( (a, b) => {
-                  if (a.agentTo.ord === b.agentTo.ord ) return b.ts - a.ts;
-                  else return a.agentTo.ord - b.agentTo.ord;
+                  if (a.agentTo?.ord === b.agentTo?.ord ) return b.ts - a.ts;
+                  else return a.agentTo?.ord - b.agentTo?.ord;
                });
                break;
             // Владелец
