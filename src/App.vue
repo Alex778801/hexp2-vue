@@ -98,7 +98,7 @@ body {
    background-color: var(--primary-100);
    position: sticky;
    top: 0.3rem;
-   z-index: 100000;
+   z-index: 1000;
 }
 
 /* Типовые кнопки различной ширины */

@@ -131,7 +131,7 @@ import ConfirmDlg          from "./tools/ConfirmDlg.vue";
 import DateIntervalDlg     from "./tools/DateIntervalDlg.vue";
 import InputSelectTreeDlg  from "./tools/InputSelectTreeDlg.vue";
 import { authUtils }       from "./tools/auth-utils";
-import { clog, fErr, isMobile, } from './tools/vue-utils';
+import {clog, fErr, findTreeItemId, isMobile,} from './tools/vue-utils';
 
 export default {
    name: 'LogFinOpers',
@@ -415,19 +415,9 @@ export default {
                 'Выберите целевой проект для переноса:',
                 'список проектов...',
                 options,
-                result => {
+                itemId => {
                    // Запрос к серверу на перенос проекта
-                   clog(result, options);
-                   const firstKey = Object.keys(result)[0];
-
-                   let curObj = options
-                   firstKey.split('-').forEach( k => {
-                      curObj = curPbj.children[`${k}`]
-                   })
-                  clog(curObj);
-
-                   const id = options.find(i => i.key === firstKey).data;
-                   clog(id);
+                   clog(itemId);
                 });
             // --
          }).catch((error) => console.log(error))

@@ -66,7 +66,8 @@ export default {
             return;
          }
          this.active = false;
-         this.dataCallback(this.result);
+         const itemId = Number(Object.keys(this.result)[0]);
+         this.dataCallback(itemId);
       },
       // Кнопка Отмена
       cancel() {

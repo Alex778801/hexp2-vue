@@ -176,9 +176,8 @@ export default {
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
             if (this.project.prefCostTypeGroup != null) {
                const id = this.project.prefCostTypeGroup.id;
-               const key = this.prefCostTypeGroupTree.find(i => i.data === id).key;
                this.selPrefCostTypeGroup = {};
-               this.selPrefCostTypeGroup[key] = true;
+               this.selPrefCostTypeGroup[id] = true;
             } else {
                this.project.prefCostTypeGroup = {};
             }
@@ -186,9 +185,8 @@ export default {
             this.prefAgentGroupTree = JSON.parse(this.project.prefAgentGroupTree);
             if (this.project.prefAgentGroup != null) {
                const id = this.project.prefAgentGroup.id;
-               const key = this.prefAgentGroupTree.find(i => i.data === id).key;
                this.selPrefAgentGroup = {};
-               this.selPrefAgentGroup[key] = true;
+               this.selPrefAgentGroup[id] = true;
             } else {
                this.project.prefAgentGroup = {};
             }
@@ -212,17 +210,13 @@ export default {
       async save() {
          // -- prefCostTypeGroupTree
          if (this.selPrefCostTypeGroup != null) {
-            const firstKey = Object.keys(this.selPrefCostTypeGroup)[0];
-            const id = this.prefCostTypeGroupTree.find(i => i.key === firstKey).data;
-            this.project.prefCostTypeGroup.id = id;
+            this.project.prefCostTypeGroup.id = Object.keys(this.selPrefCostTypeGroup)[0];
          } else {
             this.project.prefCostTypeGroup.id = -1;
          }
          // -- prefAgentGroupTree
          if (this.selPrefAgentGroup != null) {
-            const firstKey = Object.keys(this.selPrefAgentGroup)[0];
-            const id = this.prefAgentGroupTree.find(i => i.key === firstKey).data;
-            this.project.prefAgentGroup.id = id;
+            this.project.prefAgentGroup.id = Number(Object.keys(this.selPrefAgentGroup)[0]);
          } else {
             this.project.prefAgentGroup.id = -1;
          }
@@ -248,8 +242,8 @@ export default {
             variables: {
                id: this.project.id,
                name: this.project.name,
-               prefCostTypeGroup: this.project.prefCostTypeGroup.id,
-               prefAgentGroup: this.project.prefAgentGroup.id,
+               prefCostTypeGroup: Number(this.project.prefCostTypeGroup.id),
+               prefAgentGroup: Number(this.project.prefAgentGroup.id),
                prefFinOperLogIntv: this.project.prefFinOperLogIntv,
                prefFinOperLogIntvN: this.project.prefFinOperLogIntvN,
                owner: this.project.owner,

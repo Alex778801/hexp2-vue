@@ -53,7 +53,7 @@ export function isMobile() {
 
 // Фикс бага - не работает чекбокс при драге на мобильном ус-ве
 export var checkboxMobileFixMixin = {
-  methods: {
+   methods: {
       checkboxMobileFix(item, checkedItems) {
          if (!isMobile())
             return;
