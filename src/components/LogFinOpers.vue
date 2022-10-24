@@ -127,9 +127,6 @@ import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
 import {authUtils} from "./tools/auth-utils";
 import {clog, isMobile,} from './tools/vue-utils';
 
-const axios = require('axios');
-// axios.defaults.xsrfCookieName = 'csrftoken';
-// axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 
 export default {
    name: 'LogFinOpers',
@@ -344,10 +341,11 @@ export default {
          this.$refs.dateIntervalDlg.show(
             new Date(this.tsBegin * 1000),
             new Date(this.tsEnd * 1000),
+            undefined,
+            false,
             (begin, end) => {
                this.tsBegin = moment(begin).unix();
                this.tsEnd = moment(end).unix();
-               // clog(this.tsBegin, this.tsEnd);
                this.fetchList();
             })
       },

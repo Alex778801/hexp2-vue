@@ -81,11 +81,12 @@ export default {
 
    methods: {
       // Показать диалог
-      show(begin, end, dataCallback, title='Выберите период', allowEmpty=false) {
+      show(begin, end, title='Выберите период', allowEmpty=false, dataCallback) {
          this.begin = begin;
          this.end = end;
-         this.dataCallback = dataCallback;
          this.title = title;
+         this.allowEmpty = allowEmpty;
+         this.dataCallback = dataCallback;
          this.active = true;
       },
       // Кнопка ОК
