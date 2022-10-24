@@ -365,6 +365,7 @@ export default {
                this.$refs.inputTextDlg.show(
                    'Введите имя группы',
                    item.name,
+                   false,
                    async (data) => {
                       // Отправка запроса на переименование группы
                       const mut = gql(`
@@ -408,6 +409,7 @@ export default {
             this.$refs.inputTextDlg.show(
                 'Введите имя новой группы',
                 'Новая группа',
+                false,
                 async (data) => {
                    // Отправка запроса на создание новой группы
                    const mut = gql(`
@@ -444,6 +446,7 @@ export default {
             this.$refs.inputTextDlg.show(
                 'Введите имя нового элемента',
                 'Новый элемент',
+                false,
                 async (data) => {
                    // Отправка запроса на создание новой группы
                    const mut = gql(`

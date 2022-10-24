@@ -47,11 +47,11 @@ export default {
 
    methods: {
       // Показать диалог
-      show(title, initData, dataCallback, allowEmpty = false) {
+      show(title, initData, allowEmpty = false, dataCallback) {
          this.title = title;
          this.data = initData;
-         this.dataCallback = dataCallback;
          this.allowEmpty = allowEmpty;
+         this.dataCallback = dataCallback;
          this.active = true;
       },
       // Кнопка ОК
