@@ -388,7 +388,10 @@ export default {
             this.list = [...response.data.finopers];
             // Сортировка
             this.sortList();
-         }).catch((error) => authUtils.err(error));
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error)
+         });
       },
 
       // Сформировать представление (имя) сфокусированной операции - для контекстного меню
@@ -522,7 +525,7 @@ export default {
                 }).then((response) => {
                    this.$toast.add({
                       severity: 'success',
-                      summary: `Операция '${msg}'`,
+                      summary: `Операция '${this.frmFocusedItemName()}'`,
                       detail: 'Успешно удалена',
                       life: 2000
                    });
