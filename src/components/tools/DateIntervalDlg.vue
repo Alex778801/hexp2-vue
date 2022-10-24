@@ -5,20 +5,24 @@
          <span class="text-primary" > {{ title }} </span>
       </template>
 
-      <div class="p-fluid grid formgrid">
-         <div class="field labelF pb-3">
+      <div class="p-fluid grid formgrid w-auto">
+         <div class="field">
             <label for="beginF">Дата начала</label>
             <Calendar inputId="beginF" v-model="begin" dateFormat="dd MM yy (D)" :showIcon="true"/>
             <small v-if="errEmptyBegin" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
          </div>
-         <div class="field labelF pb-3">
+         <div class="field">
             <label for="endF">Дата конца</label>
             <Calendar inputId="endF" v-model="end" dateFormat="dd MM yy (D)" :showIcon="true"/>
             <small v-if="errEmptyEnd" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
          </div>
-         <div class="field labelF pb-2">
+         <div class="field">
             <label for="monthF">Месяц/год</label>
             <Calendar inputId="monthF" v-model="month" view="month" dateFormat="MM yy" :showIcon="true"/>
+         </div>
+         <div class="field">
+            <label for="yearF">Год</label>
+            <Calendar inputId="yearF" v-model="year" view="year" dateFormat="yy" :showIcon="true"/>
          </div>
       </div>
 
@@ -54,6 +58,8 @@ export default {
          end: null,
          // Месяц
          month: null,
+         // Год
+         year: null,
       }
    },
 
@@ -76,6 +82,14 @@ export default {
          const lastDay = new Date(y, m + 1, 0);
          this.begin = firstDay;
          this.end =lastDay;
+     },
+     // При выборе года
+     year() {
+        const y = this.year.getFullYear();
+        const firstDay = new Date(y, 0, 1);
+        const lastDay = new Date(y, 12, 0);
+        this.begin = firstDay;
+        this.end =lastDay;
      }
    },
 
@@ -106,10 +120,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
-.labelF {
-   color: #67a2f1
+
+.field {
+   color: #67a2f1;
+   width: 100%;
+   padding-bottom: 1rem;
 }
+
 
 </style>
