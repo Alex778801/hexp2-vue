@@ -165,7 +165,7 @@ export default {
          ],
          // Контекстное меню фин операции
          itemContextMenuContent: [
-            { label: 'Переместить', icon: 'fa fa-arrow-right',  command:() => { this.itemChangeProject() } },
+            { label: 'Переместить', icon: 'fa fa-arrow-right', command:() => { this.itemChangeProject() } },
             { label: 'Копировать', icon: 'fa fa-copy',         command:() => { this.itemCopy() } },
             { label: 'Удалить', icon: 'fa fa-trash',           command:() => { this.itemDelete() } },
          ],
@@ -397,7 +397,8 @@ export default {
 
       // Переместить операцию в другой проект
       async itemChangeProject() {
-         // Запрос журнала
+         // -------------------------------------------------------
+         // Запрос дерева проектов
          const treeQ = gql(`
             #graphql
             query {
@@ -410,29 +411,93 @@ export default {
          }).then((response) => {
             // Подготовка списка выбора
             const options = JSON.parse(response.data.projectsTree);
+            // -------------------------------------------------------
             // Диалог выбора проекта
             this.$refs.selectProjectDlg.show(
                 'Выберите целевой проект для переноса:',
                 'список проектов...',
                 options,
-                itemId => {
-                   // Запрос к серверу на перенос проекта
-                   clog(itemId);
+                false,
+                false,
+                async projectId => {
+                   // Проверим валидность целевого проекта
+                   if (projectId === this.projectId) {
+                      this.$toast.add({
+                         severity: 'error',
+                         summary: `Перемещение НЕ выполнено`,
+                         detail: 'Проект для переноса и текущий проект должны различаться!',
+                         life: 0
+                      });
+                      return;
+                   }
+                   // -------------------------------------------------------
+                   // Мутация на перенос проекта
+                   const moveM = gql(`
+                   #graphql
+                   mutation ($id: Int!, $projectId: Int!) {
+                      moveFinoper(id: $id, projectId: $projectId) {
+                        ok, result
+                      }
+                   }
+                   `);
+                   await apolloClient.mutate({
+                      mutation: moveM,
+                      variables: {
+                         id: Number(this.itemContextMenuFocus.id),
+                         projectId: projectId,
+                      },
+                      fetchPolicy: "no-cache"
+                   }).then((response) => {
+                      // Результат переноса
+                      this.$toast.add({
+                         severity: 'success',
+                         summary: `Проект '${this.project.name}'`,
+                         detail: 'Успешно перемещен',
+                         life: 2000
+                      });
+                      this.fetchList();
+                   }).catch((error) => {
+                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+                      authUtils.err(error);
+                   })
                 });
             // --
          }).catch((error) => console.log(error))
       },
 
       // Копировать операцию
-      copyItem(item) {
-          axios.get(`/finopers/copyoper/${item.id}`
-          ).then( (response) => {
-             this.fetchList();
-          }).catch( (error) => console.log(error) )
+      async itemCopy() {
+         // Мутация на копироване (клонирование) фин операции
+         const moveM = gql(`
+                   #graphql
+                   mutation ($id: Int!) {
+                      copyFinoper(id: $id) {
+                        ok, result
+                      }
+                   }
+                   `);
+         await apolloClient.mutate({
+            mutation: moveM,
+            variables: {
+               id: Number(this.itemContextMenuFocus.id),
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Проект '${this.project.name}'`,
+               detail: 'Успешно скопирован (у клона имя начинается со слова КОПИЯ)',
+               life: 2000
+            });
+            this.fetchList();
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
+         })
       },
 
       // Удалить операцию
-      deleteItem(item) {
+      itemDelete(item) {
          this.$refs.confirmDlg.show(
              'Удалить фин операцию?',
              `${this.frmTs(item.ts)} [${item.ct}] = ${this.frmSum(item.sum)}`,

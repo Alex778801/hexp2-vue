@@ -6,8 +6,9 @@
       </template>
 
       <div class="block">
-         <TreeSelect id="select" :placeholder="placeholder" class="w-100" v-model="result" :options="options" />
-         <small v-if="errEmpty" id="select-help" class="p-error"> Пустое значение не допустимо </small>
+         <TreeSelect id="select" :placeholder="placeholder" class="w-100 my-1" v-model="result" :options="options" />
+         <small v-if="errEmpty" id="select-errEmpty" class="p-error"> Пустое значение не допустимо </small>
+         <small v-if="errGroup" id="select-errGrp" class="p-error"> Нелья выбирать группу </small>
       </div>
 
       <template #footer>
@@ -20,6 +21,8 @@
 
 
 <script>
+
+import {findItemInTree} from "@/components/tools/vue-utils";
 
 export default {
    name: 'InputSelectTreeDlg',
@@ -38,6 +41,8 @@ export default {
          result: null,
          // Разрешить пустой ввод
          allowEmpty: false,
+         // Разрешить выбор группы
+         allowGroup: true,
          // Колбек обработки введенных данных
          dataCallback: function () {},
       }
@@ -48,21 +53,31 @@ export default {
       errEmpty() {
          return this.result === null;
       },
+      // Ошибка - выбрана группа
+      errGroup() {
+         if (this.result !== null) {
+            const key = Number(Object.keys(this.result)[0]);
+            const item = findItemInTree(this.options, key)
+            return !this.allowGroup && item.data.isGrp
+         }
+            return false
+      }
    },
 
    methods: {
       // Показать диалог
-      show(title, placeholder, options, dataCallback, allowEmpty = false) {
+      show(title, placeholder, options, allowEmpty = false, allowGroup = false, dataCallback) {
          this.title = title;
          this.placeholder = placeholder;
          this.options = options;
-         this.dataCallback = dataCallback;
          this.allowEmpty = allowEmpty;
+         this.allowGroup = allowGroup;
+         this.dataCallback = dataCallback;
          this.active = true;
       },
       // Кнопка ОК
       ok() {
-         if (this.errEmpty) {
+         if (this.errEmpty || this.errGroup) {
             return;
          }
          this.active = false;

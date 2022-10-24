@@ -66,3 +66,23 @@ export var checkboxMobileFixMixin = {
       },
   }
 }
+
+// Найти элемент в дереве по ключу - рекурсия
+function findItemInTreeRc(tree, key) {
+   for (let i = 0; i < tree.length; i++) {
+      if (tree[i].key === key)
+         return tree[i];
+      if (tree[i]?.children !== undefined) {
+         const res = findItemInTreeRc(tree[i].children, key);
+         if (res !== -1)
+            return res;
+      }
+   }
+   return -1;
+}
+
+// Найти элемент в дереве по ключу
+export function findItemInTree(tree, key) {
+   const item = findItemInTreeRc(tree, key)
+   return item
+}
