@@ -50,12 +50,12 @@ export default {
 
    methods: {
       // Показать диалог
-      show(title, placeholder, options, dataCallback, allowEmpty = false) {
+      show(title, placeholder, options, allowEmpty = false, dataCallback) {
          this.title = title;
          this.placeholder = placeholder;
          this.options = options;
-         this.dataCallback = dataCallback;
          this.allowEmpty = allowEmpty;
+         this.dataCallback = dataCallback;
          this.active = true;
       },
       // Кнопка ОК

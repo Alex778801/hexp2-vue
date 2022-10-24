@@ -118,20 +118,18 @@
 /* eslint-disable */
 
 import gql from "graphql-tag";
+import moment from "moment"
+import {apolloClient} from "@/apollo-config";
+import InputTextDlg from "./tools/InputTextDlg.vue";
+import ConfirmDlg from "./tools/ConfirmDlg.vue";
+import DateIntervalDlg from "./tools/DateIntervalDlg.vue";
+import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
+import {authUtils} from "./tools/auth-utils";
+import {clog, isMobile,} from './tools/vue-utils';
 
 const axios = require('axios');
 // axios.defaults.xsrfCookieName = 'csrftoken';
 // axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-
-
-import moment              from "moment"
-import { apolloClient }    from "@/apollo-config";
-import InputTextDlg        from "./tools/InputTextDlg.vue";
-import ConfirmDlg          from "./tools/ConfirmDlg.vue";
-import DateIntervalDlg     from "./tools/DateIntervalDlg.vue";
-import InputSelectTreeDlg  from "./tools/InputSelectTreeDlg.vue";
-import { authUtils }       from "./tools/auth-utils";
-import {clog, fErr, findTreeItemId, isMobile,} from './tools/vue-utils';
 
 export default {
    name: 'LogFinOpers',
@@ -395,6 +393,12 @@ export default {
          }).catch((error) => authUtils.err(error));
       },
 
+      // Сформировать представление (имя) сфокусированной операции - для контекстного меню
+      frmFocusedItemName(){
+         const item = this.itemContextMenuFocus;
+         return `${this.frmTs(item.ts)} [${item.costType?.name}] = ${this.frmSum(item.amount)}`;
+      },
+
       // Переместить операцию в другой проект
       async itemChangeProject() {
          // -------------------------------------------------------
@@ -431,7 +435,7 @@ export default {
                       return;
                    }
                    // -------------------------------------------------------
-                   // Мутация на перенос проекта
+                   // Мутация на перенос фин операции в другой порект
                    const moveM = gql(`
                    #graphql
                    mutation ($id: Int!, $projectId: Int!) {
@@ -451,7 +455,7 @@ export default {
                       // Результат переноса
                       this.$toast.add({
                          severity: 'success',
-                         summary: `Проект '${this.project.name}'`,
+                         summary: `Операция '${this.frmFocusedItemName()}'`,
                          detail: 'Успешно перемещен',
                          life: 2000
                       });
@@ -485,8 +489,8 @@ export default {
          }).then((response) => {
             this.$toast.add({
                severity: 'success',
-               summary: `Проект '${this.project.name}'`,
-               detail: 'Успешно скопирован (у клона имя начинается со слова КОПИЯ)',
+               summary: `Операция '${this.frmFocusedItemName()}'`,
+               detail: 'Успешно скопирована (имя начинается со слова КОПИЯ)',
                life: 2000
             });
             this.fetchList();
@@ -497,16 +501,38 @@ export default {
       },
 
       // Удалить операцию
-      itemDelete(item) {
+      itemDelete() {
          this.$refs.confirmDlg.show(
              'Удалить фин операцию?',
-             `${this.frmTs(item.ts)} [${item.ct}] = ${this.frmSum(item.sum)}`,
-             () => {
-                // Отправка запроса на удаление
-                axios.get(`/finopers/deloper/${item.id}`
-                ).then( (response) => {
+             this.frmFocusedItemName(),
+             async () => {
+                // Мутация на удаление фин операции
+                const delM = gql(`
+                   #graphql
+                   mutation ($id: Int!) {
+                      deleteFinoper(id: $id) {
+                        ok, result
+                      }
+                   }
+                   `);
+                await apolloClient.mutate({
+                   mutation: delM,
+                   variables: {
+                      id: Number(this.itemContextMenuFocus.id),
+                   },
+                   fetchPolicy: "no-cache"
+                }).then((response) => {
+                   this.$toast.add({
+                      severity: 'success',
+                      summary: `Операция '${msg}'`,
+                      detail: 'Успешно удалена',
+                      life: 2000
+                   });
                    this.fetchList();
-                }).catch( (error) => console.log(error) )
+                }).catch((error) => {
+                   this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+                   authUtils.err(error);
+                })
                 // --
              })
       },
