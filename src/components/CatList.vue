@@ -693,7 +693,8 @@ export default {
 <style scoped>
 
    .draggedItem {
-      background-color: #d2eef4;
+      /*background-color: #d2eef4;*/
+      background-color: var(--primary-50);
    }
 
    .tooltipClipboard {
