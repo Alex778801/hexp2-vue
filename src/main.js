@@ -32,6 +32,7 @@ import TreeSelect from 'primevue/treeselect';
 import InputNumber from 'primevue/inputnumber';
 import MultiSelect from 'primevue/multiselect';
 import ColorPicker from 'primevue/colorpicker';
+import Textarea from 'primevue/textarea';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -151,5 +152,6 @@ createApp(App)
     .component('InputNumber', InputNumber)
     .component('MultiSelect', MultiSelect)
     .component('ColorPicker', ColorPicker)
+    .component('Textarea', Textarea)
     .mount('#app');
 

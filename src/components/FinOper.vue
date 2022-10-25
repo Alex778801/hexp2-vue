@@ -18,7 +18,7 @@
 
 
 <!-- Поля  -->
-   <Fieldset legend="Поля"  class="mt-2">
+   <div legend="Поля"  class="m-2">
 <!--  Дата -->
       <div class="field">
          <label for="ts" class="text-primary"> Дата </label>
@@ -28,8 +28,11 @@
 <!--  Статья -->
       <div class="field">
          <label for="costType" class="text-primary"> Статья </label>
-         <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..."
-                   v-model="oper.costType.id"  :disabled="oper.readOnly"/>
+         <span style="min-height: 1rem; display: inline-flex; align-items: center;">
+            <div class="w-6rem text-center mr-2 h-2rem" :style="{'background-color': getCostTypeColor()}"> &nbsp </div>
+            <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..."
+                      v-model="oper.costType.id"  :disabled="oper.readOnly"/>
+         </span>
       </div>
 <!--  Агент откуда -->
       <div class="field">
@@ -44,10 +47,22 @@
                    v-model="oper.agentTo.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Сумма -->
+      <div class="field w-full" >
+         <label for="amount" class="text-primary"> Сумма </label>
+         <span style="min-height: 1rem; display: inline-flex; align-items: center;">
+            <InputNumber id="finoper_amount" v-model="oper.amount" :style="{'color': getSumColor()}"/>
+            <Button icon="fa fa-trash" class="ml-2 w-3rem text-xl" @click="oper.amount=null"/>
+         </span>
+      </div>
+<!--  Примечание -->
+      <div class="field">
+         <label for="notes" class="text-primary"> Примечание </label>
+         <Textarea v-model="oper.notes" :autoResize="true" rows="5" cols="30"/>
+      </div>
+
+   </div>
 
 
-
-   </Fieldset>
 
 
 
@@ -60,7 +75,6 @@
                    :disabled="oper.readOnly"/>
       </div>
    </Fieldset>
-
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
@@ -152,6 +166,19 @@ export default {
    },
 
    methods: {
+      // Получиьт цвет выбранной Статьи
+      getCostTypeColor() {
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).color;
+      },
+
+      // Получить цвет суммы
+      getSumColor() {
+         if (this.oper.costType?.out)
+            return '--outcomeColor'
+         else
+            return '--incomeColor'
+      },
+
       // Кнопка Сохранить
       async save() {
          // -- Мутация - запись изменений
@@ -225,6 +252,21 @@ export default {
 .field * {
    width: 100%;
    max-width: 50rem;
+}
+
+</style>
+
+<style>
+
+#finoper_amount {
+   width: 14rem;
+}
+
+#finoper_amount input {
+   width: 14rem;
+   font-weight: bold;
+   text-align: center;
+   font-size: 2rem;
 }
 
 </style>
