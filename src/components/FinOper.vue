@@ -50,7 +50,8 @@
       <div class="field w-full" >
          <label for="amount" class="text-primary"> Сумма </label>
          <span style="min-height: 1rem; display: inline-flex; align-items: center;">
-            <InputNumber id="finoper_amount" v-model="oper.amount" :style="{'color': getSumColor()}"/>
+            <InputNumber id="finoper_amount" v-model="oper.amount"
+                         :class="{'IncomeSum': !getCostTypeOut(), 'OutcomeSum': getCostTypeOut()}"/>
             <Button icon="fa fa-trash" class="ml-2 w-3rem text-xl" @click="oper.amount=null"/>
          </span>
       </div>
@@ -172,11 +173,8 @@ export default {
       },
 
       // Получить цвет суммы
-      getSumColor() {
-         if (this.oper.costType?.out)
-            return '--outcomeColor'
-         else
-            return '--incomeColor'
+      getCostTypeOut() {
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).out;
       },
 
       // Кнопка Сохранить
@@ -267,6 +265,14 @@ export default {
    font-weight: bold;
    text-align: center;
    font-size: 2rem;
+}
+
+.IncomeSum input {
+   color: var(--incomeColor)
+}
+
+.OutcomeSum input {
+   color: var(--outcomeColor)
 }
 
 </style>
