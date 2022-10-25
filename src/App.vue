@@ -81,6 +81,10 @@ body {
    max-width: var(--screen-width) !important;
 }
 
+label {
+   font-size: 0.85rem;
+}
+
 /* Нижняя панель инструментов */
 .bottom-toolbar {
    position: fixed;

@@ -60,10 +60,22 @@
          <label for="notes" class="text-primary"> Примечание </label>
          <Textarea v-model="oper.notes" :autoResize="true" rows="5" cols="30"/>
       </div>
-
    </div>
 
+<!-- ФОТО панель инструментов -->
+   <Toolbar class="m-1 p-2">
+      <template #end>
+         <!--  Кнопки действий       -->
+         <Button icon="fa fa-trash" class="mr-2" @click="deletePhoto()"/>
+         <div class="p-inputgroup mr-2">
+            <Button icon="fa fa-undo-alt" @click="rotRightPhoto()"/>
+            <Button icon="fa fa-redo-alt" @click="rotLeftPhoto()"/>
+         </div>
+         <Button icon="fa fa-camera" class="mr-2 butWide2" @click="addPhoto()"/>
+      </template>
+   </Toolbar>
 
+<!-- ФОТО карусель -->
 
 
 
@@ -227,6 +239,25 @@ export default {
    padding: 0.5rem !important;
 }
 
+#finoper_amount {
+   width: 14rem;
+}
+
+#finoper_amount input {
+   width: 14rem;
+   font-weight: bold;
+   text-align: center;
+   font-size: 2rem;
+}
+
+.IncomeSum input {
+   color: var(--incomeColor)
+}
+
+.OutcomeSum input {
+   color: var(--outcomeColor)
+}
+
 </style>
 
 
@@ -250,29 +281,6 @@ export default {
 .field * {
    width: 100%;
    max-width: 50rem;
-}
-
-</style>
-
-<style>
-
-#finoper_amount {
-   width: 14rem;
-}
-
-#finoper_amount input {
-   width: 14rem;
-   font-weight: bold;
-   text-align: center;
-   font-size: 2rem;
-}
-
-.IncomeSum input {
-   color: var(--incomeColor)
-}
-
-.OutcomeSum input {
-   color: var(--outcomeColor)
 }
 
 </style>
