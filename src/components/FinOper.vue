@@ -30,27 +30,27 @@
          <label for="costType" class="text-primary"> Статья </label>
          <span style="min-height: 1rem; display: inline-flex; align-items: center;">
             <div class="w-6rem text-center mr-2 h-2rem" :style="{'background-color': getCostTypeColor()}"> &nbsp </div>
-            <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..."
+            <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." :showClear="true"
                       v-model="oper.costType.id"  :disabled="oper.readOnly"/>
          </span>
       </div>
 <!--  Агент откуда -->
       <div class="field">
          <label for="agentFrom" class="text-primary"> Агент Откуда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..."
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." :showClear="true"
                    v-model="oper.agentFrom.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Агент куда -->
       <div class="field">
          <label for="agentTo" class="text-primary"> Агент куда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..."
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." :showClear="true"
                    v-model="oper.agentTo.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Сумма -->
       <div class="field w-full" >
          <label for="amount" class="text-primary"> Сумма </label>
          <span style="min-height: 1rem; display: inline-flex; align-items: center;">
-            <InputNumber id="finoper_amount" v-model="oper.amount"
+            <InputNumber id="finoper_amount" v-model="oper.amount" :showClear="true"
                          :class="{'IncomeSum': !getCostTypeOut(), 'OutcomeSum': getCostTypeOut()}"/>
             <Button icon="fa fa-trash" class="ml-2 w-3rem text-xl" @click="oper.amount=null"/>
          </span>
