@@ -4,7 +4,9 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь, имя проекта   -->
-         <span class="text-primary font-bold my-1">{{project.path}}{{project.name}}</span>
+<!--         <span class="text-primary font-bold my-1">{{project.path}}{{project.name}}</span>-->
+<!--         <a :href="'/project/' + projectId" class="text-primary font-bold my-1">{{project.path}}{{project.name}}</a>-->
+         <router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project.path}}{{project.name}}</router-link>
       </template>
       <template #end>
          <!-- Сводка по фильтру   -->

@@ -101,7 +101,7 @@ export default {
       // Запрос данных
       const itemQ = gql(`
             query($id: Int!) {
-               costtype(id: $id) {
+               costType(id: $id) {
                   id, name, path, isOutcome, color,
                   owner, acl, aclList,
                   readOnly,
@@ -112,7 +112,7 @@ export default {
          query: itemQ,
          variables: {id: this.costTypeId},
          fetchPolicy: "no-cache"} ).then( (response) => {
-            this.costType = response.data.costtype;
+            this.costType = response.data.costType;
             document.title =this.costType.name;
             // -- owner
             this.aclListOwner = JSON.parse(this.costType.aclList).slice(2);
@@ -125,6 +125,9 @@ export default {
    methods: {
       // Кнопка Сохранить
       async save() {
+         // Коррекция значения цвета
+         const color = this.costType.color.replace('#', '');
+         this.costType.color = '#' + color;
          // -- Мутация - запись изменений
          const updateM = gql(`
                mutation ($id: Int!, $name: String!, $isOutcome: Boolean!, $color: String!, $owner: String!) {
@@ -139,7 +142,7 @@ export default {
                id: this.costType.id,
                name: this.costType.name,
                isOutcome: this.costType.isOutcome,
-               color: `#${this.costType.color}`,
+               color: `${this.costType.color}`,
                owner: this.costType.owner,
             },
             fetchPolicy: "no-cache"

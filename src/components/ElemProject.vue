@@ -69,6 +69,12 @@
          <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
                       :disabled="project.readOnly"/>
       </div>
+<!--  Создание CRT    -->
+      <div class="field">
+         <label for="acl_crt" class="text-primary"> Создание фин операций</label>
+         <MultiSelect id="acl_read" v-model="acl_crt" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+                      :disabled="project.readOnly"/>
+      </div>
 <!--  Изменение MOD   -->
       <div class="field">
          <label for="acl_o_mod" class="text-primary"> Модификация фин операций</label>
@@ -125,6 +131,7 @@ export default {
          aclListOwner: null,
          aclList: null,
          acl_read: null,
+         acl_crt: null,
          acl_mod: null,
          acl_report: null,
          // --
@@ -143,6 +150,7 @@ export default {
       selPrefCostTypeGroup()  { this.dataChanged = true; },
       selPrefAgentGroup()     { this.dataChanged = true; },
       acl_read()              { this.dataChanged = true; },
+      acl_crt()               { this.dataChanged = true; },
       acl_mod()               { this.dataChanged = true; },
       acl_report()            { this.dataChanged = true; },
       // --
@@ -197,6 +205,7 @@ export default {
             // -- aclList
             this.aclList = JSON.parse(this.project.aclList);
             this.acl_read = JSON.parse(this.project.acl).read;
+            this.acl_crt = JSON.parse(this.project.acl).crt;
             this.acl_mod= JSON.parse(this.project.acl).mod;
             this.acl_report= JSON.parse(this.project.acl).report;
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
@@ -223,6 +232,7 @@ export default {
          // -- acl
          this.project.acl = JSON.stringify({
             'read': this.acl_read,
+            'crt': this.acl_crt,
             'mod': this.acl_mod,
             'report': this.acl_report,
          });
