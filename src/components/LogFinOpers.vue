@@ -5,7 +5,6 @@
       <template #start>
          <!-- Путь, имя проекта   -->
 <!--         <span class="text-primary font-bold my-1">{{project.path}}{{project.name}}</span>-->
-<!--         <a :href="'/project/' + projectId" class="text-primary font-bold my-1">{{project.path}}{{project.name}}</a>-->
          <router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project.path}}{{project.name}}</router-link>
       </template>
       <template #end>
@@ -38,8 +37,9 @@
          </div>
 
 <!--     Десктопная версия    -->
-<!--         <div v-else class="D_container" @click="$router.push({ path: `/finoper/${item.id}`})" >-->
-         <div v-else class="DesktopItemContainer" @contextmenu="itemContextMenuToggle(item)" aria-haspopup="true">
+         <div v-else class="DesktopItemContainer"
+              @dblclick="$router.push({ path: `/finoper/${item.id}`})"
+              @contextmenu="itemContextMenuToggle(item)" aria-haspopup="true">
             <div class="ColorBox" :style="{'background-color': item.costType?.color}">
                <i class="fas fa-camera Photo" v-if="item.pq>0"/>
             </div>

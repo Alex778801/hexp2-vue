@@ -83,6 +83,14 @@ function findItemInTreeRc(tree, key) {
 
 // Найти элемент в дереве по ключу
 export function findItemInTree(tree, key) {
-   const item = findItemInTreeRc(tree, key)
-   return item
+   return findItemInTreeRc(tree, key)
+}
+
+// Заменить в объекте все поля со значением null на значение {}
+export function replaceNulls(obj) {
+   for (let key in obj) {
+      if (obj[key] === null)
+         obj[key] = {}
+   }
+   return obj
 }

@@ -363,7 +363,7 @@ export default {
                openWindow(`${this.urlEditGroup}/${item.id}`);
             else {
                this.$refs.inputTextDlg.show(
-                   'Введите имя группы',
+                   `[${item.id}] Введите имя группы`,
                    item.name,
                    false,
                    async (data) => {
