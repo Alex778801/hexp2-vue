@@ -60,60 +60,56 @@
          <label for="notes" class="text-primary"> Примечание </label>
          <Textarea v-model="oper.notes" :autoResize="true" rows="5" cols="30"/>
       </div>
+      <!--  Владелец    -->
+      <div class="field">
+         <label for="owner" class="text-primary"> Владелец </label>
+         <Dropdown id="owner" v-model="oper.user" :options="aclListUser" optionValue="id" optionLabel="label"
+                   :filter="true" placeholder="список учетных записей..." :showClear="true" :disabled="oper.readOnly"/>
+      </div>
    </div>
 
-<!-- ФОТО панель инструментов -->
-   <Toolbar class="m-1 p-2">
+<!-- Нижняя панель инструментов -->
+<Toolbar class="m-1 p-2">
+      <template #start>
+         <!--  Флаг изменений        -->
+         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
+      </template>
       <template #end>
-         <!--  Кнопки действий       -->
-         <Button icon="fa fa-trash" class="mr-2" @click="deletePhoto()"/>
-         <div class="p-inputgroup mr-2">
-            <Button icon="fa fa-undo-alt" @click="rotRightPhoto()"/>
-            <Button icon="fa fa-redo-alt" @click="rotLeftPhoto()"/>
-         </div>
-         <FileUpload uploadIcon="pi pi-image" mode="basic" name="demo[]" chooseLabel="Фото"
+         <!-- Конпка новое ФОТО        -->
+         <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" name="demo[]" chooseLabel="+" accept="image/*"
                      :customUpload="true" @uploader="newPhoto" :auto="true"/>
-
+         <!--  Кнопки действий       -->
+         <Button label="Сохран" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
+         <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
 
-<!--   accept="image/*"-->
 <!-- ФОТО карусель -->
-
-   <Carousel :value="cars" :numVisible="1" :numScroll="1">
+   <Carousel :value="oper.photoList" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions">
       <template #item="slotProps">
-         <div class="car-item">
-            <div class="car-content">
+         <div class="photo-item">
+            <div class="photo-content">
+               <!-- ФОТО панель инструментов -->
+               <Toolbar class="mt-2 p-2">
+                  <template #end>
+                     <!-- Кнопка удалить фото        -->
+                     <Button icon="fa fa-trash" class="mr-2 butWide1" @click="deletePhoto(slotProps.data.id)"/>
+                     <div class="p-inputgroup mr-2">
+                        <!-- Кнопка вращение фото влево            -->
+                        <Button icon="fa fa-undo-alt" class="butWide1" @click="rotRightPhoto(slotProps.data.id)"/>
+                        <!-- Кнопка вращение Фото вправо           -->
+                        <Button icon="fa fa-redo-alt" class="butWide1" @click="rotLeftPhoto(slotProps.data.id)"/>
+                     </div>
+                  </template>
+               </Toolbar>
+               <!-- Изображение               -->
                <div>
-                  <img :src="'demo/images/car/' + slotProps.data.image + '.png'" />
+                  <img class="w-full" :src="mediaRoot + slotProps.data.image" />
                </div>
             </div>
          </div>
       </template>
    </Carousel>
-
-<!-- Списки контроля доступа  -->
-   <Fieldset legend="Контроль доступа" class="mt-2 m-1">
-<!--  Владелец    -->
-      <div class="field">
-         <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="oper.user" :options="aclListUser" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
-                   :disabled="oper.readOnly"/>
-      </div>
-   </Fieldset>
-
-<!-- Нижняя панель инструментов -->
-   <Toolbar class="m-1 p-2">
-      <template #start>
-<!--  Флаг изменений        -->
-         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
-      </template>
-      <template #end>
-<!--  Кнопки действий       -->
-         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
-         <Button label="Отмена" icon="fa fa-ban" class="mr-2 p-button-danger" @click="cancel()"/>
-      </template>
-   </Toolbar>
 
 </div>
 
@@ -138,19 +134,18 @@ export default {
 
    data() {
       return {
-
-         cars: [
-            {"id": "1000","code": "f230fh0g3","name": "Bamboo Watch","description": "Product Description","image": "bamboo-watch.jpg","price": 65,"category": "Accessories","quantity": 24,"inventoryStatus": "INSTOCK","rating": 5},
-            {"id": "1001","code": "nvklal433","name": "Black Watch","description": "Product Description","image": "black-watch.jpg","price": 72,"category": "Accessories","quantity": 61,"inventoryStatus": "INSTOCK","rating": 4},
-            {"id": "1002","code": "zz21cz3c1","name": "Blue Band","description": "Product Description","image": "blue-band.jpg","price": 79,"category": "Fitness","quantity": 2,"inventoryStatus": "LOWSTOCK","rating": 3},
-            {"id": "1003","code": "244wgerg2","name": "Blue T-Shirt","description": "Product Description","image": "blue-t-shirt.jpg","price": 29,"category": "Clothing","quantity": 25,"inventoryStatus": "INSTOCK","rating": 5},
-            {"id": "1004","code": "h456wer53","name": "Bracelet","description": "Product Description","image": "bracelet.jpg","price": 15,"category": "Accessories","quantity": 73,"inventoryStatus": "INSTOCK","rating": 4},
+         // Корневая папка на бекенд сервере с фото фин операций
+         mediaRoot: __backendAddr__ + '/media/',
+         // Адаптивные параметры карусели фото
+         responsiveOptions: [
+            { breakpoint: '1024px', numVisible: 3, numScroll: 3 },
+            { breakpoint: '600px', numVisible: 2, numScroll: 2 },
+            { breakpoint: '480px', numVisible: 1, numScroll: 1 },
          ],
-
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
-         oper: {'costType': {}, 'agentFrom': {}, 'agentTo': {}},
+         oper: {'costType': {}, 'agentFrom': {}, 'agentTo': {}, 'photoList': []},
          // Временное хранение МОМЕНТА
          ts: null,
          // Список доступа ACL
@@ -208,6 +203,7 @@ export default {
               readOnly,
               ctList { id, name, out, color },
               agList { id, name },
+              photoList { id, image, }
            },
          }
       `);
