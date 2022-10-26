@@ -71,13 +71,16 @@
             <Button icon="fa fa-undo-alt" @click="rotRightPhoto()"/>
             <Button icon="fa fa-redo-alt" @click="rotLeftPhoto()"/>
          </div>
-         <Button icon="fa fa-camera" class="mr-2 butWide2" @click="addPhoto()"/>
+         <FileUpload uploadIcon="pi pi-image" mode="basic" name="demo[]" chooseLabel="Фото"
+                     :customUpload="true" @uploader="newPhoto" :auto="true"/>
+
       </template>
    </Toolbar>
 
+<!--   accept="image/*"-->
 <!-- ФОТО карусель -->
 
-   <Carousel :value="cars" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions">
+   <Carousel :value="cars" :numVisible="1" :numScroll="1">
       <template #item="slotProps">
          <div class="car-item">
             <div class="car-content">
@@ -125,6 +128,10 @@ import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
 import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
+import axios from 'axios'
+axios.defaults.xsrfHeaderName = "X-CSRFToken"
+axios.defaults.xsrfCookieName = 'csrftoken'
+
 export default {
    name: "FinOper",
 
@@ -140,6 +147,7 @@ export default {
          ],
 
 
+         backendAddr: 'http://192.168.1.222:8000',
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
@@ -165,8 +173,25 @@ export default {
    },
 
    mounted() {
-      // Запрос данных
-      const operQ = gql(`
+      this.fetchData();
+   },
+
+   methods: {
+
+      // Получиьт цвет выбранной Статьи
+      getCostTypeColor() {
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).color;
+      },
+
+      // Получить цвет суммы
+      getCostTypeOut() {
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).out;
+      },
+
+      // Обновить данные фин операции
+      fetchData() {
+         // Запрос данных
+         const operQ = gql(`
          query ($id: Int!) {
             finoper (id: $id) {
               project {id, name,},
@@ -179,6 +204,7 @@ export default {
               notes,
               pq,
               user,
+              owner {id, username},
               aclList,
               readOnly,
               ctList { id, name, out, color },
@@ -186,10 +212,10 @@ export default {
            },
          }
       `);
-      apolloClient.query({
-         query: operQ,
-         variables: {id: this.operId},
-         fetchPolicy: "no-cache"} ).then( (response) => {
+         apolloClient.query({
+            query: operQ,
+            variables: {id: this.operId},
+            fetchPolicy: "no-cache"} ).then( (response) => {
             // Заменим null на {}
             this.oper = replaceNulls(response.data.finoper);
             // document.title =this.oper.notes;
@@ -198,20 +224,26 @@ export default {
             this.ts = new Date(this.oper.ts * 1000);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => { this.dataChanged = false }, 10);
-      }).catch( (error) => authUtils.err(error) );
-      // --
-   },
-
-   methods: {
-      // Получиьт цвет выбранной Статьи
-      getCostTypeColor() {
-         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).color;
+         }).catch( (error) => authUtils.err(error) );
       },
 
-      // Получить цвет суммы
-      getCostTypeOut() {
-         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).out;
+      // Добавить новое фото
+      async newPhoto(event) {
+         const file = event.files[0]
+         const payload = new FormData();
+         payload.append('token', localStorage.getItem('token'));
+         payload.append('ownerId', this.oper.owner.id);
+         payload.append('file', file);
+         payload.append('operId', this.oper.id);
+         await axios.post(`${this.backendAddr}/uploadFinOperPhoto/`, payload).then((response) => {
+            this.fetchData();
+         }).catch((error) => console.log(error))
       },
+
+
+
+
+
 
       // Кнопка Сохранить
       async save() {

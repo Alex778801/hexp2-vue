@@ -34,6 +34,7 @@ import MultiSelect from 'primevue/multiselect';
 import ColorPicker from 'primevue/colorpicker';
 import Textarea from 'primevue/textarea';
 import Carousel from 'primevue/carousel';
+import FileUpload from 'primevue/fileupload';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -155,5 +156,6 @@ createApp(App)
     .component('ColorPicker', ColorPicker)
     .component('Textarea', Textarea)
     .component('Carousel', Carousel)
+    .component('FileUpload', FileUpload)
     .mount('#app');
 
