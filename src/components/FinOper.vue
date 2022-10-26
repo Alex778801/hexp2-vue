@@ -85,12 +85,12 @@
    </Toolbar>
 
 <!-- ФОТО карусель -->
-   <Carousel :value="oper.photoList" :numVisible="1" :numScroll="1" :responsiveOptions="responsiveOptions">
+   <Carousel :value="oper.photoList" :numVisible="1" :numScroll="1">
       <template #item="slotProps">
          <div class="photo-item">
             <div class="photo-content">
                <!-- ФОТО панель инструментов -->
-               <Toolbar class="mt-2 p-2">
+               <Toolbar class="mt-2 py-2 pr-0">
                   <template #end>
                      <!-- Кнопка удалить фото        -->
                      <Button icon="fa fa-trash" class="mr-2 butWide1" @click="deletePhoto(slotProps.data.id)"/>
@@ -104,7 +104,7 @@
                </Toolbar>
                <!-- Изображение               -->
                <div>
-                  <img class="w-full" :src="mediaRoot + slotProps.data.image" />
+                  <a :href="mediaRoot + slotProps.data.image"><img class="w-full" :src="mediaRoot + slotProps.data.image" /></a>
                </div>
             </div>
          </div>
@@ -136,12 +136,6 @@ export default {
       return {
          // Корневая папка на бекенд сервере с фото фин операций
          mediaRoot: __backendAddr__ + '/media/',
-         // Адаптивные параметры карусели фото
-         responsiveOptions: [
-            { breakpoint: '1024px', numVisible: 3, numScroll: 3 },
-            { breakpoint: '600px', numVisible: 2, numScroll: 2 },
-            { breakpoint: '480px', numVisible: 1, numScroll: 1 },
-         ],
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
@@ -163,6 +157,7 @@ export default {
          },
          deep: true,
       },
+      ts() { this.dataChanged = true },
       // --
    },
 
