@@ -14,6 +14,8 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/vue-fontawesome": "^3.0.1",
+    "@tiptap/starter-kit": "^2.0.0-beta.199",
+    "@tiptap/vue-3": "^2.0.0-beta.199",
     "@vue/apollo-option": "^4.0.0-alpha.20",
     "apollo-upload-client": "^17.0.0",
     "axios": "^1.1.2",
