@@ -352,7 +352,7 @@ export default {
             })
       },
 
-      // Получить справочник
+      // Получить журнал
       async fetchList() {
          clog('fetchList - finopes');
          // Запрос журнала
@@ -475,7 +475,7 @@ export default {
       // Копировать операцию
       async itemCopy() {
          // Мутация на копироване (клонирование) фин операции
-         const moveM = gql(`
+         const copyM = gql(`
                    #graphql
                    mutation ($id: Int!) {
                       copyFinoper(id: $id) {
@@ -484,7 +484,7 @@ export default {
                    }
                    `);
          await apolloClient.mutate({
-            mutation: moveM,
+            mutation: copyM,
             variables: {
                id: Number(this.itemContextMenuFocus.id),
             },
@@ -540,6 +540,31 @@ export default {
              })
       },
 
+      // Новая операция
+      async newFinOperBtn() {
+         const copyM = gql(`
+            #graphql
+            mutation ($projectId: Int!) {
+               createFinoper (projectId: $projectId) {
+                  ok, result, newOperId
+               }
+            }
+         `);
+         await apolloClient.mutate({
+            mutation: copyM,
+            variables: {
+               projectId: Number(this.projectId),
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            // Переход в созданную фин операцию
+            const newOperId = response.data.createFinoper.newOperId;
+            this.$router.push({ path: `/finoper/${newOperId}`})
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
+         })
+      }
    }
 }
 </script>
