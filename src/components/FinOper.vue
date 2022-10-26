@@ -90,6 +90,7 @@
          <div class="photo-item">
             <div class="photo-content">
                <!-- ФОТО панель инструментов -->
+               <div>
                <Toolbar class="mt-2 py-2 px-0">
                   <template #start>
                      <!-- Кнопка УДАЛИТЬ фото        -->
@@ -104,7 +105,8 @@
                   </template>
                </Toolbar>
                <!-- Изображение               -->
-               <div>
+               </div>
+               <div class="m-1">
                   <img class="w-full" :src="mediaRoot + slotProps.data.image"/>
                </div>
             </div>
@@ -337,6 +339,10 @@ export default {
 
 .OutcomeSum input {
    color: var(--outcomeColor)
+}
+
+.p-carousel-container .p-link {
+   display: none !important;
 }
 
 </style>
