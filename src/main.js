@@ -36,6 +36,7 @@ import Textarea from 'primevue/textarea';
 import Carousel from 'primevue/carousel';
 import FileUpload from 'primevue/fileupload';
 import Image from 'primevue/image';
+import ConfirmPopup from 'primevue/confirmpopup';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -52,32 +53,32 @@ createApp(App)
     .use(apolloProvider)
     .use(PrimeVue, {
     locale: {
-        startsWith: 'Starts with',
-        contains: 'Contains',
-        notContains: 'Not contains',
-        endsWith: 'Ends with',
-        equals: 'Equals',
-        notEquals: 'Not equals',
-        noFilter: 'No Filter',
-        lt: 'Less than',
-        lte: 'Less than or equal to',
-        gt: 'Greater than',
-        gte: 'Greater than or equal to',
-        dateIs: 'Date is',
-        dateIsNot: 'Date is not',
-        dateBefore: 'Date is before',
-        dateAfter: 'Date is after',
-        clear: 'Clear',
-        apply: 'Apply',
-        matchAll: 'Match All',
-        matchAny: 'Match Any',
-        addRule: 'Add Rule',
-        removeRule: 'Remove Rule',
-        accept: 'Yes',
-        reject: 'No',
-        choose: 'Choose',
-        upload: 'Upload',
-        cancel: 'Cancel',
+        startsWith: 'Начинается',
+        contains: 'Содержит',
+        notContains: 'НЕ содержит',
+        endsWith: 'Заканчивается',
+        equals: 'Равно',
+        notEquals: 'НЕ равно',
+        noFilter: 'Нет фильтра',
+        lt: 'Меньше',
+        lte: 'Меньше или равно',
+        gt: 'Больше',
+        gte: 'Больше или равно',
+        dateIs: 'Дата равна',
+        dateIsNot: 'Дата не равна',
+        dateBefore: 'Дата до',
+        dateAfter: 'Дата после',
+        clear: 'Очистить',
+        apply: 'Применить',
+        matchAll: 'Соответсвует всем',
+        matchAny: 'Соответсвтует любому',
+        addRule: 'Добавить правило',
+        removeRule: 'Удалить правило',
+        accept: 'Да',
+        reject: 'Нет',
+        choose: 'Выбор',
+        upload: 'Загрузка',
+        cancel: 'Отмена',
         dayNames: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
         dayNamesShort: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
         dayNamesMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
@@ -104,27 +105,27 @@ createApp(App)
         weekHeader: 'Нед',
         firstDayOfWeek: 1,
         dateFormat: 'dd/mm/yy',
-        weak: 'Weak',
-        medium: 'Medium',
-        strong: 'Strong',
-        passwordPrompt: 'Enter a password',
-        emptyFilterMessage: 'No results found', // @deprecated Use 'emptySearchMessage' option instead.
-        searchMessage: '{0} results are available',
-        selectionMessage: '{0} items selected',
-        emptySelectionMessage: 'No selected item',
-        emptySearchMessage: 'No results found',
-        emptyMessage: 'No available options',
+        weak: 'Слабый',
+        medium: 'Средний',
+        strong: 'Сильный',
+        passwordPrompt: 'Введите пароль',
+        emptyFilterMessage: 'Результаты не найдены', // @deprecated Use 'emptySearchMessage' option instead.
+        searchMessage: '{0} найдено результатов',
+        selectionMessage: '{0} выбрано элементов',
+        emptySelectionMessage: 'Элементы не выбраны',
+        emptySearchMessage: 'Результаты не найдены',
+        emptyMessage: 'Нет доступных параметров',
         aria: {
-            trueLabel: 'True',
-            falseLabel: 'False',
-            nullLabel: 'Not Selected',
-            star: '1 star',
-            stars: '{star} stars',
-            selectAll: 'All items selected',
-            unselectAll: 'All items unselected',
-            close: 'Close',
-            previous: 'Previous',
-            next: 'Next'
+            trueLabel: 'Истина',
+            falseLabel: 'Ложь',
+            nullLabel: 'Не выбрано',
+            star: '1 звезда',
+            stars: '{star} звезд',
+            selectAll: 'Выбрать все элементы',
+            unselectAll: 'Сбросить все элементы',
+            close: 'Закрыть',
+            previous: 'Предыдущий',
+            next: 'Следующий'
         }
     }
 })
@@ -159,6 +160,7 @@ createApp(App)
     .component('Carousel', Carousel)
     .component('FileUpload', FileUpload)
     .component('Image', Image)
+    .component('ConfirmPopup', ConfirmPopup)
     .mount('#app');
 
 

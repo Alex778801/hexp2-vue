@@ -78,7 +78,7 @@
          <!-- Конпка новое ФОТО        -->
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" name="demo[]" chooseLabel="+" accept="image/*"
                      :customUpload="true" @uploader="newPhoto" :auto="true"/>
-         <!--  Кнопки действий       -->
+         <!--  Кнопки действий формы      -->
          <Button label="Сохран" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
          <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
@@ -90,15 +90,18 @@
          <div class="photo-item">
             <div class="photo-content">
                <!-- ФОТО панель инструментов -->
-               <Toolbar class="mt-2 py-2 pr-0">
-                  <template #end>
+               <Toolbar class="mt-2 py-2 px-0">
+                  <template #start>
                      <!-- Кнопка удалить фото        -->
-                     <Button icon="fa fa-trash" class="mr-2 butWide1" @click="deletePhoto(slotProps.data.id)"/>
+                     <ConfirmPopup></ConfirmPopup>
+                     <Button icon="fa fa-trash" class="ml-2 butWide1" @click="deletePhoto($event, slotProps.data.id)"/>
+                  </template>
+                  <template #end>
                      <div class="p-inputgroup mr-2">
                         <!-- Кнопка вращение фото влево            -->
-                        <Button icon="fa fa-undo-alt" class="butWide1" @click="rotRightPhoto(slotProps.data.id)"/>
+                        <Button icon="fa fa-undo-alt" class="butWide1" @click="actionPhoto(slotProps.data.id, 2)"/>
                         <!-- Кнопка вращение Фото вправо           -->
-                        <Button icon="fa fa-redo-alt" class="butWide1" @click="rotLeftPhoto(slotProps.data.id)"/>
+                        <Button icon="fa fa-redo-alt" class="butWide1" @click="actionPhoto(slotProps.data.id, 3)"/>
                      </div>
                   </template>
                </Toolbar>
@@ -230,10 +233,42 @@ export default {
          }).catch((error) => console.log(error))
       },
 
+      // Удалить фото - подтверждение
+      deletePhoto(event, id) {
+         this.$confirm.require({
+            target: event.currentTarget,
+            message: 'Удалить фото?',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => { this.actionPhoto(id, 1) },
+            reject: () => { }
+         });
+      },
 
-
-
-
+      // Операция с фото: 1 - удалить, 2 вращать вправо, 3 вращать влео
+      async actionPhoto(photoId, action) {
+         // -- Мутация - операция с фото
+         const photoM = gql(`
+               #graphql
+               mutation ($id: Int!, $action: Int!) {
+                  photoAction (id: $id, action: $action) {
+                     ok, result
+                  }
+               }
+         `);
+         await apolloClient.mutate({
+            mutation: photoM,
+            variables: {
+               id: Number(photoId),
+               action: action,
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            this.fetchData();
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
+         })
+      },
 
       // Кнопка Сохранить
       async save() {
@@ -268,6 +303,7 @@ export default {
          })
          this.$router.go(-1);
       },
+
       // Кнопка Отмена
       cancel() {
          this.$router.go(-1);
