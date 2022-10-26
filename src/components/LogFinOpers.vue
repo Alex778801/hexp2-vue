@@ -63,13 +63,13 @@
 <!--           Кнопка Календарь                 -->
                <Button icon="fa fa-calendar-alt" @click="calendar()"/>
 <!--           Кнопка Сортировка                -->
-               <Button icon="fa fa-sort-amount-up" class="text-center w-9rem" aria-haspopup="true" aria-controls="sort_menu"
-                       :label="sortMenuContent[sortMode].label" @click="sortMenuToggle"/>
+               <Button icon="fa fa-sort-amount-up" class="text-center text-sm w-8rem" aria-haspopup="true" aria-controls="sort_menu"
+                       :label="sortModeCaptions[sortMode]" @click="sortMenuToggle"/>
                <Menu id="sortMenu" ref="sortMenu" :model="sortMenuContent" :popup="true" />
             </div>
             <div class="p-inputgroup mr-2">
 <!--           Кнопка Инфо                      -->
-               <Button icon="fa fa-info-circle" @click="infoBtn()"/>
+               <Button icon="fa fa-info-circle" @click="$router.push({ path: `/project-info/${projectId}`})"/>
 <!--           Кнопка Бюджет                    -->
                <Button icon="fa fa-usd-circle" @click="budgetBtn()"/>
 <!--           Кнопка Отчеты                    -->
@@ -78,7 +78,7 @@
             </div>
             <div class="p-inputgroup mr-2">
 <!--           Кнопка Новая операция            -->
-               <Button icon="fa fa-file-plus" class="butWide2" @click="newFinOperBtn()"/>
+               <Button icon="fa fa-file-plus" @click="newFinOperBtn()"/>
             </div>
          </template>
          <template #end>
@@ -147,7 +147,7 @@ export default {
    data() {
       return {
          // Режимы сортировки
-         sortModeCaptions: ["Дата", "Статья", "Аг Откуда", "Аг Куда", "Автор"],
+         sortModeCaptions: ["Дата", "Статья", "Аг откуд", "Аг куда", "Автор"],
          sortMenuContent: [
             { label: 'Дата',        command:() => { this.sortList(0) } },
             { label: 'Статья',      command:() => { this.sortList(1) } },

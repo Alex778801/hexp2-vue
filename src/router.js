@@ -10,13 +10,15 @@ import CatAgents        from './components/CatAgents.vue';
 import ElemAgent        from './components/ElemAgent.vue';
 import LogFinOpers      from './components/LogFinOpers.vue';
 import FinOper          from './components/FinOper.vue';
-import Settings from "@/components/Settings";
+import Settings         from "@/components/Settings";
+import ProjectInfo      from "@/components/ProjectInfo";
 
 export default createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/cat-projects',        component: CatProjects, meta: { title: 'Проекты'}, alias: '/' },
         { path: '/project/:id',         component: ElemProject, meta: { title: 'Проект'} },
+        { path: '/project-info/:id',    component: ProjectInfo, meta: { title: 'Инфо проекта'} },
         { path: '/cat-costtypes',       component: CatCostTypes, meta: { title: 'Статьи'} },
         { path: '/costtype/:id',        component: ElemCostType, meta: { title: 'Статья'} },
         { path: '/cat-agents',          component: CatAgents, meta: { title: 'Агенты'} },

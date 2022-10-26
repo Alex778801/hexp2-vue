@@ -13,7 +13,6 @@
       </template>
    </Toolbar>
 
-
 <!-- Поля  -->
    <Fieldset legend="Поля"  class="mt-2">
 <!--  Имя -->
@@ -54,7 +53,6 @@
       </div>
    </Fieldset>
 
-
 <!-- Списки контроля доступа  -->
    <Fieldset legend="Контроль доступа" class="mt-2 m-1">
 <!--  Владелец    -->
@@ -88,7 +86,6 @@
                       :disabled="project.readOnly"/>
       </div>
    </Fieldset>
-
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
