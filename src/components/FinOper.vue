@@ -92,17 +92,15 @@
                <!-- ФОТО панель инструментов -->
                <Toolbar class="mt-2 py-2 px-0">
                   <template #start>
-                     <!-- Кнопка удалить фото        -->
+                     <!-- Кнопка УДАЛИТЬ фото        -->
                      <ConfirmPopup></ConfirmPopup>
-                     <Button icon="fa fa-trash" class="ml-2 butWide1" @click="deletePhoto($event, slotProps.data.id)"/>
+                     <Button icon="fa fa-trash" class="p-button-danger p-button-outlined ml-2 butWide1" @click="deletePhoto($event, slotProps.data.id)"/>
                   </template>
                   <template #end>
-                     <div class="p-inputgroup mr-2">
-                        <!-- Кнопка вращение фото влево            -->
-                        <Button icon="fa fa-undo-alt" class="butWide1" @click="actionPhoto(slotProps.data.id, 2)"/>
-                        <!-- Кнопка вращение Фото вправо           -->
-                        <Button icon="fa fa-redo-alt" class="butWide1" @click="actionPhoto(slotProps.data.id, 3)"/>
-                     </div>
+                     <!-- Кнопка вращение фото влево            -->
+                     <Button icon="fa fa-undo-alt" class="p-button-outlined butWide1 mr-2" @click="actionPhoto(slotProps.data.id, 2)"/>
+                     <!-- Кнопка вращение Фото вправо           -->
+                     <Button icon="fa fa-redo-alt" class="p-button-outlined butWide1 mr-2" @click="actionPhoto(slotProps.data.id, 3)"/>
                   </template>
                </Toolbar>
                <!-- Изображение               -->
@@ -237,6 +235,7 @@ export default {
       deletePhoto(event, id) {
          this.$confirm.require({
             target: event.currentTarget,
+            acceptClass: 'p-button-danger',
             message: 'Удалить фото?',
             icon: 'pi pi-exclamation-triangle',
             accept: () => { this.actionPhoto(id, 1) },
