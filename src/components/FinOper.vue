@@ -104,7 +104,7 @@
                </Toolbar>
                <!-- Изображение               -->
                <div>
-                  <a :href="mediaRoot + slotProps.data.image"><img class="w-full" :src="mediaRoot + slotProps.data.image" /></a>
+                  <img class="w-full" :src="mediaRoot + slotProps.data.image"/>
                </div>
             </div>
          </div>
