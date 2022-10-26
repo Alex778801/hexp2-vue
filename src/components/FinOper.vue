@@ -129,6 +129,7 @@ import gql from "graphql-tag";
 import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
+import {__backendAddr__} from "@/setup";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -146,8 +147,6 @@ export default {
             {"id": "1004","code": "h456wer53","name": "Bracelet","description": "Product Description","image": "bracelet.jpg","price": 15,"category": "Accessories","quantity": 73,"inventoryStatus": "INSTOCK","rating": 4},
          ],
 
-
-         backendAddr: 'http://192.168.1.222:8000',
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
@@ -235,7 +234,7 @@ export default {
          payload.append('ownerId', this.oper.owner.id);
          payload.append('file', file);
          payload.append('operId', this.oper.id);
-         await axios.post(`${this.backendAddr}/uploadFinOperPhoto/`, payload).then((response) => {
+         await axios.post(`${__backendAddr__}/uploadFinOperPhoto/`, payload).then((response) => {
             this.fetchData();
          }).catch((error) => console.log(error))
       },
