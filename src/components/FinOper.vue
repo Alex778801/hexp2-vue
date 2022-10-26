@@ -211,7 +211,7 @@ export default {
          }).then((response) => {
             // Заменим null на {}
             this.oper = replaceNulls(response.data.finoper);
-            this.oper.amount = Number()
+            this.oper.amount = Number(this.oper.amount);
             // -- owner
             this.aclListUser = JSON.parse(this.oper.aclList).slice(2);
             this.ts = new Date(this.oper.ts * 1000);
