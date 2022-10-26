@@ -14,13 +14,14 @@
    </Toolbar>
 
 <!-- Содержимое -->
-   <div class="mx-1">
+   <div style="padding-bottom: 9rem;" class="mx-1">
       <div class="item"
            v-for="item in list" :key="item.id"
            v-show="qFilterFunc(item)"
       >
 <!--     Мобильная версия    -->
-         <div v-if="isMobile" class="MobileItemContainer M_OperBody">
+         <div v-if="isMobile" class="MobileItemContainer M_OperBody"
+              @dblclick="$router.push({ path: `/finoper/${item.id}`})">
                <div class="ColorBox" :style="{'background-color': item.costType?.color}"></div>
                <div class="Amount" :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
                <div class="Ts">{{ frmTs(item.ts) }}<span class="User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
@@ -354,7 +355,7 @@ export default {
 
       // Получить журнал
       async fetchList() {
-         clog('fetchList - finopes');
+         // clog('fetchList - finopes');
          // Запрос журнала
          const listQ = gql(`
             #graphql
