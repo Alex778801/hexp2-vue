@@ -16,7 +16,6 @@
       </template>
    </Toolbar>
 
-
 <!-- Поля  -->
    <div legend="Поля"  class="m-2">
 <!--  Дата -->
@@ -142,7 +141,7 @@ export default {
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
-         oper: {'costType': {}, 'agentFrom': {}, 'agentTo': {}, 'photoList': []},
+         oper: {'costType': {}, 'agentFrom': {}, 'agentTo': {}, 'owner': {}, 'photoList': []},
          // Временное хранение МОМЕНТА
          ts: null,
          // Список доступа ACL
@@ -181,9 +180,10 @@ export default {
       },
 
       // Обновить данные фин операции
-      fetchData() {
+      async fetchData() {
          // Запрос данных
          const operQ = gql(`
+         #graphql
          query ($id: Int!) {
             finoper (id: $id) {
               project {id, name,},
@@ -196,28 +196,29 @@ export default {
               notes,
               pq,
               user,
-              owner {id, username},
               aclList,
               readOnly,
-              ctList { id, name, out, color },
-              agList { id, name },
+              ctList { id, name, out, color, },
+              agList { id, name, },
               photoList { id, image, }
            },
          }
       `);
-         apolloClient.query({
+         await apolloClient.query({
             query: operQ,
             variables: {id: this.operId},
-            fetchPolicy: "no-cache"} ).then( (response) => {
+            fetchPolicy: "no-cache"
+         }).then((response) => {
             // Заменим null на {}
             this.oper = replaceNulls(response.data.finoper);
-            // document.title =this.oper.notes;
             // -- owner
             this.aclListUser = JSON.parse(this.oper.aclList).slice(2);
             this.ts = new Date(this.oper.ts * 1000);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
-            setTimeout(() => { this.dataChanged = false }, 10);
-         }).catch( (error) => authUtils.err(error) );
+            setTimeout(() => {
+               this.dataChanged = false
+            }, 10);
+         }).catch((error) => authUtils.err(error));
       },
 
       // Добавить новое фото
@@ -275,8 +276,11 @@ export default {
       async save() {
          // -- Мутация - запись изменений
          const updateM = gql(`
-               mutation ($id: Int!, $name: String!, $owner: String!) {
-                  updateAgent (id: $id, name: $name, owner: $owner) {
+               #graphql
+               mutation ($id: Int!, $ts: Int!, $costTypeId: Int, $agentFromId: Int, $agentToId: Int,
+                         $amount: Int!, $notes: String, $user: String) {
+                  updateFinoper (id: $id, ts: $ts, costTypeId: $costTypeId, agentFromId: $agentFromId, agentToId: $agentToId,
+                                 amount: $amount, notes: $notes, user: $user) {
                      ok, result
                   }
                }
@@ -284,25 +288,28 @@ export default {
          await apolloClient.mutate({
             mutation: updateM,
             variables: {
-               id: this.agent.id,
-               name: this.agent.name,
-               isOutcome: this.agent.isOutcome,
-               color: `#${this.agent.color}`,
-               owner: this.agent.owner,
+               id:          Number(this.oper.id),
+               ts:          Math.floor((new Date(this.ts)).getTime() / 1000),
+               costTypeId:  this.oper.costType.id,
+               agentFromId: this.oper.agentFrom.id,
+               agentToId:   this.oper.agentTo.id,
+               amount:      Number(this.oper.amount),
+               notes:       this.oper.notes,
+               user:        this.oper.user,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
             this.$toast.add({
                severity: 'success',
-               summary: `Агент '${this.agent.name}'`,
-               detail: 'Успешно сохранен',
+               summary: 'Финансовая операция',
+               detail: 'Успешно сохранена',
                life: 2000
             });
          }).catch((error) => {
             this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
-         this.$router.go(-1);
+         // this.$router.go(-1);
       },
 
       // Кнопка Отмена
