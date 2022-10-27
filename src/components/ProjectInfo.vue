@@ -22,6 +22,8 @@
       />
    </div>
 
+<!--   :options="editorOption"-->
+
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
       <template #start>
@@ -47,6 +49,7 @@ import {authUtils} from "@/components/tools/auth-utils";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import '@vueup/vue-quill/dist/vue-quill.bubble.css';
+import ImageUploader from 'quill-image-uploader';
 
 export default {
    name: "ProjectInfo",
@@ -75,8 +78,26 @@ export default {
             [{'font': []}],
             [{'color': []}, {'background': []}],          // dropdown with defaults from theme
 
+            ['link', 'image'],
+
             ['clean']                                         // remove formatting button
          ],
+
+         editorOption: {
+            // some quill options
+            modules: {
+               toolbar: {
+                  container: [["bold", "image"]],
+                  handlers: {
+                     image: function() {
+                        clog('halt')
+                        document.getElementById('file').click()
+                     }
+                  }
+               },
+            }
+         },
+
          // ИД проекта
          projectId: Number(this.$route.params.id),
          // Проект
@@ -96,6 +117,7 @@ export default {
       },
       // --
    },
+
 
    mounted() {
       // Загрузка данных
@@ -148,7 +170,7 @@ export default {
          }).then((response) => {
             this.$toast.add({
                severity: 'success',
-               summary: `Заметки проекта ${this.project.name}`,
+               summary: `Заметки проекта '${this.project.name}'`,
                detail: 'Успешно сохранены',
                life: 2000
             });
@@ -156,7 +178,7 @@ export default {
             this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          });
-         // this.$router.go(-1);
+         this.$router.go(-1);
       },
 
       // Кнопка Отмена

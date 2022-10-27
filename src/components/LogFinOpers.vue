@@ -597,7 +597,6 @@ export default {
    }
 
    .Amount {
-      margin-right: 1rem;
       text-align: end;
       font-size: 1.2rem;
       font-weight: bold;

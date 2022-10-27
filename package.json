@@ -26,6 +26,7 @@
     "moment": "^2.29.4",
     "primeflex": "^3.2.1",
     "primevue": "^3.17.0",
+    "quill-image-uploader": "^1.2.3",
     "vue": "^3.2.13",
     "vue-router": "^4.1.5"
   },
