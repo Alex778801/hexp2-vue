@@ -17,6 +17,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.199",
     "@tiptap/vue-3": "^2.0.0-beta.199",
     "@vue/apollo-option": "^4.0.0-alpha.20",
+    "@vueup/vue-quill": "^1.0.0",
     "apollo-upload-client": "^17.0.0",
     "axios": "^1.1.2",
     "core-js": "^3.8.3",

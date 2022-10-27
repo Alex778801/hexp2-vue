@@ -14,73 +14,13 @@
 
 <!-- Редактор  -->
 
-   <div v-if="editor">
-      <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-         bold
-      </button>
-      <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-         italic
-      </button>
-      <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-         strike
-      </button>
-      <button @click="editor.chain().focus().toggleCode().run()" :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-         code
-      </button>
-      <button @click="editor.chain().focus().unsetAllMarks().run()">
-         clear marks
-      </button>
-      <button @click="editor.chain().focus().clearNodes().run()">
-         clear nodes
-      </button>
-      <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
-         paragraph
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-         h1
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-         h2
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-         h3
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
-         h4
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 5 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }">
-         h5
-      </button>
-      <button @click="editor.chain().focus().toggleHeading({ level: 6 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }">
-         h6
-      </button>
-      <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-         bullet list
-      </button>
-      <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-         ordered list
-      </button>
-      <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-         code block
-      </button>
-      <button @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
-         blockquote
-      </button>
-      <button @click="editor.chain().focus().setHorizontalRule().run()">
-         horizontal rule
-      </button>
-      <button @click="editor.chain().focus().setHardBreak().run()">
-         hard break
-      </button>
-      <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
-         undo
-      </button>
-      <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
-         redo
-      </button>
+   <div class="m-1">
+      <QuillEditor ref="editor" theme="snow"
+                   content-type="html"
+                   :toolbar="toolbarOptions"
+                   v-model:content="project.info"
+      />
    </div>
-
-   <editor-content :editor="editor" v-model="project.info" class="my-1 mx-3"/>
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
@@ -104,20 +44,39 @@ import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
 import {clog, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
-import {useEditor, EditorContent, Editor} from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import '@vueup/vue-quill/dist/vue-quill.bubble.css';
 
 export default {
    name: "ProjectInfo",
 
    components: {
-      EditorContent,
+      QuillEditor
    },
 
    data() {
       return {
          // Редактор
-         editor: null,
+         toolbarOptions: [
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+            // ['blockquote', 'code-block'],
+
+            [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+
+            // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+
+            [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+            [{'align': []}],
+
+            [{'font': []}],
+            [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+
+            ['clean']                                         // remove formatting button
+         ],
          // ИД проекта
          projectId: Number(this.$route.params.id),
          // Проект
@@ -132,9 +91,6 @@ export default {
       project: {
          handler(newVal, oldVal) {
             this.dataChanged = true;
-            // Обновление реадктора
-            if (newVal.info !== oldVal.info)
-               this.editor.commands.setContent(newVal.info, false)
          },
          deep: true,
       },
@@ -144,20 +100,10 @@ export default {
    mounted() {
       // Загрузка данных
       this.fetchData();
-      // Инит редактора
-      this.editor = new Editor({
-         extensions: [
-            StarterKit,
-         ],
-         content: this.project.info,
-      })
-   },
-
-   beforeUnmount() {
-      this.editor.destroy();
    },
 
    methods: {
+
       // Обновить данные
       async fetchData() {
          // Запрос данных
@@ -172,60 +118,55 @@ export default {
          }).then((response) => {
             // Заменим null на {}
             this.project = replaceNulls(response.data.project);
-            // this.content = this.project.info;
+            this.$refs.editor.pasteHTML(this.project.info);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false
             }, 10);
          }).catch((error) => authUtils.err(error));
       },
-   },
 
-   // Кнопка Сохранить
-   async save() {
-      // -- Мутация - запись изменений
-      const updateM = gql(`
-               #graphql
-               mutation ($id: Int!, $ts: Int!, $costTypeId: Int, $agentFromId: Int, $agentToId: Int,
-                         $amount: Int!, $notes: String, $user: String) {
-                  updateFinoper (id: $id, ts: $ts, costTypeId: $costTypeId, agentFromId: $agentFromId, agentToId: $agentToId,
-                                 amount: $amount, notes: $notes, user: $user) {
-                     ok, result
+      // Кнопка Сохранить
+      async save() {
+         clog(this.$refs.editor.content)
+         // -- Мутация - запись изменений
+         const updateM = gql(`
+                  #graphql
+                  mutation ($id: Int!, $projinfo: String!) {
+                     updateProjectInfo (id: $id, projinfo: $projinfo) {
+                        ok, result
+                     }
                   }
-               }
-         `);
-      await apolloClient.mutate({
-         mutation: updateM,
-         variables: {
-            id:          Number(this.oper.id),
-            ts:          Math.floor((new Date(this.ts)).getTime() / 1000),
-            costTypeId:  this.oper.costType.id,
-            agentFromId: this.oper.agentFrom.id,
-            agentToId:   this.oper.agentTo.id,
-            amount:      Number(this.oper.amount),
-            notes:       this.oper.notes,
-            user:        this.oper.user,
-         },
-         fetchPolicy: "no-cache"
-      }).then((response) => {
-         this.$toast.add({
-            severity: 'success',
-            summary: 'Финансовая операция',
-            detail: 'Успешно сохранена',
-            life: 2000
+            `);
+         await apolloClient.mutate({
+            mutation: updateM,
+            variables: {
+               id: Number(this.projectId),
+               projinfo: this.$refs.editor.content,
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Заметки проекта ${this.project.name}`,
+               detail: 'Успешно сохранены',
+               life: 2000
+            });
+         }).catch((error) => {
+            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
+            authUtils.err(error);
          });
-      }).catch((error) => {
-         this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
-         authUtils.err(error);
-      })
-      this.$router.go(-1);
-   },
+         // this.$router.go(-1);
+      },
 
-   // Кнопка Отмена
-   cancel() {
-      this.$router.go(-1);
-   },
+      // Кнопка Отмена
+      cancel() {
+         this.$router.go(-1);
+      },
+
+   }
 }
+
 </script>
 
 <style lang="scss" scoped>
