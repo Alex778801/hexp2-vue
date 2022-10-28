@@ -238,8 +238,8 @@ export default {
          // -- Мутация - запись изменений
          const updateM = gql(`
                #graphql
-               mutation ($id: Int!, $name: String!, $prefCostTypeGroup: Int!, $prefAgentGroup: Int!,
-                         $prefFinOperLogIntv: Int!, $prefFinOperLogIntvN: Int!, $owner: String!, $acl: String!) {
+               mutation ($id: Int!, $name: String!, $prefCostTypeGroup: Int, $prefAgentGroup: Int,
+                         $prefFinOperLogIntv: Int, $prefFinOperLogIntvN: Int, $owner: String!, $acl: String!) {
                   updateProject (id: $id, name: $name, prefCostTypeGroup: $prefCostTypeGroup,
                                  prefAgentGroup: $prefAgentGroup, prefFinOperLogIntv: $prefFinOperLogIntv,
                                  prefFinOperLogIntvN: $prefFinOperLogIntvN, owner: $owner, acl: $acl) {

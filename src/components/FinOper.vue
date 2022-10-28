@@ -171,12 +171,12 @@ export default {
 
       // Получиьт цвет выбранной Статьи
       getCostTypeColor() {
-         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).color;
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id)?.color;
       },
 
       // Получить цвет суммы
       getCostTypeOut() {
-         return this.oper.ctList?.find( i => i.id === this.oper.costType.id).out;
+         return this.oper.ctList?.find( i => i.id === this.oper.costType.id)?.out;
       },
 
       // Обновить данные фин операции

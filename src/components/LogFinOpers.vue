@@ -217,7 +217,7 @@ export default {
          let cntrOutcome = 0;
          const fList = this.list.filter( item => this.qFilterFunc(item) )
          fList.forEach( item => {
-            if (item.costType.out) {
+            if (item.costType?.out) {
                sumOutcome += Number(item.amount);
                cntrOutcome += 1;
             } else {
