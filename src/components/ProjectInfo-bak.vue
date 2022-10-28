@@ -14,6 +14,15 @@
 
 <!-- Редактор  -->
 
+   <div class="m-1">
+      <QuillEditor ref="editor" theme="snow"
+                   content-type="html"
+                   :toolbar="toolbarOptions"
+                   v-model:content="project.info"
+      />
+   </div>
+
+<!--   :options="editorOption"-->
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
@@ -37,17 +46,56 @@ import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
 import {clog, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
-
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import '@vueup/vue-quill/dist/vue-quill.bubble.css';
+import ImageUploader from 'quill-image-uploader';
 
 export default {
    name: "ProjectInfo",
 
    components: {
+      QuillEditor
    },
 
    data() {
       return {
          // Редактор
+         toolbarOptions: [
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+            // ['blockquote', 'code-block'],
+
+            [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+
+            // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+
+            [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+            [{'align': []}],
+
+            [{'font': []}],
+            [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+
+            ['link', 'image'],
+
+            ['clean']                                         // remove formatting button
+         ],
+
+         editorOption: {
+            // some quill options
+            modules: {
+               toolbar: {
+                  container: [["bold", "image"]],
+                  handlers: {
+                     image: function() {
+                        clog('halt')
+                        document.getElementById('file').click()
+                     }
+                  }
+               },
+            }
+         },
 
          // ИД проекта
          projectId: Number(this.$route.params.id),
@@ -91,6 +139,7 @@ export default {
          }).then((response) => {
             // Заменим null на {}
             this.project = replaceNulls(response.data.project);
+            this.$refs.editor.pasteHTML(this.project.info);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false
@@ -100,6 +149,7 @@ export default {
 
       // Кнопка Сохранить
       async save() {
+         clog(this.$refs.editor.content)
          // -- Мутация - запись изменений
          const updateM = gql(`
                   #graphql
@@ -113,7 +163,7 @@ export default {
             mutation: updateM,
             variables: {
                id: Number(this.projectId),
-               projinfo: this.project.info,
+               projinfo: this.$refs.editor.content,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
