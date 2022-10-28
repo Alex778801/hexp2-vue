@@ -63,7 +63,7 @@
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
          <Dropdown id="owner" v-model="oper.user" :options="aclListUser" optionValue="id" optionLabel="label"
-                   :filter="true" placeholder="список учетных записей..." :showClear="true" :disabled="oper.readOnly"/>
+                   :filter="true" placeholder="список учетных записей..." :disabled="oper.readOnly"/>
       </div>
    </div>
 
