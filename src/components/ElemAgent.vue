@@ -100,7 +100,7 @@ export default {
          variables: {id: this.agentId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.agent = replaceNulls(response.data.agent);
-            document.title =this.agent.name;
+            document.title = `Агент: ${this.agent.name}`;
             // -- owner
             this.aclListOwner = JSON.parse(this.agent.aclList).slice(2);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке

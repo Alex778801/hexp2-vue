@@ -178,7 +178,7 @@ export default {
          variables: {id: this.projectId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.project = replaceNulls(response.data.project);
-            document.title =this.project.name;
+            document.title = `Проект: ${this.project.name}`;
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
             if (this.project.prefCostTypeGroup != null) {

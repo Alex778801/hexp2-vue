@@ -213,6 +213,7 @@ export default {
             // Заменим null на {}
             this.oper = replaceNulls(response.data.finoper);
             this.oper.amount = Number(this.oper.amount);
+            document.title = `Фин опер: ${this.oper.project.name}`;
             // -- owner
             this.aclListUser = JSON.parse(this.oper.aclList).slice(2);
             this.ts = new Date(this.oper.ts * 1000);

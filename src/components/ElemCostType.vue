@@ -112,7 +112,7 @@ export default {
          variables: {id: this.costTypeId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.costType = response.data.costType;
-            document.title =replaceNulls(this.costType.name);
+            document.title = `Статья: ${this.costType.name}`;
             // -- owner
             this.aclListOwner = JSON.parse(this.costType.aclList).slice(2);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке

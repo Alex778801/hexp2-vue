@@ -12,6 +12,7 @@ import LogFinOpers      from './components/LogFinOpers.vue';
 import FinOper          from './components/FinOper.vue';
 import Settings         from "@/components/Settings";
 import ProjectInfo      from "@/components/ProjectInfo";
+import Budget           from "@/components/Budget";
 
 export default createRouter({
     history: createWebHistory(),
@@ -25,6 +26,7 @@ export default createRouter({
         { path: '/agent/:id',           component: ElemAgent, meta: { title: 'Агент'} },
         { path: '/log-finopers/:id',    component: LogFinOpers, meta: { title: 'Журнал операций'} },
         { path: '/finoper/:id',         component: FinOper, meta: { title: 'Фин операция'} },
+        { path: '/budget/:id',          component: Budget, meta: { title: 'Бюджет'} },
         { path: '/settings',            component: Settings, meta: { title: 'Настройки'} },
     ]
 })

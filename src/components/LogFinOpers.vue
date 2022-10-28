@@ -71,7 +71,7 @@
 <!--           Кнопка Инфо                      -->
                <Button icon="fa fa-info-circle" @click="$router.push({ path: `/project-info/${projectId}`})"/>
 <!--           Кнопка Бюджет                    -->
-               <Button icon="fa fa-usd-circle" @click="budgetBtn()"/>
+               <Button icon="fa fa-usd-circle" @click="$router.push({ path: `/budget/${projectId}`})"/>
 <!--           Кнопка Отчеты                    -->
                <Button icon="fa fa-chart-line" aria-haspopup="true" aria-controls="reportMenu" @click="reportMenuToggle"/>
                <Menu id="reportMenu" ref="reportMenu" :model="reportMenuContent" :popup="true" />
@@ -85,7 +85,7 @@
             <div class="p-inputgroup">
 <!--           Быстрый фильтр                   -->
                <InputText placeholder="быстрый фильтр" style="width: 12em" v-model="qFilter"/>
-<!--           Кнопка Сброс быстрого abkmnhf    -->
+<!--           Кнопка Сброс быстрого фильтра    -->
                <Button icon="fa fa-times" @click="qFilter=''"/>
             </div>
             <div class="p-inputgroup ml-2">
@@ -389,6 +389,7 @@ export default {
             // Копируем данные из ответа
             this.project = response.data.project;
             this.list = [...response.data.finopers];
+            document.title = `Журнал: ${this.project.name}`;
             // Сортировка
             this.sortList();
          }).catch((error) => {

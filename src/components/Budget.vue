@@ -7,16 +7,13 @@
          <i class="fa fa-file-code text-primary text-3xl"/>
          <span class="text-primary ml-2">Заметки (info) проекта '
             <router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">
-               {{project.path}}{{project.name}}</router-link>'
+               {{project?.path}}{{project?.name}}</router-link>'
          </span>
       </template>
    </Toolbar>
 
-<!-- Редактор  -->
-   <div class="m-1">
-      <ckeditor :editor="editor" v-model="project.info" :config="editorConfig" @ready="onReady"
-                :disabled="project.readOnly" ></ckeditor>
-   </div>
+<!-- Содержимое бюджета-->
+
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
@@ -26,7 +23,7 @@
       </template>
       <template #end>
          <!--  Кнопки действий формы      -->
-         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" :disabled="project.readOnly" @click="save()"/>
+         <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" :disabled="project?.readOnly" @click="save()"/>
          <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
@@ -38,41 +35,18 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, isMobile, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 
-import CKEditor from '@ckeditor/ckeditor5-vue';
-import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/ru';
-import {MyCustomUploadAdapterPlugin} from "@/components/tools/CKEuploadAdapter";
-
-
 export default {
-   name: "ProjectInfo",
-
-   components: {
-      ckeditor: CKEditor.component
-   },
+   name: "Budget",
 
    data() {
       return {
-         // Редактор
-         editor: DecoupledEditor,
-         mobileButtons: [
-             'bold', 'underline', 'fontBackgroundColor', '|',
-             'insertTable', 'uploadImage', '|',
-             'bulletedList', 'numberedList', 'todoList', '|',
-             '|', 'undo', 'redo'],
-         editorConfig: {
-            language: 'ru',
-            toolbar: { shouldNotGroupWhenFull: true },
-            extraPlugins: [ MyCustomUploadAdapterPlugin ],
-            projectId: Number(this.$route.params.id),
-         },
          // ИД проекта
          projectId: Number(this.$route.params.id),
-         // Проект
-         project: {'info': ''},
+         // Бюджет
+         budget: {},
          // Данные изменены пользователем
          dataChanged: false,
          bugDataLoaded: false,
@@ -81,7 +55,7 @@ export default {
 
    watch: {
       // Признак внесения изменений в данные
-      project: {
+      budget: {
          handler(newVal, oldVal) {
             this.dataChanged = true;
          },
@@ -90,26 +64,12 @@ export default {
       // --
    },
 
-   created() {
-      // Выбираем наборк кнопок реадктора - полный или мобильная версия
-      if (isMobile())
-         this.editorConfig.toolbar.items = this.mobileButtons;
-   },
-
    mounted() {
       // Загрузка данных
       this.fetchData();
    },
 
    methods: {
-      // Настраиваем панели редактора
-      onReady( editor )  {
-         editor.ui.getEditableElement().parentElement.insertBefore(
-             editor.ui.view.toolbar.element,
-             editor.ui.getEditableElement()
-         );
-      },
-
       // Обновить данные
       async fetchData() {
          // Запрос данных
@@ -123,8 +83,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
-            this.project = replaceNulls(response.data.project);
-            document.title = `Инфо: ${this.project.name}`;
+            this.budget = replaceNulls(response.data.budget);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false;
@@ -154,8 +113,8 @@ export default {
          }).then((response) => {
             this.$toast.add({
                severity: 'success',
-               summary: `Заметки проекта '${this.project.name}'`,
-               detail: 'Успешно сохранены',
+               summary: `Бюджет проекта '${this.project.name}'`,
+               detail: 'Успешно сохранен',
                life: 2000
             });
          }).catch((error) => {
@@ -169,14 +128,11 @@ export default {
       cancel() {
          this.$router.go(-1);
       },
-
    }
 }
 
 </script>
 
-<style lang="scss" scoped>
-
-
+<style scoped>
 
 </style>
