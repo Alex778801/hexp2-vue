@@ -6,6 +6,5 @@
 export const __backendAddr__  = 'http://192.168.1.222:8000';
 export const __frontendAddr__ = 'http://192.168.1.222:8080';
 
-// Папки статических медиа ресурсов
-export const __finOperPhotoDir__     =  __backendAddr__ + '/media/';
-export const __projectInfoMediaDir__ =  __backendAddr__ + '/media/';
+// Папки статических медиа ресурсов на бекенде
+export const __backendMediaDir__ = '/media/'

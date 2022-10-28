@@ -124,10 +124,10 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
-import {__finOperPhotoDir__} from "@/setup";
+import {__backendMediaDir__} from "@/setup";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -137,7 +137,7 @@ export default {
    data() {
       return {
          // Корневая папка на бекенд сервере с фото фин операций
-         mediaRoot: __finOperPhotoDir__,
+         mediaRoot: __backendMediaDir__,
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция
