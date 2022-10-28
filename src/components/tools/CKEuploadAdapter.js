@@ -1,11 +1,18 @@
 import {clog} from "@/components/tools/vue-utils";
 import axios from "axios";
+
+/* eslint-disable */
+
 import {__backendAddr__} from "@/setup";
 
 export class MyUploadAdapter {
-   constructor( loader ) {
+
+   projectId = null;
+
+   constructor( loader, projectId ) {
       // The file loader instance to use during the upload.
       this.loader = loader;
+      this.projectId = projectId;
    }
 
    // Starts the upload process.
@@ -87,7 +94,7 @@ export class MyUploadAdapter {
 
       data.append('file', file);
       data.append('token', localStorage.getItem('token'));
-
+      data.append('projectId', this.projectId);
 
       // Important note: This is the right place to implement security mechanisms
       // like authentication and CSRF protection. For instance, you can use
@@ -103,8 +110,10 @@ export class MyUploadAdapter {
 
 export function MyCustomUploadAdapterPlugin( editor ) {
    editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+
       // Configure the URL to the upload script in your back-end here!
-      return new MyUploadAdapter( loader );
+
+      return new MyUploadAdapter( loader, editor.config._config.projectId );
    };
 }
 

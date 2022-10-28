@@ -67,6 +67,7 @@ export default {
             language: 'ru',
             toolbar: { shouldNotGroupWhenFull: true },
             extraPlugins: [ MyCustomUploadAdapterPlugin ],
+            projectId: Number(this.$route.params.id),
          },
          // ИД проекта
          projectId: Number(this.$route.params.id),
@@ -101,9 +102,6 @@ export default {
    },
 
    methods: {
-
-
-
       // Настраиваем панели редактора
       onReady( editor )  {
          editor.ui.getEditableElement().parentElement.insertBefore(
