@@ -15,7 +15,7 @@
 <!-- Редактор  -->
    <div class="m-1">
       <ckeditor :editor="editor" v-model="project.info" :config="editorConfig" @ready="onReady"
-                :disabled="project.readOnly"></ckeditor>
+                :disabled="project.readOnly" ></ckeditor>
    </div>
 
 <!-- Нижняя панель инструментов -->
@@ -42,10 +42,9 @@ import {clog, isMobile, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 
 import CKEditor from '@ckeditor/ckeditor5-vue';
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-// import '@ckeditor/ckeditor5-build-classic/build/translations/de';
 import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/ru';
+import {MyCustomUploadAdapterPlugin} from "@/components/tools/CKEuploadAdapter";
 
 
 export default {
@@ -66,9 +65,8 @@ export default {
              '|', 'undo', 'redo'],
          editorConfig: {
             language: 'ru',
-            toolbar: {
-               shouldNotGroupWhenFull: true,
-            },
+            toolbar: { shouldNotGroupWhenFull: true },
+            extraPlugins: [ MyCustomUploadAdapterPlugin ],
          },
          // ИД проекта
          projectId: Number(this.$route.params.id),
@@ -92,33 +90,34 @@ export default {
    },
 
    created() {
-      // if (isMobile())
+      // Выбираем наборк кнопок реадктора - полный или мобильная версия
+      if (isMobile())
          this.editorConfig.toolbar.items = this.mobileButtons;
    },
 
    mounted() {
-
       // Загрузка данных
       this.fetchData();
    },
 
    methods: {
 
+
+
+      // Настраиваем панели редактора
       onReady( editor )  {
-         // Insert the toolbar before the editable area.
          editor.ui.getEditableElement().parentElement.insertBefore(
              editor.ui.view.toolbar.element,
              editor.ui.getEditableElement()
          );
       },
 
-
       // Обновить данные
       async fetchData() {
          // Запрос данных
          const infoQ = gql(`
             #graphql
-            query ($id: Int!) { project(id: $id) { id, name, path, info, readOnly } }
+            query ($id: Int!) { project(id: $id) { id, name, path, info, readOnly, ownerId } }
          `);
          await apolloClient.query({
             query: infoQ,

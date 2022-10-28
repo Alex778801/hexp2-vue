@@ -13,6 +13,7 @@
     "@ckeditor/ckeditor5-build-decoupled-document": "^35.2.1",
     "@ckeditor/ckeditor5-dev-utils": "^31.1.4",
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^31.1.4",
+    "@ckeditor/ckeditor5-upload": "^35.2.1",
     "@ckeditor/ckeditor5-vue": "^4.0.1",
     "@ckeditor/ckeditor5-vue2": "^3.0.1",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
