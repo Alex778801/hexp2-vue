@@ -984,8 +984,8 @@
               "isDeprecated": false,
               "name": "owner",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "OBJECT",
+                "name": "UserType",
                 "ofType": null
               }
             },

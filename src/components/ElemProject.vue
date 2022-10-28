@@ -58,7 +58,7 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="project.owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="project.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
                    :disabled="project.readOnly"/>
       </div>
 <!--  Чтение READ    -->
@@ -111,7 +111,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog} from "@/components/tools/vue-utils";
+import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemProject",
@@ -156,6 +156,7 @@ export default {
    mounted() {
       // Запрос данных
       const itemQ = gql(`
+            #graphql
             query($id: Int!) {
                project(id: $id) {
                   id, name, path,
@@ -166,7 +167,8 @@ export default {
                   prefFinOperLogIntv,
                   prefFinOperLogIntvN,
                   logIntervalList,
-                  owner, acl, aclList,
+                  owner { id, username, }, user,
+                  acl, aclList,
                   readOnly,
                }
             }
@@ -175,7 +177,7 @@ export default {
          query: itemQ,
          variables: {id: this.projectId},
          fetchPolicy: "no-cache"} ).then( (response) => {
-            this.project = response.data.project;
+            this.project = replaceNulls(response.data.project);
             document.title =this.project.name;
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
@@ -254,7 +256,7 @@ export default {
                prefAgentGroup: Number(this.project.prefAgentGroup.id),
                prefFinOperLogIntv: this.project.prefFinOperLogIntv,
                prefFinOperLogIntvN: this.project.prefFinOperLogIntvN,
-               owner: this.project.owner,
+               owner: this.project.user,
                acl: this.project.acl,
             },
             fetchPolicy: "no-cache"

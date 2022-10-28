@@ -196,6 +196,7 @@ export default {
               notes,
               pq,
               user,
+              owner {id, username},
               aclList,
               readOnly,
               ctList { id, name, out, color, },
@@ -229,7 +230,7 @@ export default {
          payload.append('token', localStorage.getItem('token'));
          payload.append('ownerId', this.oper.owner.id);
          payload.append('file', file);
-         payload.append('operId', this.oper.id);
+         payload.append('operId', this.operId);
          await axios.post(`${__backendAddr__}/uploadFinOperPhoto/`, payload).then((response) => {
             this.fetchData();
          }).catch((error) => console.log(error))

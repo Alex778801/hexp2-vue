@@ -30,7 +30,7 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="agent.owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="agent.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
                    :disabled="agent.readOnly"/>
       </div>
    </Fieldset>
@@ -60,7 +60,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog} from "@/components/tools/vue-utils";
+import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemAgent",
@@ -91,7 +91,7 @@ export default {
       const itemQ = gql(`
             query($id: Int!) {
                agent(id: $id) {
-                  id, name, path, owner, acl, aclList, readOnly,
+                  id, name, path, owner {id, username,}, user, acl, aclList, readOnly,
                }
             }
       `);
@@ -99,7 +99,7 @@ export default {
          query: itemQ,
          variables: {id: this.agentId},
          fetchPolicy: "no-cache"} ).then( (response) => {
-            this.agent = response.data.agent;
+            this.agent = replaceNulls(response.data.agent);
             document.title =this.agent.name;
             // -- owner
             this.aclListOwner = JSON.parse(this.agent.aclList).slice(2);
@@ -127,7 +127,7 @@ export default {
                name: this.agent.name,
                isOutcome: this.agent.isOutcome,
                color: `#${this.agent.color}`,
-               owner: this.agent.owner,
+               owner: this.agent.user,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {

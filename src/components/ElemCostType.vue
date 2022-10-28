@@ -41,7 +41,7 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="costType.owner" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="costType.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
                    :disabled="costType.readOnly"/>
       </div>
    </Fieldset>
@@ -71,7 +71,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog} from "@/components/tools/vue-utils";
+import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemCostType",
@@ -103,8 +103,7 @@ export default {
             query($id: Int!) {
                costType(id: $id) {
                   id, name, path, isOutcome, color,
-                  owner, acl, aclList,
-                  readOnly,
+                  owner { id, username, }, user, acl, aclList, readOnly,
                }
             }
       `);
@@ -113,7 +112,7 @@ export default {
          variables: {id: this.costTypeId},
          fetchPolicy: "no-cache"} ).then( (response) => {
             this.costType = response.data.costType;
-            document.title =this.costType.name;
+            document.title =replaceNulls(this.costType.name);
             // -- owner
             this.aclListOwner = JSON.parse(this.costType.aclList).slice(2);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
@@ -143,7 +142,7 @@ export default {
                name: this.costType.name,
                isOutcome: this.costType.isOutcome,
                color: `${this.costType.color}`,
-               owner: this.costType.owner,
+               owner: this.costType.user,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
