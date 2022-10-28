@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { createApp } from 'vue';
+import Vue, { createApp } from 'vue';
 import App from "./App.vue";
 import vueRouter from './router.js';
 import { apolloProvider } from "@/apollo-config";

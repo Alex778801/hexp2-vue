@@ -13,13 +13,16 @@
    </Toolbar>
 
 <!-- Редактор  -->
-
+   <div class="m-1">
+      <ckeditor :editor="editor" v-model="project.info" :config="editorConfig" @ready="onReady"
+                :disabled="project.readOnly"></ckeditor>
+   </div>
 
 <!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
       <template #start>
          <!--  Флаг изменений        -->
-         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
+         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged && bugDataLoaded"/>
       </template>
       <template #end>
          <!--  Кнопки действий формы      -->
@@ -35,26 +38,45 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, isMobile, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
+
+import CKEditor from '@ckeditor/ckeditor5-vue';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+// import '@ckeditor/ckeditor5-build-classic/build/translations/de';
+import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/ru';
 
 
 export default {
    name: "ProjectInfo",
 
    components: {
+      ckeditor: CKEditor.component
    },
 
    data() {
       return {
          // Редактор
-
+         editor: DecoupledEditor,
+         mobileButtons: [
+             'bold', 'underline', 'fontBackgroundColor', '|',
+             'insertTable', 'uploadImage', '|',
+             'bulletedList', 'numberedList', 'todoList', '|',
+             '|', 'undo', 'redo'],
+         editorConfig: {
+            language: 'ru',
+            toolbar: {
+               shouldNotGroupWhenFull: true,
+            },
+         },
          // ИД проекта
          projectId: Number(this.$route.params.id),
          // Проект
          project: {'info': ''},
          // Данные изменены пользователем
          dataChanged: false,
+         bugDataLoaded: false,
       }
    },
 
@@ -69,13 +91,27 @@ export default {
       // --
    },
 
+   created() {
+      // if (isMobile())
+         this.editorConfig.toolbar.items = this.mobileButtons;
+   },
 
    mounted() {
+
       // Загрузка данных
       this.fetchData();
    },
 
    methods: {
+
+      onReady( editor )  {
+         // Insert the toolbar before the editable area.
+         editor.ui.getEditableElement().parentElement.insertBefore(
+             editor.ui.view.toolbar.element,
+             editor.ui.getEditableElement()
+         );
+      },
+
 
       // Обновить данные
       async fetchData() {
@@ -93,8 +129,9 @@ export default {
             this.project = replaceNulls(response.data.project);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
-               this.dataChanged = false
-            }, 10);
+               this.dataChanged = false;
+               this.bugDataLoaded = true;
+            }, 1000);
          }).catch((error) => authUtils.err(error));
       },
 
@@ -143,62 +180,5 @@ export default {
 <style lang="scss" scoped>
 
 
-
-/* Basic editor styles */
-.ProseMirror {
-   > * + * {
-      margin-top: 0.75em;
-   }
-
-   ul,
-   ol {
-      padding: 0 1rem;
-   }
-
-   h1,
-   h2,
-   h3,
-   h4,
-   h5,
-   h6 {
-      line-height: 1.1;
-   }
-
-   code {
-      background-color: rgba(#616161, 0.1);
-      color: #616161;
-   }
-
-   pre {
-      background: #0D0D0D;
-      color: #FFF;
-      font-family: 'JetBrainsMono', monospace;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-
-      code {
-         color: inherit;
-         padding: 0;
-         background: none;
-         font-size: 0.8rem;
-      }
-   }
-
-   img {
-      max-width: 100%;
-      height: auto;
-   }
-
-   blockquote {
-      padding-left: 1rem;
-      border-left: 2px solid rgba(#0D0D0D, 0.1);
-   }
-
-   hr {
-      border: none;
-      border-top: 2px solid rgba(#0D0D0D, 0.1);
-      margin: 2rem 0;
-   }
-}
 
 </style>
