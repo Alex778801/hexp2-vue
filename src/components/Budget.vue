@@ -45,6 +45,8 @@ export default {
       return {
          // ИД проекта
          projectId: Number(this.$route.params.id),
+         // Проект
+         project: {},
          // Бюджет
          budget: {},
          // Данные изменены пользователем
@@ -75,7 +77,21 @@ export default {
          // Запрос данных
          const infoQ = gql(`
             #graphql
-            query ($id: Int!) { project(id: $id) { id, name, path, info, readOnly } }
+            query ($id: Int!) {
+              project(id: $id) {
+                id
+                name
+                path
+                readOnly
+              },
+              budget(projectId: $id) {
+                id,
+                costType { id, name, ord, out, color, }
+                order,
+                amount,
+                notes,
+              }
+            }
          `);
          await apolloClient.query({
             query: infoQ,
@@ -83,6 +99,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
+            this.project = replaceNulls(response.data.project);
             this.budget = replaceNulls(response.data.budget);
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
