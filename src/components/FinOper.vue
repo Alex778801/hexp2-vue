@@ -127,7 +127,7 @@ import gql from "graphql-tag";
 import {clog, replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
-import {__backendAddr__} from "@/setup";
+import {__finOperPhotoDir__} from "@/setup";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -137,7 +137,7 @@ export default {
    data() {
       return {
          // Корневая папка на бекенд сервере с фото фин операций
-         mediaRoot: __backendAddr__ + '/media/',
+         mediaRoot: __finOperPhotoDir__,
          // ИД операции
          operId: Number(this.$route.params.id),
          // Фин операция

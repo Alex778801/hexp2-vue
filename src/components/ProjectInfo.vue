@@ -117,7 +117,7 @@ export default {
          // Запрос данных
          const infoQ = gql(`
             #graphql
-            query ($id: Int!) { project(id: $id) { id, name, path, info, readOnly, ownerId } }
+            query ($id: Int!) { project(id: $id) { id, name, path, info, readOnly } }
          `);
          await apolloClient.query({
             query: infoQ,

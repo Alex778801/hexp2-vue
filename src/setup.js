@@ -3,5 +3,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 // Адрес бекенда с django
-export const __backendAddr__  = 'http://192.168.1.222:8000'
-export const __frontendAddr__ = 'http://192.168.1.222:8080'
+export const __backendAddr__  = 'http://192.168.1.222:8000';
+export const __frontendAddr__ = 'http://192.168.1.222:8080';
+
+export const __finOperPhotoDir__     =  __backendAddr__ + '/media/';
+export const __projectInfoMediaDir__ =  __backendAddr__ + '/media/';
