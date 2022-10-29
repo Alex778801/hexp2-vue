@@ -7,10 +7,7 @@
       <template #start>
          <!-- Путь    -->
          <i class="fa fa-file-code text-primary text-3xl"/>
-         <span class="text-primary ml-2">Заметки (info) проекта '
-            <router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">
-               {{project?.path}}{{project?.name}}</router-link>'
-         </span>
+         <span class="text-primary ml-2">Бюдет '<router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project?.path}}{{project?.name}}</router-link>'</span>
       </template>
    </Toolbar>
 
@@ -22,8 +19,9 @@
          <div class="Amount" :class="{'SumOutcomeColor': costType.out, 'SumIncomeColor': !costType.out}">{{ frmSum(group.amount) }}</div>
       </div>
       <div class="Body" v-for="item in group.group">
+         <div class="Drag fa fa-hand-pointer text-center"></div>
          <InputText class="Notes" v-model="item.notes" ></InputText>
-         <InputNumber class="Amount" inputStyle="width: 7rem; text-align: end" v-model="item.amount" :maxFractionDigits="0"></InputNumber>
+         <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end" v-model="item.amount" :maxFractionDigits="0"></InputNumber>
       </div>
    </div>
 
@@ -203,11 +201,20 @@ export default {
    .Body {
       margin-top: 0.5rem;
       display: grid;
-      grid-template-columns: auto 7rem;
+      grid-template-columns: 2rem auto 6rem;
+
+      .Drag {
+         background-color: var(--surface-400);
+         color: var(--surface-200);
+         border-radius: 0.4rem;
+         margin-right: 0.2rem;
+         line-height: 2rem;
+      }
 
       .Notes {
-         margin-right: 0.5rem;
+         margin-right: 0.2rem;
          text-align: end;
+         font-size: 0.9rem;
       }
 
       &:last-child {

@@ -5,10 +5,7 @@
       <template #start>
          <!-- Путь    -->
          <i class="fa fa-file-code text-primary text-3xl"/>
-         <span class="text-primary ml-2">Заметки (info) проекта '
-            <router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">
-               {{project.path}}{{project.name}}</router-link>'
-         </span>
+         <span class="text-primary ml-2">Заметки '<router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project.path}}{{project.name}}</router-link>'</span>
       </template>
    </Toolbar>
 
