@@ -22,13 +22,23 @@
            :draggable="dragMode"
            @dragstart="dragStart($event, item)"
            @dragend="dragEnd($event, item)"
-           @drop="dragDrop($event, item)"
+           @drop="dragDropMoveItem($event, item)"
            @dragover.prevent
            @dragenter.prevent
       >
          <InputText class="Notes" v-model="item.notes" :disabled="dragMode" :readonly="project.readOnly"></InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
                       v-model="item.amount" :maxFractionDigits="0" :disabled="dragMode" :readonly="project.readOnly"></InputNumber>
+      </div>
+<!--  Корзина    -->
+      <div class="Header bg-primary-100" v-if="dragMode"
+           @drop="dragDropDeleteZone($event)"
+           @dragover.prevent
+           @dragenter.prevent
+         >
+         <div class="ColorBox"></div>
+         <div class="Name text-primary-500 font-italic font-light"> перетащите сюда для удаления </div>
+         <div class="Amount fa fa-trash text-primary-500"></div>
       </div>
    </div>
 
@@ -55,7 +65,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, findItemById, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, findItemById, replaceNulls, swap} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 
 const fp = require('lodash/fp');
@@ -115,19 +125,82 @@ export default {
          event.target.classList.remove('draggedItem');
       },
 
-      // На что перетащили
-      async dragDrop(event, targetItem) {
+      // На что перетащили - удаление
+      dragDropDeleteZone(event) {
          event.target.classList.remove('draggedItem');
          const sourceItemId = event.dataTransfer.getData('itemId');
+         const fromPos = this.budgetFlat.findIndex( i => i.id === sourceItemId );
+         const fromItem = this.budgetFlat[fromPos];
+         const fromCtId = fromItem.costType.id;
+         const fromOrder = fromItem.order;
+         // Удаляем
+         this.budgetFlat.splice(fromPos, 1);
+         this.budgetFlat
+             .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
+             .forEach( i => i.order -= 1);
+         // Сортируем по порядковым номерам
+         this.budgetFlat = _(this.budgetFlat)
+             .sortBy( i => [i.costType.order, i.order] )
+             .value();
+         // Группируем по статьям и рассчитаем суммы
+         this.budget = _(replaceNulls(this.budgetFlat))
+             .groupBy( 'costType.id' )
+             .map( (group, amount) => ({
+                group: group,
+                amount: _.sumBy(group, 'amount'),
+             }))
+             .value();
+      },
+
+      // На что перетащили - перемещение
+      dragDropMoveItem(event, targetItem) {
+         event.target.classList.remove('draggedItem');
+         const sourceItemId = event.dataTransfer.getData('itemId');
+         // сам на себя - отмена
          if (sourceItemId === targetItem.id)
             return;
-         // Поменяем местами элементы
-         const posSource = this.budgetFlat.findIndex( i => i.id = sourceItemId )
-         const posTarget = this.budgetFlat.findIndex( i => i.id = targetItem.id )
-         const tmp = this.budgetFlat[posTarget];
-         this.budgetFlat[posTarget] = this.budgetFlat[posSource];
-         this.budgetFlat[posSource] = tmp;
-         // Сгруппируем по статьям и рассчитаем суммы
+         // --
+         const fromPos = this.budgetFlat.findIndex( i => i.id === sourceItemId );
+         const toPos = this.budgetFlat.findIndex( i => i.id === targetItem.id );
+         const fromItem = this.budgetFlat[fromPos];
+         const toItem = this.budgetFlat[toPos];
+         if (fromItem.costType.id === toItem.costType.id) {
+         // Перемещаем внутри одной статьи
+            const ctId = fromItem.costType.id;
+            const fromOrder = fromItem.order;
+            const toOrder = toItem.order;
+            if (fromItem.order > toItem.order ) {
+               this.budgetFlat
+                   .filter( i => i.costType.id === ctId && i.order >= toOrder && i.order < fromOrder )
+                   .forEach( i => i.order += 1);
+            } else {
+               this.budgetFlat
+                   .filter( i => i.costType.id === ctId && i.order <= toOrder && i.order > fromOrder )
+                   .forEach( i => i.order -= 1);
+            }
+            fromItem.order = toOrder;
+         } else {
+         // Перемещаем между разными статьями
+            const fromCtId = fromItem.costType.id;
+            const toCtId = toItem.costType.id;
+            const fromOrder = fromItem.order;
+            const toOrder = toItem.order;
+            // добавим в новую статью
+            this.budgetFlat
+                .filter( i => i.costType.id === toCtId && i.order >= toOrder )
+                .forEach( i => i.order += 1);
+            fromItem.costType.id = toCtId;
+            fromItem.order = toOrder;
+            // удалим из старой
+            this.budgetFlat
+                .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
+                .forEach( i => i.order -= 1);
+         }
+         // Сортируем по порядковым номерам
+         this.budgetFlat = _(this.budgetFlat)
+             .sortBy( i => [i.costType.order, i.order] )
+             .value();
+         // Группируем по статьям и рассчитаем суммы
          this.budget = _(replaceNulls(this.budgetFlat))
              .groupBy( 'costType.id' )
              .map( (group, amount) => ({

@@ -94,3 +94,10 @@ export function replaceNulls(obj) {
    }
    return obj
 }
+
+// Поменять значения объектов друг с другом
+export function swap(a ,b) {
+   const tmp = a;
+   a = b;
+   b = tmp;
+}
