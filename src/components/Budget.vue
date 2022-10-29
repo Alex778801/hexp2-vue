@@ -18,10 +18,17 @@
          <div class="Name" :class="{'SumOutcomeColor': costType.out, 'SumIncomeColor': !costType.out}">{{ costType.name }}</div>
          <div class="Amount" :class="{'SumOutcomeColor': costType.out, 'SumIncomeColor': !costType.out}">{{ frmSum(group.amount) }}</div>
       </div>
-      <div class="Body" v-for="item in group.group">
-         <div class="Drag fa fa-hand-pointer text-center"></div>
-         <InputText class="Notes" v-model="item.notes" ></InputText>
-         <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end" v-model="item.amount" :maxFractionDigits="0"></InputNumber>
+      <div class="Body" v-for="item in group.group"
+           :draggable="dragMode"
+           @dragstart="dragStart($event, item)"
+           @dragend="dragEnd($event, item)"
+           @drop="dragDrop($event, item)"
+           @dragover.prevent
+           @dragenter.prevent
+      >
+         <InputText class="Notes" v-model="item.notes" :disabled="dragMode" :readonly="project.readOnly"></InputText>
+         <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
+                      v-model="item.amount" :maxFractionDigits="0" :disabled="dragMode" :readonly="project.readOnly"></InputNumber>
       </div>
    </div>
 
@@ -33,10 +40,11 @@
       </template>
       <template #end>
          <!-- Конпка новая строка бюджета        -->
+         <Button icon="fa fa-arrows" class="mr-1" :class="{'EnBtn': dragMode}" @click="dragMode=!dragMode"/>
          <Button icon="fa fa-plus" @click="newBudgetLine()"/>
          <!--  Кнопки действий формы      -->
-         <Button label="Сохран" icon="fa fa-save" class="mx-2 p-button-success" :disabled="project.readOnly" @click="save()"/>
-         <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
+         <Button label="Сохр" icon="fa fa-save" class="mx-1 p-button-success" :disabled="project.readOnly" @click="save()"/>
+         <Button label="Отм" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
 
@@ -47,7 +55,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, findItemById, replaceNulls} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 
 const fp = require('lodash/fp');
@@ -63,6 +71,9 @@ export default {
          project: {},
          // Бюджет
          budget: {},
+         budgetFlat: null,
+         // Режим перетаскивания
+         dragMode: false,
          // Данные изменены пользователем
          dataChanged: false,
          bugDataLoaded: false,
@@ -89,6 +100,41 @@ export default {
       // Форматирование суммы
       frmSum(sum) {
          return new Intl.NumberFormat('ru-RU').format(sum);
+      },
+
+      // Начало перетаскивания
+      dragStart(event, item) {
+         event.dataTransfer.dropEffect = 'move';
+         event.dataTransfer.effectAllowed = 'move';
+         event.dataTransfer.setData('itemId', item.id);
+         event.target.classList.add('draggedItem');
+      },
+
+      // Конец Перетаскивания
+      dragEnd(event, item) {
+         event.target.classList.remove('draggedItem');
+      },
+
+      // На что перетащили
+      async dragDrop(event, targetItem) {
+         event.target.classList.remove('draggedItem');
+         const sourceItemId = event.dataTransfer.getData('itemId');
+         if (sourceItemId === targetItem.id)
+            return;
+         // Поменяем местами элементы
+         const posSource = this.budgetFlat.findIndex( i => i.id = sourceItemId )
+         const posTarget = this.budgetFlat.findIndex( i => i.id = targetItem.id )
+         const tmp = this.budgetFlat[posTarget];
+         this.budgetFlat[posTarget] = this.budgetFlat[posSource];
+         this.budgetFlat[posSource] = tmp;
+         // Сгруппируем по статьям и рассчитаем суммы
+         this.budget = _(replaceNulls(this.budgetFlat))
+             .groupBy( 'costType.id' )
+             .map( (group, amount) => ({
+                group: group,
+                amount: _.sumBy(group, 'amount'),
+             }))
+             .value();
       },
 
       // Обновить данные
@@ -120,6 +166,8 @@ export default {
             // Заменим null на {}
             this.project = replaceNulls(response.data.project);
             document.title = `Бюджет: ${this.project.name}`;
+            // Копия бюджета без группировок
+            this.budgetFlat = response.data.budget;
             // Сгруппируем по статьям и рассчитаем суммы
             this.budget = _(replaceNulls(response.data.budget))
                 .groupBy( 'costType.id' )
@@ -127,8 +175,7 @@ export default {
                    group: group,
                    amount: _.sumBy(group, 'amount'),
                 }))
-                .value()
-            clog(this.budget)
+                .value();
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false;
@@ -185,7 +232,6 @@ export default {
    margin-right: 0.5rem;
 
    .Header {
-      margin-top: 0.5rem;
       height: 3rem;
       display: grid;
       grid-template-columns: 1fr 8fr 7rem;
@@ -199,27 +245,21 @@ export default {
    }
 
    .Body {
-      margin-top: 0.5rem;
+      margin: 0.25rem 0;
       display: grid;
-      grid-template-columns: 2rem auto 6rem;
-
-      .Drag {
-         background-color: var(--surface-400);
-         color: var(--surface-200);
-         border-radius: 0.4rem;
-         margin-right: 0.2rem;
-         line-height: 2rem;
-      }
+      grid-template-columns: auto 6rem;
 
       .Notes {
          margin-right: 0.2rem;
          text-align: end;
          font-size: 0.9rem;
       }
+   }
 
-      &:last-child {
-         padding-bottom: 1rem;
-      }
+   .draggedItem {
+      -webkit-text-fill-color: var(--primary-500);
+      border: solid 0.25rem var(--primary-500);
+      border-radius: 0.5rem;
    }
 
 }
