@@ -1297,6 +1297,18 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "ctList",
+              "type": {
+                "kind": "OBJECT",
+                "name": "CostTypeType",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "prefAgentGroupTree",
               "type": {
                 "kind": "SCALAR",
@@ -1787,13 +1799,9 @@
               "isDeprecated": false,
               "name": "amount",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Decimal",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
               }
             },
             {
@@ -1813,16 +1821,6 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "BudgetLineType",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Decimal` scalar type represents a python Decimal.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Decimal",
           "possibleTypes": null
         },
         {

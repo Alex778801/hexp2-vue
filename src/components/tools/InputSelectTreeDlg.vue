@@ -6,7 +6,7 @@
       </template>
 
       <div class="block">
-         <TreeSelect id="select" :placeholder="placeholder" class="w-100 my-1" v-model="result" :options="options" />
+         <TreeSelect id="select" :placeholder="placeholder" class="w-full my-1" v-model="result" :options="options" />
          <small v-if="errEmpty" id="select-errEmpty" class="p-error"> Пустое значение не допустимо </small>
          <small v-if="errGroup" id="select-errGrp" class="p-error"> Нелья выбирать группу </small>
       </div>

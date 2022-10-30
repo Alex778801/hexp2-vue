@@ -5,7 +5,7 @@
          <span class="text-primary">{{ title }}</span>
       </template>
 
-      <Dropdown v-model="result" :options="options" optionLabel="name" optionValue="id" :placeholder="placeholder" class="w-100"/>
+      <Dropdown v-model="result" :options="options" optionLabel="name" optionValue="id" :placeholder="placeholder" class="w-full"/>
       <small v-if="errEmpty" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
 
       <template #footer>

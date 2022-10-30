@@ -28,7 +28,8 @@
       >
          <InputText class="Notes" v-model="item.notes" :disabled="dragMode" :readonly="project.readOnly"></InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
-                      v-model="item.amount" :maxFractionDigits="0" :disabled="dragMode" :readonly="project.readOnly"></InputNumber>
+                      v-model="item.amount" :maxFractionDigits="0" @ended="updateBudgetFlat(item)"
+                      :disabled="dragMode" :readonly="project.readOnly"></InputNumber>
       </div>
 <!--  Корзина    -->
       <div class="Header bg-primary-100" v-if="dragMode"
@@ -42,7 +43,7 @@
       </div>
    </div>
 
-   <!-- Нижняя панель инструментов -->
+<!-- Нижняя панель инструментов -->
    <Toolbar class="m-1 p-2">
       <template #start>
          <!--  Флаг изменений        -->
@@ -58,6 +59,9 @@
       </template>
    </Toolbar>
 
+<!-- Диалог выбора статьи новой строки бюджета -->
+   <InputSelectDlg ref="InputCostTypeDlg" />
+
 </template>
 
 <script>
@@ -67,12 +71,13 @@ import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
 import {clog, findItemById, replaceNulls, swap} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
+import InputSelectDlg from "@/components/tools/InputSelectDlg";
 
 const fp = require('lodash/fp');
 
 export default {
    name: "Budget",
-
+   components: {InputSelectDlg},
    data() {
       return {
          // ИД проекта
@@ -107,6 +112,16 @@ export default {
    },
 
    methods: {
+
+      // Актуализировать данные в плоском бюджете
+      updateBudgetFlat(event, item){
+         clog('2222')
+        const fi = this.budgetFlat.find( i => i.id === item.id);
+        fi.notes = item.notes;
+        fi.amount = item.amount;
+        this.applyBudgetFlat();
+      },
+
       // Форматирование суммы
       frmSum(sum) {
          return new Intl.NumberFormat('ru-RU').format(sum);
@@ -138,18 +153,8 @@ export default {
          this.budgetFlat
              .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
              .forEach( i => i.order -= 1);
-         // Сортируем по порядковым номерам
-         this.budgetFlat = _(this.budgetFlat)
-             .sortBy( i => [i.costType.order, i.order] )
-             .value();
-         // Группируем по статьям и рассчитаем суммы
-         this.budget = _(replaceNulls(this.budgetFlat))
-             .groupBy( 'costType.id' )
-             .map( (group, amount) => ({
-                group: group,
-                amount: _.sumBy(group, 'amount'),
-             }))
-             .value();
+         // Применим бюджет из плоской копии
+         this.applyBudgetFlat();
       },
 
       // На что перетащили - перемещение
@@ -200,6 +205,29 @@ export default {
                 .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
                 .forEach( i => i.order -= 1);
          }
+         // Применим бюджет из плоской копии
+         this.applyBudgetFlat();
+      },
+
+      // Новая строка бюджета
+      newBudgetLine() {
+         this.$refs.InputCostTypeDlg.show(
+             "Выберите статью", "Статья", this.project.ctList, false,
+             (costTypeId) => {
+                const maxOrder = _(this.budgetFlat)
+                    .filter( i => i.costType.id === costTypeId)
+                    ?.maxBy( i => i.order)
+                    ?.order || -1;
+                const costType = this.project.ctList.find( i => i.id === costTypeId );
+                this.budgetFlat.push( { id: -1, costType: costType, order: maxOrder + 1, amount: 0, notes: ''} );
+                // Применим бюджет из плоской копии
+                this.applyBudgetFlat();
+             }
+         )
+      },
+
+      // Применить бюджет из плоской копии
+      applyBudgetFlat() {
          // Сортируем по порядковым номерам
          this.budgetFlat = _(this.budgetFlat)
              .sortBy( i => [i.costType.order, i.order] )
@@ -221,10 +249,10 @@ export default {
             #graphql
             query ($id: Int!) {
               project(id: $id) {
-                id, name, path readOnly,
+                id, name, path readOnly, ctList { id, name, ord, out, color }
               },
               budget(projectId: $id) {
-                id, costType { id, ord, name, out, color},
+                id, costType { id, name, ord, out, color},
                 order, amount, notes,
               }
             }
@@ -239,14 +267,8 @@ export default {
             document.title = `Бюджет: ${this.project.name}`;
             // Копия бюджета без группировок
             this.budgetFlat = response.data.budget;
-            // Сгруппируем по статьям и рассчитаем суммы
-            this.budget = _(replaceNulls(response.data.budget))
-                .groupBy( 'costType.id' )
-                .map( (group, amount) => ({
-                   group: group,
-                   amount: _.sumBy(group, 'amount'),
-                }))
-                .value();
+            // Применим бюджет из плоской копии
+            this.applyBudgetFlat();
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false;

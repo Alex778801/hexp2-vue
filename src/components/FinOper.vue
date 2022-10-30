@@ -68,7 +68,7 @@
    </div>
 
 <!-- Нижняя панель инструментов -->
-<Toolbar class="m-1 p-2">
+   <Toolbar class="m-1 p-2">
       <template #start>
          <!--  Флаг изменений        -->
          <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
