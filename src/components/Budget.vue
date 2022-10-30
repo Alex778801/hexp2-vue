@@ -30,7 +30,7 @@
                     :disabled="dragMode" :readonly="project.readOnly">
          </InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
-                      v-model="item.amount" @input="onChangeAmount($event, item)" :maxFractionDigits="0"
+                      v-model="item.amount" @input="onChangeAmount($event, item)" :maxFractionDigits="0" :min="0"
                       :disabled="dragMode" :readonly="project.readOnly">
          </InputNumber>
       </div>
@@ -89,7 +89,10 @@ export default {
          project: {},
          // Бюджет
          budget: {},
+         // Плоский бюджет
          budgetFlat: null,
+         // Спикок ИД удаленных позиций бюджета
+         deleted: [],
          // Режим перетаскивания
          dragMode: false,
          // Данные изменены пользователем
@@ -151,7 +154,7 @@ export default {
       // На что перетащили - удаление
       dragDropDeleteZone(event) {
          event.target.classList.remove('draggedItem');
-         const sourceItemId = event.dataTransfer.getData('itemId');
+         const sourceItemId = Number(event.dataTransfer.getData('itemId'));
          const fromPos = this.budgetFlat.findIndex( i => i.id === sourceItemId );
          const fromItem = this.budgetFlat[fromPos];
          const fromCtId = fromItem.costType.id;
@@ -161,6 +164,7 @@ export default {
          this.budgetFlat
              .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
              .forEach( i => i.order -= 1);
+         this.deleted.push(sourceItemId);
          // Применим бюджет из плоской копии
          this.applyBudgetFlat();
       },
@@ -290,8 +294,8 @@ export default {
          // -- Мутация - запись изменений
          const updateM = gql(`
                   #graphql
-                  mutation ($id: Int!, $projinfo: String!) {
-                     updateProjectInfo (id: $id, projinfo: $projinfo) {
+                  mutation ($projectId: Int!, $budgetPack: String!, $deletedPack: String!) {
+                     updateBudget (projectId: $projectId, budgetPack: $budgetPack, deletedPack: $deletedPack) {
                         ok, result
                      }
                   }
@@ -299,8 +303,9 @@ export default {
          await apolloClient.mutate({
             mutation: updateM,
             variables: {
-               id: Number(this.projectId),
-               projinfo: this.project.info,
+               projectId: Number(this.projectId),
+               budgetPack: JSON.stringify(this.budgetFlat),
+               deletedPack: JSON.stringify(this.deleted),
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
