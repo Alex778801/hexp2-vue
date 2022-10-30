@@ -26,10 +26,13 @@
            @dragover.prevent
            @dragenter.prevent
       >
-         <InputText class="Notes" v-model="item.notes" :disabled="dragMode" :readonly="project.readOnly"></InputText>
+         <InputText class="Notes" v-model="item.notes" @change="onChaneNotes(item)"
+                    :disabled="dragMode" :readonly="project.readOnly">
+         </InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
-                      v-model="item.amount" :maxFractionDigits="0" @ended="updateBudgetFlat(item)"
-                      :disabled="dragMode" :readonly="project.readOnly"></InputNumber>
+                      v-model="item.amount" @input="onChangeAmount($event, item)" :maxFractionDigits="0"
+                      :disabled="dragMode" :readonly="project.readOnly">
+         </InputNumber>
       </div>
 <!--  Корзина    -->
       <div class="Header bg-primary-100" v-if="dragMode"
@@ -113,18 +116,23 @@ export default {
 
    methods: {
 
-      // Актуализировать данные в плоском бюджете
-      updateBudgetFlat(event, item){
-         clog('2222')
-        const fi = this.budgetFlat.find( i => i.id === item.id);
-        fi.notes = item.notes;
-        fi.amount = item.amount;
-        this.applyBudgetFlat();
-      },
-
       // Форматирование суммы
       frmSum(sum) {
          return new Intl.NumberFormat('ru-RU').format(sum);
+      },
+
+      // Изменение описания
+      onChaneNotes(item){
+         const fi = this.budgetFlat.find( i => i.id === item.id);
+         fi.notes = item.notes;
+         this.applyBudgetFlat();
+      },
+
+      // Изменение суммы
+      onChangeAmount(event, item) {
+         const fi = this.budgetFlat.find( i => i.id === item.id);
+         fi.amount = event.value;
+         this.applyBudgetFlat();
       },
 
       // Начало перетаскивания
@@ -226,7 +234,7 @@ export default {
          )
       },
 
-      // Применить бюджет из плоской копии
+      // Применить (и пересчитать агрегатные данные) бюджет из плоской копии
       applyBudgetFlat() {
          // Сортируем по порядковым номерам
          this.budgetFlat = _(this.budgetFlat)
@@ -327,7 +335,7 @@ export default {
    .Header {
       height: 3rem;
       display: grid;
-      grid-template-columns: 1fr 8fr 7rem;
+      grid-template-columns: 1fr 8fr 8rem;
       background-color: var(--surface-300);
       font-weight: bolder;
 
