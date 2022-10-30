@@ -80,7 +80,9 @@ const fp = require('lodash/fp');
 
 export default {
    name: "Budget",
+
    components: {InputSelectDlg},
+
    data() {
       return {
          // ИД проекта
