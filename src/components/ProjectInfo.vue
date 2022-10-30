@@ -24,7 +24,7 @@
       <template #end>
          <!--  Кнопки действий формы      -->
          <Button label="Сохранить" icon="fa fa-save" class="mr-2 p-button-success" :disabled="project.readOnly" @click="save()"/>
-         <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
+         <Button label="Закрыть" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
 
@@ -159,7 +159,7 @@ export default {
             this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          });
-         this.$router.go(-1);
+         // this.$router.go(-1);
       },
 
       // Кнопка Отмена

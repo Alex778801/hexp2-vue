@@ -54,7 +54,7 @@
          <Button icon="fa fa-plus" @click="newBudgetLine()"/>
          <!--  Кнопки действий формы      -->
          <Button label="Сохр" icon="fa fa-save" class="mx-1 p-button-success" :disabled="project.readOnly" @click="save()"/>
-         <Button label="Отм" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
+         <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
 
@@ -191,6 +191,10 @@ export default {
                 .forEach( i => i.order += 1);
             fromItem.costType.id = toCtId;
             fromItem.order = toOrder;
+            fromItem.costType.name  = toItem.costType.name
+            fromItem.costType.order = toItem.costType.order
+            fromItem.costType.our   = toItem.costType.out
+            fromItem.costType.color = toItem.costType.color
             // удалим из старой
             this.budgetFlat
                 .filter( i => i.costType.id === fromCtId && i.order >= fromOrder )
@@ -217,17 +221,11 @@ export default {
             #graphql
             query ($id: Int!) {
               project(id: $id) {
-                id
-                name
-                path
-                readOnly
+                id, name, path readOnly,
               },
               budget(projectId: $id) {
-                id,
-                costType { id, name, ord, out, color, }
-                order,
-                amount,
-                notes,
+                id, costType { id, ord, name, out, color},
+                order, amount, notes,
               }
             }
          `);
@@ -286,7 +284,7 @@ export default {
             this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          });
-         this.$router.go(-1);
+         // this.$router.go(-1);
       },
 
       // Кнопка Отмена
