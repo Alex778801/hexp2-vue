@@ -62,7 +62,38 @@
          </table>
       </div>
 
-
+<!--      Приход по статьям-->
+      <div class="mt-3">
+         <table class="table">
+            <caption> Приход по статьям </caption>
+            <thead class="bc_orange">
+            <tr>
+               <th style="width: 50%"> Статья прихода </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+<!--            {% for l in prihps %}-->
+            <template v-for="(l, idx) in rd.prihps" :key="idx">
+               <tr>
+                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> {{ fs(l.pr) }} </td>
+                  <td class="nc"> {{ fs(l.qnty) }} </td>
+               </tr>
+            </template>
+<!--            {% endfor %}-->
+            </tbody>
+            <tr>
+               <th> {{ rd.prihps_.ct }} </th>
+               <th> {{ fs(rd.prihps_.summ) }} </th>
+               <th> {{ fs(rd.prihps_.pr) }} </th>
+               <th> {{ fs(rd.prihps_.qnty) }} </th>
+            </tr>
+         </table>
+      </div>
 
    </div>
 
@@ -104,7 +135,10 @@ export default {
    methods: {
       // Форматирование суммы
       fs(sum) {
-         return new Intl.NumberFormat('ru-RU').format(sum);
+         if (sum !== undefined && sum !== null && !isNaN(sum))
+            return new Intl.NumberFormat('ru-RU').format(sum);
+         else
+            return ''
       },
 
       // Форматировать дату
