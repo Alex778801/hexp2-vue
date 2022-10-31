@@ -13,7 +13,8 @@ import FinOper          from './components/FinOper.vue';
 import Settings         from "@/components/Settings";
 import ProjectInfo      from "@/components/ProjectInfo";
 import Budget           from "@/components/Budget";
-import Report           from "@/components/Report";
+import Report1          from "@/components/Report1";
+import Report2          from "@/components/Report2";
 
 export default createRouter({
     history: createWebHistory(),
@@ -29,6 +30,7 @@ export default createRouter({
         { path: '/finoper/:id',         component: FinOper, meta: { title: 'Фин операция'} },
         { path: '/budget/:id',          component: Budget, meta: { title: 'Бюджет'} },
         { path: '/settings',            component: Settings, meta: { title: 'Настройки'} },
-        { path: '/report/1/:projId',    component: Report, meta: { title: 'Отчет 1'} },
+        { path: '/report/1/:projId',    component: Report1, meta: { title: 'Отчет 1'} },
+        { path: '/report/2/:projId',    component: Report2, meta: { title: 'Отчет 2'} },
     ]
 })

@@ -204,12 +204,10 @@ import {clog} from "@/components/tools/vue-utils";
 import moment from "moment/moment";
 
 export default {
-   name: "Report",
+   name: "Report1",
 
    data() {
       return {
-         // ИД отчета
-         reportId: Number(this.$route.params.id),
          // ИД проекта
          projectId: Number(this.$route.params.projId),
          // Данные отчета
