@@ -75,7 +75,6 @@
             </tr>
             </thead>
             <tbody>
-<!--            {% for l in prihps %}-->
             <template v-for="(l, idx) in rd.prihps" :key="idx">
                <tr>
                   <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
@@ -84,7 +83,6 @@
                   <td class="nc"> {{ fs(l.qnty) }} </td>
                </tr>
             </template>
-<!--            {% endfor %}-->
             </tbody>
             <tr>
                <th> {{ rd.prihps_.ct }} </th>
@@ -92,6 +90,81 @@
                <th> {{ fs(rd.prihps_.pr) }} </th>
                <th> {{ fs(rd.prihps_.qnty) }} </th>
             </tr>
+         </table>
+      </div>
+
+<!--      Расход по статьям-->
+      <div class="mt-3">
+         <table class="table">
+            <caption> Расход по статьям </caption>
+            <thead class="bc_purple">
+            <tr>
+               <th style="width: 50%"> Статья расход </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.rashps" :key="idx">
+               <tr>
+                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> {{ fs(l.pr) }} </td>
+                  <td class="nc"> {{ fs(l.qnty) }} </td>
+               </tr>
+            </template>
+            </tbody>
+            <tr>
+               <th> {{ rd.rashps_.ct }} </th>
+               <th> {{ fs(rd.rashps_.summ) }} </th>
+               <th> {{ fs(rd.rashps_.pr) }} </th>
+               <th> {{ fs(rd.rashps_.qnty) }} </th>
+            </tr>
+         </table>
+      </div>
+
+<!--      Обороты агентов-->
+      <div class="mt-3">
+         <table class="table">
+            <caption> Обороты агентов </caption>
+            <thead class="bc_brown">
+            <tr>
+               <th style="width: 50%"> Агент </th>
+               <th style="width: 20%"> Приход </th>
+               <th style="width: 20%"> Расход </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.obk" :key="idx">
+               <template v-if="l.isOut == null">
+                  <tr class="bc_brown">
+                     <th colspan="4"> {{ l.ag }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+                  <template v-if="l.isOut">
+                     <tr>
+                        <td v-if="l.ag != null"> {{ l.ag }} </td>
+                        <td v-else>  --- </td>
+                        <td class="nc"> </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                        <td class="nc"> {{ fs(l.qnty) }} </td>
+                     </tr>
+                  </template>
+                  <template v-else>
+                     <tr>
+                        <td v-if="l.ag != null"> {{ l.ag }} </td>
+                        <td v-else>  --- </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                        <td class="nc"> 0 </td>
+                        <td class="nc"> {{ fs(l.qnty) }} </td>
+                     </tr>
+                  </template>
+               </template>
+            </template>
+            </tbody>
          </table>
       </div>
 
