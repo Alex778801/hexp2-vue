@@ -157,9 +157,9 @@ export default {
          ],
          // Отчеты
          reportMenuContent: [
-            { label: 'Отчет 1 (бюджет)',     command:() => { this.$router.push({ path: `/report/1`}) } },
-            { label: 'Отчет 2 (расходы)',    command:() => { this.$router.push({ path: `/report/2`}) } },
-            { label: 'Отчет 3 (комплекс)',   command:() => { this.$router.push({ path: `/report/3`}) } },
+            { label: 'Отчет 1 (бюджет)',     command:() => { this.$router.push({ path: `/report/1/${this.projectId}`}) } },
+            { label: 'Отчет 2 (расходы)',    command:() => { this.$router.push({ path: `/report/2/${this.projectId}`}) } },
+            { label: 'Отчет 3 (комплекс)',   command:() => { this.$router.push({ path: `/report/3/${this.projectId}`}) } },
          ],
          // Контекстное меню фин операции
          itemContextMenuContent: [

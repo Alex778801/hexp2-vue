@@ -1,6 +1,10 @@
 <template>
 
-   111
+   {{reportId}} / {{ projectId}}
+
+   <iframe>
+
+   </iframe>
 
 </template>
 
@@ -12,8 +16,10 @@ export default {
 
    data() {
       return {
-         // ИД проекта
+         // ИД отчета
          reportId: Number(this.$route.params.id),
+         // ИД проекта
+         projectId: Number(this.$route.params.projId),
       }
    },
 
