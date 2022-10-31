@@ -28,7 +28,7 @@ export default createRouter({
         { path: '/log-finopers/:id',    component: LogFinOpers, meta: { title: 'Журнал операций'} },
         { path: '/finoper/:id',         component: FinOper, meta: { title: 'Фин операция'} },
         { path: '/budget/:id',          component: Budget, meta: { title: 'Бюджет'} },
-        { path: '/report/:id/:projId',  component: Report, meta: { title: 'Отчет'} },
         { path: '/settings',            component: Settings, meta: { title: 'Настройки'} },
+        { path: '/report/1/:projId',    component: Report, meta: { title: 'Отчет 1'} },
     ]
 })
