@@ -24,7 +24,7 @@
       </div>
 
 <!--      Бюджет-->
-      <div class="mt-3">
+      <div class="mt-4">
          <table class="table">
             <caption> Бюджет </caption>
             <thead class="bc_yellow">
@@ -63,7 +63,7 @@
       </div>
 
 <!--      Приход по статьям-->
-      <div class="mt-3">
+      <div class="mt-4">
          <table class="table">
             <caption> Приход по статьям </caption>
             <thead class="bc_orange">
@@ -94,7 +94,7 @@
       </div>
 
 <!--      Расход по статьям-->
-      <div class="mt-3">
+      <div class="mt-4">
          <table class="table">
             <caption> Расход по статьям </caption>
             <thead class="bc_purple">
@@ -125,7 +125,7 @@
       </div>
 
 <!--      Обороты агентов-->
-      <div class="mt-3">
+      <div class="mt-4">
          <table class="table">
             <caption> Обороты агентов </caption>
             <thead class="bc_brown">
@@ -168,10 +168,48 @@
          </table>
       </div>
 
+<!--      Детализация по статьям-->
+      <div class="mt-4">
+         <table class="table">
+            <caption> Детализация по статьям </caption>
+            <thead class="bc_blue">
+            <tr>
+               <th style="width: 30%"> Дата </th>
+               <th style="width: 40%"> Операция </th>
+               <th style="width: 30%"> Сумма </th>
+            </tr>
+            </thead>
+            <tbody>
+<!--            {% for l in detct %}-->
+            <template v-for="(l, idx) in rd.detct" :key="idx">
+<!--               {% if l.grp %}-->
+               <template v-if="l.grp">
+                  <tr class="bc_blue">
+                     <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
+                     <th class="nc"> {{ fs(l.summ) }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+<!--               {% else %}-->
+                  <tr>
+<!--                     {#                            <td> <a href='/finopers/oper/-1/{{ l.pk|safe }}' target="_blank"> {{ l.moment|date:"d M y (D) H:i:s" }} </a> </td>#}-->
+<!--                     <td> <a href="javascript:openWindow('/finopers/oper/-1/{{ l.pk|safe }}');"> {{ l.moment|date:"d M y (D) H:i:s" }} </a>-->
+                     <td>
+                        <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
+                        <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
+                     </td>
+                     <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                  </tr>
+               </template>
+<!--               {% endif %}-->
+            </template>
+<!--            {% endfor %}-->
+            </tbody>
+         </table>
+      </div>
+
    </div>
-
-
-
 
 </template>
 
