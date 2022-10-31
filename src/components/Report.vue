@@ -1,215 +1,197 @@
 <template>
 
+<div class="flex justify-content-center">
+
    <div v-if="reportReady" id="ReportBody" class="m-2">
-      <div class="row justify-content-center my-3">
-         <h2>Отчет форма №1</h2>
-      </div>
+      <h2>Отчет форма №1</h2>
 
 <!--      Заголовок-->
-      <div>
-         <table class="table">
-            <thead class="bc_green">
-            <tr>
-               <th style="width: 50%" class="ar"> Проект: </th>
-               <th style="width: 50%" class="al"> {{ rd.proj }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(l, idx) in rd.head" :key="idx">
-               <td class="ar"> {{ l.param }}: </td>
-               <td> {{ l.value }} </td>
-            </tr>
-            </tbody>
-         </table>
-      </div>
+      <table class="table">
+         <thead class="bc_green">
+         <tr>
+            <th style="width: 50%" class="ar"> Проект: </th>
+            <th style="width: 50%" class="al"> {{ rd.proj }}</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr v-for="(l, idx) in rd.head" :key="idx">
+            <td class="ar"> {{ l.param }}: </td>
+            <td> {{ l.value }} </td>
+         </tr>
+         </tbody>
+      </table>
 
 <!--      Бюджет-->
-      <div class="mt-4">
-         <table class="table">
-            <caption> Бюджет </caption>
-            <thead class="bc_yellow">
-            <tr>
-               <th style="width: 25%"> Статья </th>
-               <th style="width: 25%"> План </th>
-               <th style="width: 25%"> Факт </th>
-               <th style="width: 25%"> Долг </th>
+      <table class="table">
+         <caption> Бюджет </caption>
+         <thead class="bc_yellow">
+         <tr>
+            <th style="width: 25%"> Статья </th>
+            <th style="width: 25%"> План </th>
+            <th style="width: 25%"> Факт </th>
+            <th style="width: 25%"> Долг </th>
+         </tr>
+         </thead>
+         <tbody>
+         <template v-for="(l, idx) in rd.budget" :key="idx">
+            <tr v-if="l.grp" class="bc_yellow">
+               <th> {{ l.ct }} </th>
+               <th> {{ fs(l.sumb) }} </th>
+               <th> {{ fs(l.sumo) }} </th>
+               <th :class="{'neg': l.sumdiff < 0}"> {{ fs(l.sumdiff) }} </th>
             </tr>
-            </thead>
-            <tbody>
-            <template v-for="(l, idx) in rd.budget" :key="idx">
-               <tr v-if="l.grp" class="bc_yellow">
-                  <th> {{ l.ct }} </th>
-                  <th> {{ fs(l.sumb) }} </th>
-                  <th> {{ fs(l.sumo) }} </th>
-                  <th :class="{'neg': l.sumdiff < 0}"> {{ fs(l.sumdiff) }} </th>
-               </tr>
-               <tr v-else>
-                  <template v-if="l.type === 'bud'">
-                     <td> {{ l.notes }} </td>
-                     <td class="nc"> {{ fs(l.summ) }} </td>
-                     <td class="nc"> --- </td>
-                     <td class="nc"> --- </td>
-                  </template>
-                  <template v-else>
-                     <td> <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link> </td>
-                     <td> {{ l.notes }} </td>
-                     <td class="nc"> {{ fs(l.summ) }} </td>
-                     <td class="nc"> --- </td>
-                  </template>
-               </tr>
-            </template>
-            </tbody>
-         </table>
-      </div>
+            <tr v-else>
+               <template v-if="l.type === 'bud'">
+                  <td> {{ l.notes }} </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> --- </td>
+                  <td class="nc"> --- </td>
+               </template>
+               <template v-else>
+                  <td> <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link> </td>
+                  <td> {{ l.notes }} </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> --- </td>
+               </template>
+            </tr>
+         </template>
+         </tbody>
+      </table>
 
 <!--      Приход по статьям-->
-      <div class="mt-4">
-         <table class="table">
-            <caption> Приход по статьям </caption>
-            <thead class="bc_orange">
+      <table class="table">
+         <caption> Приход по статьям </caption>
+         <thead class="bc_orange">
+         <tr>
+            <th style="width: 50%"> Статья прихода </th>
+            <th style="width: 25%"> Сумма </th>
+            <th style="width: 15%"> % </th>
+            <th style="width: 10%"> * </th>
+         </tr>
+         </thead>
+         <tbody>
+         <template v-for="(l, idx) in rd.prihps" :key="idx">
             <tr>
-               <th style="width: 50%"> Статья прихода </th>
-               <th style="width: 25%"> Сумма </th>
-               <th style="width: 15%"> % </th>
-               <th style="width: 10%"> * </th>
+               <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
+               <td class="nc"> {{ fs(l.summ) }} </td>
+               <td class="nc"> {{ fs(l.pr) }} </td>
+               <td class="nc"> {{ fs(l.qnty) }} </td>
             </tr>
-            </thead>
-            <tbody>
-            <template v-for="(l, idx) in rd.prihps" :key="idx">
-               <tr>
-                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
-                  <td class="nc"> {{ fs(l.summ) }} </td>
-                  <td class="nc"> {{ fs(l.pr) }} </td>
-                  <td class="nc"> {{ fs(l.qnty) }} </td>
-               </tr>
-            </template>
-            </tbody>
-            <tr>
-               <th> {{ rd.prihps_.ct }} </th>
-               <th> {{ fs(rd.prihps_.summ) }} </th>
-               <th> {{ fs(rd.prihps_.pr) }} </th>
-               <th> {{ fs(rd.prihps_.qnty) }} </th>
-            </tr>
-         </table>
-      </div>
+         </template>
+         </tbody>
+         <tr>
+            <th> {{ rd.prihps_.ct }} </th>
+            <th> {{ fs(rd.prihps_.summ) }} </th>
+            <th> {{ fs(rd.prihps_.pr) }} </th>
+            <th> {{ fs(rd.prihps_.qnty) }} </th>
+         </tr>
+      </table>
 
 <!--      Расход по статьям-->
-      <div class="mt-4">
-         <table class="table">
-            <caption> Расход по статьям </caption>
-            <thead class="bc_purple">
+      <table class="table">
+         <caption> Расход по статьям </caption>
+         <thead class="bc_purple">
+         <tr>
+            <th style="width: 50%"> Статья расход </th>
+            <th style="width: 25%"> Сумма </th>
+            <th style="width: 15%"> % </th>
+            <th style="width: 10%"> * </th>
+         </tr>
+         </thead>
+         <tbody>
+         <template v-for="(l, idx) in rd.rashps" :key="idx">
             <tr>
-               <th style="width: 50%"> Статья расход </th>
-               <th style="width: 25%"> Сумма </th>
-               <th style="width: 15%"> % </th>
-               <th style="width: 10%"> * </th>
+               <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
+               <td class="nc"> {{ fs(l.summ) }} </td>
+               <td class="nc"> {{ fs(l.pr) }} </td>
+               <td class="nc"> {{ fs(l.qnty) }} </td>
             </tr>
-            </thead>
-            <tbody>
-            <template v-for="(l, idx) in rd.rashps" :key="idx">
-               <tr>
-                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
-                  <td class="nc"> {{ fs(l.summ) }} </td>
-                  <td class="nc"> {{ fs(l.pr) }} </td>
-                  <td class="nc"> {{ fs(l.qnty) }} </td>
-               </tr>
-            </template>
-            </tbody>
-            <tr>
-               <th> {{ rd.rashps_.ct }} </th>
-               <th> {{ fs(rd.rashps_.summ) }} </th>
-               <th> {{ fs(rd.rashps_.pr) }} </th>
-               <th> {{ fs(rd.rashps_.qnty) }} </th>
-            </tr>
-         </table>
-      </div>
+         </template>
+         </tbody>
+         <tr>
+            <th> {{ rd.rashps_.ct }} </th>
+            <th> {{ fs(rd.rashps_.summ) }} </th>
+            <th> {{ fs(rd.rashps_.pr) }} </th>
+            <th> {{ fs(rd.rashps_.qnty) }} </th>
+         </tr>
+      </table>
 
 <!--      Обороты агентов-->
-      <div class="mt-4">
-         <table class="table">
-            <caption> Обороты агентов </caption>
-            <thead class="bc_brown">
-            <tr>
-               <th style="width: 50%"> Агент </th>
-               <th style="width: 20%"> Приход </th>
-               <th style="width: 20%"> Расход </th>
-               <th style="width: 10%"> * </th>
-            </tr>
-            </thead>
-            <tbody>
-            <template v-for="(l, idx) in rd.obk" :key="idx">
-               <template v-if="l.isOut == null">
-                  <tr class="bc_brown">
-                     <th colspan="4"> {{ l.ag }} </th>
+      <table class="table">
+         <caption> Обороты агентов </caption>
+         <thead class="bc_brown">
+         <tr>
+            <th style="width: 50%"> Агент </th>
+            <th style="width: 20%"> Приход </th>
+            <th style="width: 20%"> Расход </th>
+            <th style="width: 10%"> * </th>
+         </tr>
+         </thead>
+         <tbody>
+         <template v-for="(l, idx) in rd.obk" :key="idx">
+            <template v-if="l.isOut == null">
+               <tr class="bc_brown">
+                  <th colspan="4"> {{ l.ag }} </th>
+               </tr>
+            </template>
+            <template v-else>
+               <template v-if="l.isOut">
+                  <tr>
+                     <td v-if="l.ag != null"> {{ l.ag }} </td>
+                     <td v-else>  --- </td>
+                     <td class="nc"> </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                     <td class="nc"> {{ fs(l.qnty) }} </td>
                   </tr>
                </template>
                <template v-else>
-                  <template v-if="l.isOut">
-                     <tr>
-                        <td v-if="l.ag != null"> {{ l.ag }} </td>
-                        <td v-else>  --- </td>
-                        <td class="nc"> </td>
-                        <td class="nc"> {{ fs(l.summ) }} </td>
-                        <td class="nc"> {{ fs(l.qnty) }} </td>
-                     </tr>
-                  </template>
-                  <template v-else>
-                     <tr>
-                        <td v-if="l.ag != null"> {{ l.ag }} </td>
-                        <td v-else>  --- </td>
-                        <td class="nc"> {{ fs(l.summ) }} </td>
-                        <td class="nc"> 0 </td>
-                        <td class="nc"> {{ fs(l.qnty) }} </td>
-                     </tr>
-                  </template>
+                  <tr>
+                     <td v-if="l.ag != null"> {{ l.ag }} </td>
+                     <td v-else>  --- </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                     <td class="nc"> 0 </td>
+                     <td class="nc"> {{ fs(l.qnty) }} </td>
+                  </tr>
                </template>
             </template>
-            </tbody>
-         </table>
-      </div>
+         </template>
+         </tbody>
+      </table>
 
 <!--      Детализация по статьям-->
-      <div class="mt-4">
-         <table class="table">
-            <caption> Детализация по статьям </caption>
-            <thead class="bc_blue">
-            <tr>
-               <th style="width: 30%"> Дата </th>
-               <th style="width: 40%"> Операция </th>
-               <th style="width: 30%"> Сумма </th>
-            </tr>
-            </thead>
-            <tbody>
-<!--            {% for l in detct %}-->
-            <template v-for="(l, idx) in rd.detct" :key="idx">
-<!--               {% if l.grp %}-->
-               <template v-if="l.grp">
-                  <tr class="bc_blue">
-                     <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
-                     <th class="nc"> {{ fs(l.summ) }} </th>
-                  </tr>
-               </template>
-               <template v-else>
-<!--               {% else %}-->
-                  <tr>
-<!--                     {#                            <td> <a href='/finopers/oper/-1/{{ l.pk|safe }}' target="_blank"> {{ l.moment|date:"d M y (D) H:i:s" }} </a> </td>#}-->
-<!--                     <td> <a href="javascript:openWindow('/finopers/oper/-1/{{ l.pk|safe }}');"> {{ l.moment|date:"d M y (D) H:i:s" }} </a>-->
-                     <td>
-                        <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
-                        <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
-                     </td>
-                     <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
-                     <td class="nc"> {{ fs(l.summ) }} </td>
-                  </tr>
-               </template>
-<!--               {% endif %}-->
+      <table class="table">
+         <caption> Детализация по статьям </caption>
+         <thead class="bc_blue">
+         <tr>
+            <th style="width: 30%"> Дата </th>
+            <th style="width: 40%"> Операция </th>
+            <th style="width: 30%"> Сумма </th>
+         </tr>
+         </thead>
+         <tbody>
+         <template v-for="(l, idx) in rd.detct" :key="idx">
+            <template v-if="l.grp">
+               <tr class="bc_blue">
+                  <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
+                  <th class="nc"> {{ fs(l.summ) }} </th>
+               </tr>
             </template>
-<!--            {% endfor %}-->
-            </tbody>
-         </table>
-      </div>
-
+            <template v-else>
+               <tr>
+                  <td>
+                     <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
+                     <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
+                  </td>
+                  <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+               </tr>
+            </template>
+         </template>
+         </tbody>
+      </table>
    </div>
+
+</div>
 
 </template>
 
@@ -282,7 +264,7 @@ export default {
          }).then((response) => {
             // Выгрузка жанных
             this.rd = JSON.parse(response.data.report001);
-            clog(this.rd);
+            // clog(this.rd);
             this.reportReady = true;
          });
       },
@@ -291,11 +273,6 @@ export default {
 </script>
 
 <style scoped>
-
-/*body {*/
-/*   max-width: 75em !important;*/
-/*   margin:0 auto !important;*/
-/*}*/
 
 @supports (-webkit-touch-callout: none) {
    @media print {
@@ -325,29 +302,13 @@ export default {
    }
 }
 
-.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
-   background-color: #519df8 !important;
-}
-
-.btn-outline-primary:hover {
-   color: darkslateblue;
-}
-
-.btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:active, .btn-outline-primary:visited {
-   background-color: white !important;
+#ReportBody {
+   width: 100%;
+   max-width: 60rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
    text-align: center;
-}
-
-.ItemBtnIcon {
-   font-size: 1.8em;
-   color: #519df8;
-}
-
-.wideBtn {
-   width: 4em;
 }
 
 table {
@@ -361,6 +322,8 @@ table caption {
    text-align: center;
    font-size: 1.5em;
    color: black;
+   padding-top: 1.5em;
+   padding-bottom: 0.5em;
 }
 
 td, th {
@@ -390,44 +353,6 @@ td {
 
 .al {
    text-align: start;
-}
-
-/*.tform th {*/
-/*   border-color: #659de7;*/
-/*   vertical-align: middle;*/
-/*   text-align: end;*/
-/*   color: #2372f6;*/
-/*}*/
-
-/*.tform td {*/
-/*   border-color: #659de7;*/
-/*   vertical-align: middle;*/
-/*   padding: 0.6em;*/
-/*}*/
-
-/*.tform select {*/
-/*   border-color: #659de7;*/
-/*   border-radius: 0.3em;*/
-/*   font-size: 1.2em;*/
-/*}*/
-
-/*.tform input {*/
-/*   border-width: 1px;*/
-/*   border-color: #659de7;*/
-/*   border-radius: 0.3em;*/
-/*}*/
-
-/*.tform input[type=date], .tform input[type=month] {*/
-/*   font-size: 1.2em;*/
-/*   padding-left: 0.3em;*/
-/*}*/
-
-.errorlist {
-   color: red !important;
-}
-
-.red {
-   color: red !important;
 }
 
 .neg {
