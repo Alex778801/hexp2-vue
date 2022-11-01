@@ -5,7 +5,7 @@
    <div v-if="reportReady" id="ReportBody" class="m-2">
       <h2>Отчет форма №2</h2>
 
-<!--  Поля фильтра              -->
+<!--  Поля фильтра                    -->
       <div class="FieldsHeader" :class="{'TwoColumns': !mobile}">
          <div class="field">
             <label for="beginF">Дата начала</label>
@@ -45,7 +45,7 @@
          </div>
       </div>
 
-<!--      Заголовок             -->
+<!--      Заголовок                   -->
       <table class="table">
          <thead class="bc_green">
          <tr>
@@ -61,7 +61,7 @@
          </tbody>
       </table>
 
-<!--      Обороты по статьям    -->
+<!--      Обороты по статьям          -->
       <div>
          <table class="table">
             <caption> Обороты по статьям <br> (период/год) </caption>
@@ -105,7 +105,7 @@
          </table>
       </div>
 
-<!--      Обороты по агентам     -->
+<!--      Обороты по агентам          -->
       <div>
          <table class="table">
             <caption> Обороты по агентам <br> (период/год) </caption>
@@ -158,7 +158,7 @@
       </div>
 
 
-<!--      Обороты по месяцам   -->
+<!--      Обороты по месяцам          -->
       <div>
          <table class="table">
             <caption> Обороты по месяцам </caption>
@@ -186,9 +186,7 @@
          </table>
       </div>
 
-
 <!--      Детализация по статьям      -->
-
       <div>
          <table class="table">
             <caption> Детализация по статьям </caption>
@@ -222,7 +220,54 @@
          </table>
       </div>
 
+<!--      Детализация по агентам      -->
+      <div>
+         <table class="table">
+            <caption> Детализация по агентам </caption>
+            <thead class="bc_green">
+            <tr>
+               <th style="width: 30%"> Дата </th>
+               <th style="width: 40%"> Операция </th>
+               <th style="width: 30%"> Сумма </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.detag" :key="idx">
+               <template v-if="l.hdr">
+                  <tr class="bc_green">
+                     <th colspan="4"> {{ l.ag }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+                  <template v-if="l.grp">
+                     <tr class="bc_green">
+                        <th id="agdet_{{ l.agId }}" colspan="2"> {{ l.ag }} </th>
+                        <th class="nc"> {{ fs(l.summ) }} </th>
+                     </tr>
+                  </template>
+                  <template v-else>
+                     <tr>
+                        <td>
+                           <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
+                           <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
+                        </td>
+                        <td> <strong> {{ l.ct }} </strong> <br> {{ l.notes }} </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                     </tr>
+                  </template>
+               </template>
+            </template>
+            </tbody>
+         </table>
+      </div>
 
+<!--      Нижняя панель инструментов -->
+      <Toolbar class="mx-0 my-1 p-2">
+         <template #end>
+            <!--  Кнопки действий формы      -->
+            <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="$router.go(-1)"/>
+         </template>
+      </Toolbar>
 
    </div>
 
@@ -354,9 +399,10 @@ export default {
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
-            // Выгрузка жанных
+            // Выгрузка данных
             this.rd = JSON.parse(response.data.report002);
             this.project = response.data.project;
+            document.title = `Отч 2: ${this.rd.proj}`;
             clog(this.rd, this.project);
             this.reportReady = true;
          });

@@ -1,197 +1,206 @@
 <template>
 
-<div class="flex justify-content-center">
+   <div class="flex justify-content-center">
 
-   <div v-if="reportReady" id="ReportBody" class="m-2">
-      <h2>Отчет форма №1</h2>
+      <div v-if="reportReady" id="ReportBody" class="m-2">
+         <h2>Отчет форма №1</h2>
 
-<!--      Заголовок-->
-      <table class="table">
-         <thead class="bc_green">
-         <tr>
-            <th style="width: 50%" class="ar"> Проект: </th>
-            <th style="width: 50%" class="al"> {{ rd.proj }}</th>
-         </tr>
-         </thead>
-         <tbody>
-         <tr v-for="(l, idx) in rd.head" :key="idx">
-            <td class="ar"> {{ l.param }}: </td>
-            <td> {{ l.value }} </td>
-         </tr>
-         </tbody>
-      </table>
-
-<!--      Бюджет-->
-      <table class="table">
-         <caption> Бюджет </caption>
-         <thead class="bc_yellow">
-         <tr>
-            <th style="width: 25%"> Статья </th>
-            <th style="width: 25%"> План </th>
-            <th style="width: 25%"> Факт </th>
-            <th style="width: 25%"> Долг </th>
-         </tr>
-         </thead>
-         <tbody>
-         <template v-for="(l, idx) in rd.budget" :key="idx">
-            <tr v-if="l.grp" class="bc_yellow">
-               <th> {{ l.ct }} </th>
-               <th> {{ fs(l.sumb) }} </th>
-               <th> {{ fs(l.sumo) }} </th>
-               <th :class="{'neg': l.sumdiff < 0}"> {{ fs(l.sumdiff) }} </th>
-            </tr>
-            <tr v-else>
-               <template v-if="l.type === 'bud'">
-                  <td> {{ l.notes }} </td>
-                  <td class="nc"> {{ fs(l.summ) }} </td>
-                  <td class="nc"> --- </td>
-                  <td class="nc"> --- </td>
-               </template>
-               <template v-else>
-                  <td> <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link> </td>
-                  <td> {{ l.notes }} </td>
-                  <td class="nc"> {{ fs(l.summ) }} </td>
-                  <td class="nc"> --- </td>
-               </template>
-            </tr>
-         </template>
-         </tbody>
-      </table>
-
-<!--      Приход по статьям-->
-      <table class="table">
-         <caption> Приход по статьям </caption>
-         <thead class="bc_orange">
-         <tr>
-            <th style="width: 50%"> Статья прихода </th>
-            <th style="width: 25%"> Сумма </th>
-            <th style="width: 15%"> % </th>
-            <th style="width: 10%"> * </th>
-         </tr>
-         </thead>
-         <tbody>
-         <template v-for="(l, idx) in rd.prihps" :key="idx">
+   <!--      Заголовок              -->
+         <table class="table">
+            <thead class="bc_green">
             <tr>
-               <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
-               <td class="nc"> {{ fs(l.summ) }} </td>
-               <td class="nc"> {{ fs(l.pr) }} </td>
-               <td class="nc"> {{ fs(l.qnty) }} </td>
+               <th style="width: 50%" class="ar"> Проект: </th>
+               <th style="width: 50%" class="al"> {{ rd.proj }}</th>
             </tr>
-         </template>
-         </tbody>
-         <tr>
-            <th> {{ rd.prihps_.ct }} </th>
-            <th> {{ fs(rd.prihps_.summ) }} </th>
-            <th> {{ fs(rd.prihps_.pr) }} </th>
-            <th> {{ fs(rd.prihps_.qnty) }} </th>
-         </tr>
-      </table>
+            </thead>
+            <tbody>
+            <tr v-for="(l, idx) in rd.head" :key="idx">
+               <td class="ar"> {{ l.param }}: </td>
+               <td> {{ l.value }} </td>
+            </tr>
+            </tbody>
+         </table>
 
-<!--      Расход по статьям-->
-      <table class="table">
-         <caption> Расход по статьям </caption>
-         <thead class="bc_purple">
-         <tr>
-            <th style="width: 50%"> Статья расход </th>
-            <th style="width: 25%"> Сумма </th>
-            <th style="width: 15%"> % </th>
-            <th style="width: 10%"> * </th>
-         </tr>
-         </thead>
-         <tbody>
-         <template v-for="(l, idx) in rd.rashps" :key="idx">
+   <!--      Бюджет                 -->
+         <table class="table">
+            <caption> Бюджет </caption>
+            <thead class="bc_yellow">
             <tr>
-               <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
-               <td class="nc"> {{ fs(l.summ) }} </td>
-               <td class="nc"> {{ fs(l.pr) }} </td>
-               <td class="nc"> {{ fs(l.qnty) }} </td>
+               <th style="width: 25%"> Статья </th>
+               <th style="width: 25%"> План </th>
+               <th style="width: 25%"> Факт </th>
+               <th style="width: 25%"> Долг </th>
             </tr>
-         </template>
-         </tbody>
-         <tr>
-            <th> {{ rd.rashps_.ct }} </th>
-            <th> {{ fs(rd.rashps_.summ) }} </th>
-            <th> {{ fs(rd.rashps_.pr) }} </th>
-            <th> {{ fs(rd.rashps_.qnty) }} </th>
-         </tr>
-      </table>
-
-<!--      Обороты агентов-->
-      <table class="table">
-         <caption> Обороты агентов </caption>
-         <thead class="bc_brown">
-         <tr>
-            <th style="width: 50%"> Агент </th>
-            <th style="width: 20%"> Приход </th>
-            <th style="width: 20%"> Расход </th>
-            <th style="width: 10%"> * </th>
-         </tr>
-         </thead>
-         <tbody>
-         <template v-for="(l, idx) in rd.obk" :key="idx">
-            <template v-if="l.isOut == null">
-               <tr class="bc_brown">
-                  <th colspan="4"> {{ l.ag }} </th>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.budget" :key="idx">
+               <tr v-if="l.grp" class="bc_yellow">
+                  <th> {{ l.ct }} </th>
+                  <th> {{ fs(l.sumb) }} </th>
+                  <th> {{ fs(l.sumo) }} </th>
+                  <th :class="{'neg': l.sumdiff < 0}"> {{ fs(l.sumdiff) }} </th>
+               </tr>
+               <tr v-else>
+                  <template v-if="l.type === 'bud'">
+                     <td> {{ l.notes }} </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                     <td class="nc"> --- </td>
+                     <td class="nc"> --- </td>
+                  </template>
+                  <template v-else>
+                     <td> <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link> </td>
+                     <td> {{ l.notes }} </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                     <td class="nc"> --- </td>
+                  </template>
                </tr>
             </template>
-            <template v-else>
-               <template v-if="l.isOut">
-                  <tr>
-                     <td v-if="l.ag != null"> {{ l.ag }} </td>
-                     <td v-else>  --- </td>
-                     <td class="nc"> </td>
-                     <td class="nc"> {{ fs(l.summ) }} </td>
-                     <td class="nc"> {{ fs(l.qnty) }} </td>
-                  </tr>
-               </template>
-               <template v-else>
-                  <tr>
-                     <td v-if="l.ag != null"> {{ l.ag }} </td>
-                     <td v-else>  --- </td>
-                     <td class="nc"> {{ fs(l.summ) }} </td>
-                     <td class="nc"> 0 </td>
-                     <td class="nc"> {{ fs(l.qnty) }} </td>
-                  </tr>
-               </template>
-            </template>
-         </template>
-         </tbody>
-      </table>
+            </tbody>
+         </table>
 
-<!--      Детализация по статьям-->
-      <table class="table">
-         <caption> Детализация по статьям </caption>
-         <thead class="bc_blue">
-         <tr>
-            <th style="width: 30%"> Дата </th>
-            <th style="width: 40%"> Операция </th>
-            <th style="width: 30%"> Сумма </th>
-         </tr>
-         </thead>
-         <tbody>
-         <template v-for="(l, idx) in rd.detct" :key="idx">
-            <template v-if="l.grp">
-               <tr class="bc_blue">
-                  <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
-                  <th class="nc"> {{ fs(l.summ) }} </th>
-               </tr>
-            </template>
-            <template v-else>
+   <!--      Приход по статьям      -->
+         <table class="table">
+            <caption> Приход по статьям </caption>
+            <thead class="bc_orange">
+            <tr>
+               <th style="width: 50%"> Статья прихода </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.prihps" :key="idx">
                <tr>
-                  <td>
-                     <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
-                     <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
-                  </td>
-                  <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
+                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
                   <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> {{ fs(l.pr) }} </td>
+                  <td class="nc"> {{ fs(l.qnty) }} </td>
                </tr>
             </template>
-         </template>
-         </tbody>
-      </table>
-   </div>
+            </tbody>
+            <tr>
+               <th> {{ rd.prihps_.ct }} </th>
+               <th> {{ fs(rd.prihps_.summ) }} </th>
+               <th> {{ fs(rd.prihps_.pr) }} </th>
+               <th> {{ fs(rd.prihps_.qnty) }} </th>
+            </tr>
+         </table>
 
-</div>
+   <!--      Расход по статьям      -->
+         <table class="table">
+            <caption> Расход по статьям </caption>
+            <thead class="bc_purple">
+            <tr>
+               <th style="width: 50%"> Статья расход </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.rashps" :key="idx">
+               <tr>
+                  <td> <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a> </td>
+                  <td class="nc"> {{ fs(l.summ) }} </td>
+                  <td class="nc"> {{ fs(l.pr) }} </td>
+                  <td class="nc"> {{ fs(l.qnty) }} </td>
+               </tr>
+            </template>
+            </tbody>
+            <tr>
+               <th> {{ rd.rashps_.ct }} </th>
+               <th> {{ fs(rd.rashps_.summ) }} </th>
+               <th> {{ fs(rd.rashps_.pr) }} </th>
+               <th> {{ fs(rd.rashps_.qnty) }} </th>
+            </tr>
+         </table>
+
+   <!--      Обороты агентов        -->
+         <table class="table">
+            <caption> Обороты агентов </caption>
+            <thead class="bc_brown">
+            <tr>
+               <th style="width: 50%"> Агент </th>
+               <th style="width: 20%"> Приход </th>
+               <th style="width: 20%"> Расход </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.obk" :key="idx">
+               <template v-if="l.isOut == null">
+                  <tr class="bc_brown">
+                     <th colspan="4"> {{ l.ag }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+                  <template v-if="l.isOut">
+                     <tr>
+                        <td v-if="l.ag != null"> {{ l.ag }} </td>
+                        <td v-else>  --- </td>
+                        <td class="nc"> </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                        <td class="nc"> {{ fs(l.qnty) }} </td>
+                     </tr>
+                  </template>
+                  <template v-else>
+                     <tr>
+                        <td v-if="l.ag != null"> {{ l.ag }} </td>
+                        <td v-else>  --- </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                        <td class="nc"> 0 </td>
+                        <td class="nc"> {{ fs(l.qnty) }} </td>
+                     </tr>
+                  </template>
+               </template>
+            </template>
+            </tbody>
+         </table>
+
+   <!--      Детализация по статьям -->
+         <table class="table">
+            <caption> Детализация по статьям </caption>
+            <thead class="bc_blue">
+            <tr>
+               <th style="width: 30%"> Дата </th>
+               <th style="width: 40%"> Операция </th>
+               <th style="width: 30%"> Сумма </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(l, idx) in rd.detct" :key="idx">
+               <template v-if="l.grp">
+                  <tr class="bc_blue">
+                     <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
+                     <th class="nc"> {{ fs(l.summ) }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+                  <tr>
+                     <td>
+                        <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
+                        <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
+                     </td>
+                     <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                  </tr>
+               </template>
+            </template>
+            </tbody>
+         </table>
+
+   <!-- Нижняя панель инструментов -->
+         <Toolbar class="mx-0 my-1 p-2">
+            <template #end>
+               <!--  Кнопки действий формы      -->
+               <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="$router.go(-1)"/>
+            </template>
+         </Toolbar>
+
+      </div>
+
+   </div>
 
 </template>
 
@@ -228,7 +237,7 @@ export default {
       // Форматирование суммы
       fs(sum) {
          if (sum !== undefined && sum !== null && !isNaN(sum))
-            return new Intl.NumberFormat('ru-RU').format(sum);
+            return new Intl.NumberFormat('ru-RU').format(Math.round(sum));
          else
             return ''
       },
@@ -260,8 +269,9 @@ export default {
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
-            // Выгрузка жанных
+            // Выгрузка данных
             this.rd = JSON.parse(response.data.report001);
+            document.title = `Отч 1: ${this.rd.proj}`;
             // clog(this.rd);
             this.reportReady = true;
          });
