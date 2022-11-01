@@ -19,6 +19,14 @@ export default {
       return {
          // ИД проекта
          projectId: Number(this.$route.params.projId),
+         // Проект
+         project: null,
+         // Операции проекта
+         finOpers: null,
+         // Статьи
+         costTypes: null,
+         // Агенты
+         agents: null,
          // Данные отчета
          rd: {},
          // Отчет готов
@@ -58,21 +66,46 @@ export default {
          // Запрос данных
          const reportQ = gql(`
             #graphql
-            query ($projectId: Int!) {
-                report001(projectId: $projectId)
+            query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
+               project(id: $projectId) {
+                  id, name, path,
+               },
+               finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
+                  id,
+                  ts,
+                  costType { id },
+                  agentFrom { id },
+                  agentTo { id },
+                  user,
+                  ucol,
+                  amount,
+                  notes,
+                  pq,
+              },
+              costTypes {
+                id, name, ord, out, color,
+              },
+              agents {
+                id, name, ord,
+              }
             }
          `);
          await apolloClient.query({
             query: reportQ,
             variables: {
                projectId: this.projectId,
+               tsBegin: -1,
+               tsEnd: -1,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Выгрузка данных
-            this.rd = JSON.parse(response.data.report001);
+            this.project = response.data.project;
+            this.finOpers = response.data.finopers;
+            this.costTypes = response.data.costTypes;
+            this.agents = response.data.agents;
             // document.title = `Отч 1: ${this.rd.proj}`;
-            clog(this.rd);
+            clog(this.project, this.finOpers, this.costTypes, this.agents);
             this.reportReady = true;
          });
       },
