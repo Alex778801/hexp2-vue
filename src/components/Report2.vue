@@ -5,10 +5,11 @@
    <div v-if="reportReady" id="ReportBody" class="m-2">
       <h2>Отчет форма №2</h2>
 
+<!--  Поля фильтра              -->
       <div class="FieldsHeader" :class="{'TwoColumns': !mobile}">
          <div class="field">
             <label for="beginF">Дата начала</label>
-            <Calendar inputId="beginF" v-model="begin" :class="{'errEmpty': errEmptyBegin}" dateFormat="dd MM yy (D)" showIcon/>
+            <Calendar inputId="beginF" dateFormat="dd MM yy (D)" showIcon/>
 <!--            <small v-if="errEmptyBegin" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>-->
          </div>
          <div class="field">
@@ -39,13 +40,71 @@
             <Dropdown inputId="agentTo" placeholder="<все агенты>" filter showClear
                       v-model="agentToId" :options="project.agList" optionLabel="name" optionValue="id" />
          </div>
+         <div class="field" style="margin-top: 2.6rem">
+            <Button label="Применить фильтр" icon="pi pi-check" class="p-button-sm" @click="buildReport()" style="height: 2.3rem"/>
+         </div>
       </div>
 
-      <toolbar class="m-0 p-2">
-         <template #end>
-            <Button label="Применить" icon="pi pi-check" class="p-button-sm" @click="apply()"/>
-         </template>
-      </toolbar>
+<!--      Заголовок             -->
+      <table class="table">
+         <thead class="bc_green">
+         <tr>
+            <th style="width: 50%" class="ar"> Проект: </th>
+            <th style="width: 50%" class="al"> {{ rd.proj }}</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr v-for="(l, idx) in rd.head" :key="idx">
+            <td class="ar"> {{ l.param }}: </td>
+            <td> {{ l.value }} </td>
+         </tr>
+         </tbody>
+      </table>
+
+<!--      Обороты по статьям    -->
+      <div>
+         <table class="table">
+            <caption> Обороты по статьям <br> (период/год) </caption>
+            <thead class="bc_yellow">
+            <tr>
+               <th style="width: 50%"> Статья </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+               <template v-for="(l, idx) in rd.moveOnCt" :key="idx">
+                  <tr>
+                     <td rowspan="2">
+                        <span v-if="!l.isOut" class="errorlist">[+]</span>
+                        <a :href="'#ctdet_' + l.ctId"> {{ l.ct }} </a>
+                     </td>
+                     <td class="nc"> {{ fs(l.Psum) }} </td>
+                     <td class="nc"> {{ fs(l.Ppr) }} </td>
+                     <td class="nc"> {{ fs(l.Pqnty) }} </td>
+                  </tr>
+                  <tr class="bc_yellow_50">
+                     <td class="nc"> {{ fs(l.Ysum) }} </td>
+                     <td class="nc"> {{ fs(l.Ypr) }} </td>
+                     <td class="nc"> {{ fs(l.Yqnty)}} </td>
+                  </tr>
+               </template>
+               <tr>
+                  <th rowspan="2"> Итого  </th>
+                  <th> {{ fs(rd.moveOnCt_.Psum) }} </th>
+                  <th> {{ fs(rd.moveOnCt_.Ppr) }} </th>
+                  <th> {{ fs(rd.moveOnCt_.Pqnty) }} </th>
+               </tr>
+               <tr class="bc_yellow_50">
+                  <th> {{ fs(rd.moveOnCt_.Ysum) }} </th>
+                  <th> {{ fs(rd.moveOnCt_.Ypr) }} </th>
+                  <th> {{ fs(rd.moveOnCt_.Yqnty) }} </th>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+
 
    </div>
 
@@ -135,7 +194,7 @@ export default {
       // Форматирование суммы
       fs(sum) {
          if (sum !== undefined && sum !== null && !isNaN(sum))
-            return new Intl.NumberFormat('ru-RU').format(sum);
+            return new Intl.NumberFormat('ru-RU').format(Math.round(sum));
          else
             return ''
       },
@@ -179,8 +238,12 @@ export default {
             this.reportReady = true;
          });
       },
-   },
 
+      // Построить отчет
+      buildReport() {
+         this.fetchReportData();
+      }
+   },
 }
 </script>
 
@@ -302,6 +365,14 @@ td {
 
 .al {
    text-align: start;
+}
+
+.errorlist {
+   color: red !important;
+}
+
+.red {
+   color: red !important;
 }
 
 .neg {
