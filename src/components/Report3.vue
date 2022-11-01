@@ -61,6 +61,14 @@ export default {
          return moment(ts).format("DD MMMM YYYY ddd HH:mm:ss");
       },
 
+      getCostType(id) {
+         return this.costTypes.find( i => i.id === id);
+      },
+
+      getAgent(id) {
+         return this.agents.find( i => i.id === id);
+      },
+
       // Отобразить отчет
       async fetchReportData() {
          // Запрос данных
@@ -82,10 +90,10 @@ export default {
                   notes,
               },
               costTypes {
-                id, name, ord, out, color,
+                id, pid, name, ord, out, color,
               },
               agents {
-                id, name, ord,
+                id, pid, name, ord,
               }
             }
          `);
@@ -105,6 +113,25 @@ export default {
             this.agents = response.data.agents;
             // document.title = `Отч 1: ${this.rd.proj}`;
             clog(this.project, this.finOpers, this.costTypes, this.agents);
+            clog('---');
+
+            this.rd = _(this.finOpers)
+                .groupBy('ctId')
+                .map( ( i, id ) => ({
+                   ctId: id,
+                   finOpers: i,
+                   sum: _.sumBy(i, 'amount')
+                }) )
+                // .sortBy( i => {
+                //    clog(i);
+                   // const ct = this.getCostType(id);
+                   // return [ ct.pid, ct.ord ];
+                   // })
+                .value();
+
+            clog(this.rd);
+
+            //
             this.reportReady = true;
          });
       },
