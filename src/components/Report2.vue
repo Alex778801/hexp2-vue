@@ -50,7 +50,9 @@
          <thead class="bc_green">
          <tr>
             <th style="width: 50%" class="ar"> Проект: </th>
-            <th style="width: 50%" class="al"> {{ rd.proj }}</th>
+            <th style="width: 50%" class="al">
+               <router-link :to="'/project/' + projectId">{{ rd.proj }}</router-link>
+            </th>
          </tr>
          </thead>
          <tbody>
