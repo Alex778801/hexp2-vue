@@ -435,7 +435,6 @@ export default {
    max-width: 40rem;
    margin-left: auto;
    margin-right: auto;
-   padding: 2rem;
 }
 
 .sizes {
