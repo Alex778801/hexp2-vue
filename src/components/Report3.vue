@@ -73,14 +73,13 @@ export default {
                finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
                   id,
                   ts,
-                  costType { id },
-                  agentFrom { id },
-                  agentTo { id },
+                  ctId,
+                  agFromId,
+                  agToId,
                   user,
                   ucol,
                   amount,
                   notes,
-                  pq,
               },
               costTypes {
                 id, name, ord, out, color,
