@@ -105,6 +105,88 @@
          </table>
       </div>
 
+<!--      Обороты по агентам     -->
+      <div>
+         <table class="table">
+            <caption> Обороты по агентам <br> (период/год) </caption>
+            <thead class="bc_orange">
+            <tr>
+               <th style="width: 50%"> Статья </th>
+               <th style="width: 25%"> Сумма </th>
+               <th style="width: 15%"> % </th>
+               <th style="width: 10%"> * </th>
+            </tr>
+            </thead>
+            <tbody>
+               <template v-for="(l, idx) in rd.moveOnAg" :key="idx">
+               <template v-if="l.hdr">
+                  <tr class="bc_orange">
+                     <th colspan="4"> {{ l.ag }} </th>
+                  </tr>
+               </template>
+               <template v-else>
+                  <tr>
+                     <td rowspan="2">
+                        <span v-if="l.ag == null">---</span>
+                        <span v-else> <a :href="'#agdet_' + l.agId">{{ l.ag }}</a></span>
+                     </td>
+                     <td class="nc"> {{ fs(l.Psum) }} </td>
+                     <td class="nc"> {{ fs(l.Ppr) }} </td>
+                     <td class="nc"> {{ fs(l.Pqnty) }} </td>
+                  </tr>
+                  <tr class="bc_orange_50">
+                     <td class="nc"> {{ fs(l.Ysum) }} </td>
+                     <td class="nc"> {{ fs(l.Ypr) }} </td>
+                     <td class="nc"> {{ fs(l.Yqnty) }} </td>
+                  </tr>
+               </template>
+               </template>
+               <tr class="bc_orange"><th colspan="4"> И Т О Г О </th></tr>
+               <tr>
+                  <th rowspan="2"> </th>
+                  <th> {{ fs(rd.moveOnAgFrom_.Psum) }} </th>
+                  <th> {{ fs(rd.moveOnAgFrom_.Ppr) }} </th>
+                  <th> {{ fs(rd.moveOnAgFrom_.Pqnty) }} </th>
+               </tr>
+               <tr class="bc_orange_50">
+                  <th> {{ fs(rd.moveOnAgFrom_.Ysum) }} </th>
+                  <th> {{ fs(rd.moveOnAgFrom_.Ypr) }} </th>
+                  <th> {{ fs(rd.moveOnAgFrom_.Yqnty) }} </th>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+
+
+<!--      Обороты по месяцам   -->
+      <div>
+         <table class="table">
+            <caption> Обороты по месяцам </caption>
+            <thead class="bc_purple">
+            <tr>
+               <th style="width: 50%"> Месяц </th>
+               <th style="width: 30%"> Сумма </th>
+               <th style="width: 20%"> % </th>
+            </tr>
+            </thead>
+            <tbody>
+               <template v-for="(l, idx) in rd.months" :key="idx">
+                  <tr>
+                     <td > {{ fs(l.month) }} </td>
+                     <td class="nc"> {{ fs(l.summ) }} </td>
+                     <td class="nc"> {{ fs(l.pr) }} </td>
+                  </tr>
+               </template>
+               <tr>
+                  <th> {{ rd.months_.month }} </th>
+                  <th> {{ fs(rd.months_.summ) }} </th>
+                  <th>  </th>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+
+
 
    </div>
 
