@@ -5,12 +5,47 @@
    <div v-if="reportReady" id="ReportBody" class="m-2">
       <h2>Отчет форма №2</h2>
 
+      <div class="FieldsHeader" :class="{'TwoColumns': !mobile}">
+         <div class="field">
+            <label for="beginF">Дата начала</label>
+            <Calendar inputId="beginF" v-model="begin" :class="{'errEmpty': errEmptyBegin}" dateFormat="dd MM yy (D)" showIcon/>
+<!--            <small v-if="errEmptyBegin" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>-->
+         </div>
+         <div class="field">
+            <label for="endF">Дата конца</label>
+            <Calendar inputId="endF" v-model="end" dateFormat="dd MM yy (D)" showIcon/>
+<!--            <small v-if="errEmptyEnd" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>-->
+         </div>
+         <div class="field">
+            <label for="monthF">Месяц/год</label>
+            <Calendar inputId="monthF" v-model="month" view="month" dateFormat="MM yy" showIcon/>
+         </div>
+         <div class="field">
+            <label for="yearF">Год</label>
+            <Calendar inputId="yearF" v-model="year" view="year" dateFormat="yy" showIcon/>
+         </div>
+         <div class="field">
+            <label for="costType">Статья</label>
+            <Dropdown inputId="costType" placeholder="<все статьи>" filter showClear
+                      v-model="costTypeId" :options="project.ctList" optionLabel="name" optionValue="id" />
+         </div>
+         <div class="field">
+            <label for="agentFrom">Агент откуда</label>
+            <Dropdown inputId="agentFrom" placeholder="<все агенты>" filter showClear
+                      v-model="agentFromId" :options="project.agList" optionLabel="name" optionValue="id" />
+         </div>
+         <div class="field">
+            <label for="agentTo">Агент куда</label>
+            <Dropdown inputId="agentTo" placeholder="<все агенты>" filter showClear
+                      v-model="agentToId" :options="project.agList" optionLabel="name" optionValue="id" />
+         </div>
+      </div>
 
-
-
-
-
-
+      <toolbar class="m-0 p-2">
+         <template #end>
+            <Button label="Применить" icon="pi pi-check" class="p-button-sm" @click="apply()"/>
+         </template>
+      </toolbar>
 
    </div>
 
@@ -23,7 +58,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog} from "@/components/tools/vue-utils";
+import {clog, isMobile} from "@/components/tools/vue-utils";
 import moment from "moment/moment";
 
 export default {
@@ -39,6 +74,53 @@ export default {
          rd: {},
          // Отчет готов
          reportReady: false,
+         // Дата начала
+         begin: null,
+         // Дата конца
+         end: null,
+         // Месяц
+         month: null,
+         // Год
+         year: null,
+         // Статья
+         costTypeId: null,
+         // Агент откуда
+         agentFromId: null,
+         // Агент куда
+         agentToId: null,
+      }
+   },
+
+   computed: {
+      mobile() {
+         return isMobile();
+      },
+      // Ошибка - пустой ввод пол Начало
+      errEmptyBegin() {
+         return isNaN(Date.parse(this.begin))
+      },
+      // Ошибка - пустой ввод пол Конец
+      errEmptyEnd() {
+         return isNaN(Date.parse(this.end))
+      },
+   },
+
+   watch: {
+      // При выборе месяца - меняем начало и конец периода
+      month() {
+         const y = this.month.getFullYear(), m = this.month.getMonth();
+         const firstDay = new Date(y, m, 1);
+         const lastDay = new Date(y, m + 1, 0);
+         this.begin = firstDay;
+         this.end =lastDay;
+      },
+      // При выборе года
+      year() {
+         const y = this.year.getFullYear();
+         const firstDay = new Date(y, 0, 1);
+         const lastDay = new Date(y, 12, 0);
+         this.begin = firstDay;
+         this.end =lastDay;
       }
    },
 
@@ -97,11 +179,49 @@ export default {
             this.reportReady = true;
          });
       },
-   }
+   },
+
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.errEmpty {
+   color: red;
+}
+
+.TwoColumns {
+   column-count: 2;
+   column-fill: auto;
+   column-span: none;
+   column-gap: 2rem;
+}
+
+.FieldsHeader {
+   max-width: 40rem;
+   margin-left: auto;
+   margin-right: auto;
+   padding: 2rem;
+}
+
+.sizes {
+   .p-inputtext {
+      display: block;
+      margin-bottom: .5rem;
+
+      &:last-child {
+         margin-bottom: 0;
+      }
+   }
+}
+
+.field * {
+   width: 100%;
+}
+
+label {
+   color: var(--primary-500);
+}
 
 @supports (-webkit-touch-callout: none) {
    @media print {

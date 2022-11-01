@@ -124,7 +124,7 @@ export default {
 
 
 .field {
-   color: #67a2f1;
+   color: var(--primary-400);
    width: 100%;
    padding-bottom: 1rem;
 }
