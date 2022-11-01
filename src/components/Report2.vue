@@ -9,7 +9,7 @@
       <div class="FieldsHeader" :class="{'TwoColumns': !mobile}">
          <div class="field">
             <label for="beginF">Дата начала</label>
-            <Calendar inputId="beginF" dateFormat="dd MM yy (D)" showIcon/>
+            <Calendar inputId="beginF" v-model="begin" dateFormat="dd MM yy (D)" showIcon/>
 <!--            <small v-if="errEmptyBegin" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>-->
          </div>
          <div class="field">
@@ -385,8 +385,10 @@ export default {
          // Запрос данных
          const reportQ = gql(`
             #graphql
-            query ($projectId: Int!) {
-               report002(projectId: $projectId),
+            query ($projectId: Int!, $beginDate: Int, $endDate: Int,
+                   $costTypeId: Int, $agentFromId: Int, $agentToId: Int) {
+               report002(projectId: $projectId, beginDate: $beginDate, endDate: $endDate,
+                         costTypeId: $costTypeId, agentFromId: $agentFromId, agentToId: $agentToId),
                project(id: $projectId) {
                   id, name, path,
                   ctList { id, name, },
@@ -397,7 +399,12 @@ export default {
          await apolloClient.query({
             query: reportQ,
             variables: {
-               projectId: this.projectId,
+               projectId:     this.projectId,
+               beginDate:     this.begin           == null ? -1 : moment(this.begin).unix(),
+               endDate:       this.end             == null ? -1 : moment(this.end).unix(),
+               costTypeId:    this.costTypeId      == null ? -1 : this.costTypeId,
+               agentFromId:   this.agentFromId     == null ? -1 : this.agentFromId,
+               agentToId:     this.agentToId       == null ? -1 : this.agentToId,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
