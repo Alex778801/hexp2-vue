@@ -243,7 +243,7 @@
                <template v-else>
                   <template v-if="l.grp">
                      <tr class="bc_green">
-                        <th id="agdet_{{ l.agId }}" colspan="2"> {{ l.ag }} </th>
+                        <th :id="'agdet_' + l.agId" colspan="2"> {{ l.ag }} </th>
                         <th class="nc"> {{ fs(l.summ) }} </th>
                      </tr>
                   </template>
@@ -442,6 +442,7 @@ export default {
    max-width: 40rem;
    margin-left: auto;
    margin-right: auto;
+   margin-bottom: 1rem;
 }
 
 .sizes {
