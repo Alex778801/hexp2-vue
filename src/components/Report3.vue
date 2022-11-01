@@ -117,16 +117,20 @@ export default {
 
             this.rd = _(this.finOpers)
                 .groupBy('ctId')
-                .map( ( i, id ) => ({
-                   ctId: id,
-                   finOpers: i,
-                   sum: _.sumBy(i, 'amount')
-                }) )
-                // .sortBy( i => {
-                //    clog(i);
-                   // const ct = this.getCostType(id);
-                   // return [ ct.pid, ct.ord ];
-                   // })
+                .map( ( i, id ) => {
+                   const _id = Number(id);
+                   const ct = this.getCostType(_id);
+                   return {
+                      ctId: _id,
+                      ctPid: ct.pid,
+                      ctOrd: ct.ord,
+                      ct: ct,
+                      finOpers: i,
+                      sum: _.sumBy(i, 'amount'),
+                      cnt: _.countBy(i),
+                   }
+                })
+                .sortBy( ['ctPid', 'ctOrd'] )
                 .value();
 
             clog(this.rd);
