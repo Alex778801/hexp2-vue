@@ -331,20 +331,26 @@ export default {
 
    watch: {
       // При выборе месяца - меняем начало и конец периода
-      month() {
+      month(newVal) {
+         if (newVal == null)
+            return
          const y = this.month.getFullYear(), m = this.month.getMonth();
          const firstDay = new Date(y, m, 1);
          const lastDay = new Date(y, m + 1, 0);
          this.begin = firstDay;
          this.end =lastDay;
+         this.year = null;
       },
       // При выборе года
-      year() {
+      year(newVal) {
+         if (newVal == null)
+            return
          const y = this.year.getFullYear();
          const firstDay = new Date(y, 0, 1);
          const lastDay = new Date(y, 12, 0);
          this.begin = firstDay;
          this.end =lastDay;
+         this.month = null;
       }
    },
 
@@ -412,7 +418,7 @@ export default {
             this.rd = JSON.parse(response.data.report002);
             this.project = response.data.project;
             document.title = `Отч 2: ${this.rd.proj}`;
-            clog(this.rd, this.project);
+            // clog(this.rd, this.project);
             this.reportReady = true;
          });
       },
