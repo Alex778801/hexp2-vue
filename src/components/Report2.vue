@@ -172,7 +172,7 @@
             <tbody>
                <template v-for="(l, idx) in rd.months" :key="idx">
                   <tr>
-                     <td > {{ fs(l.month) }} </td>
+                     <td > {{ fdMY(l.month) }} </td>
                      <td class="nc"> {{ fs(l.summ) }} </td>
                      <td class="nc"> {{ fs(l.pr) }} </td>
                   </tr>
@@ -182,6 +182,42 @@
                   <th> {{ fs(rd.months_.summ) }} </th>
                   <th>  </th>
                </tr>
+            </tbody>
+         </table>
+      </div>
+
+
+<!--      Детализация по статьям      -->
+
+      <div>
+         <table class="table">
+            <caption> Детализация по статьям </caption>
+            <thead class="bc_blue">
+            <tr>
+               <th style="width: 30%"> Дата </th>
+               <th style="width: 40%"> Операция </th>
+               <th style="width: 30%"> Сумма </th>
+            </tr>
+            </thead>
+            <tbody>
+               <template v-for="(l, idx) in rd.detct" :key="idx">
+                  <template v-if="l.grp">
+                     <tr class="bc_blue">
+                        <th :id="'ctdet_' + l.ctId" colspan="2"> {{ l.ct }} </th>
+                        <th class="nc"> {{ fs(l.summ) }} </th>
+                     </tr>
+                  </template>
+                  <template v-else>
+                     <tr>
+                        <td>
+                           <router-link :to="'/finoper/' + l.pk">{{ fd(l.moment) }}</router-link>
+                           <span class="font-monospace text-info" :style="{'color': l.userColor}">  @{{ l.user }} </span>
+                        </td>
+                        <td> <strong> {{ l.agF }} <span class="agarw">→</span> {{ l.agT }} </strong> <br> {{ l.notes }} </td>
+                        <td class="nc"> {{ fs(l.summ) }} </td>
+                     </tr>
+                  </template>
+               </template>
             </tbody>
          </table>
       </div>
@@ -290,6 +326,11 @@ export default {
       // Форматировать дату 2
       fd2(ts) {
          return moment(ts).format("DD MMMM YYYY ddd HH:mm:ss");
+      },
+
+      // Форматировать дату - месяц/год
+      fdMY(ts) {
+         return moment(ts).format("MMMM YYYY");
       },
 
       // Отобразить отчет
