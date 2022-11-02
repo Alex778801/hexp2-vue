@@ -302,7 +302,6 @@ export default {
 
       // Получить справочник
       async fetchList() {
-         // clog(`fetchList ${this.model}`);
          // Запрос справочника
          const listQ = gql(this.modelQ);
          await apolloClient.query({query: listQ, fetchPolicy: "no-cache"}).then((response) => {
@@ -316,6 +315,7 @@ export default {
                    } else return a.pid - b.pid;
                 }
             )
+            // clog(this.list);
          }).catch((error) => authUtils.err(error));
       },
 

@@ -62,17 +62,27 @@
 
 <!-- Отчет                               -->
    <div v-if="reportReady">
-      <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
-         <div style="background-color: #6ba1e8">
-            {{ ct.ct.name }} {{ fs(ct.sum) }} {{ ct.cnt }}
-            <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
-         </div>
-         <div v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
-            {{ fd(fo.ts) }} {{ fo.notes }} {{ fs(fo.amount) }}
+      <div class="CostTypeReport">
+         <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
+            <div class="Group" style="background-color: #6ba1e8">
+               <div class="CheckBox"><Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" /></div>
+               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">!</div>
+               <div class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></div>
+               <div class="TotalsA">{{ fs(ct.sumA) }} ({{ ct.cntA }})</div>
+               <div class="TotalsB">{{ fs(ct.sumB) }} ({{ ct.cntB }})</div>
+            </div>
+            <div class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
+               <div class="Ts">{{ fd(fo.ts) }}</div>
+               <div class="Agents">
+                  <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                  <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+               </div>
+               <div class="Notes">{{ fo.notes }}</div>
+               <div class="Amount">{{ fs(fo.amount) }}</div>
+            </div>
          </div>
       </div>
    </div>
-
 </template>
 
 <script>
@@ -201,19 +211,14 @@ export default {
              .groupBy('ctId')
              .map( ( i, id ) => {
                 const _id = Number(id);
-                // const ct = this.getCostType(_id);
                 const sortFinOpers = _(i).sortBy('ts').value();
                 return {
                    ctId: _id,
-                   // ctPid: ct.pid,
-                   // ctOrd: ct.ord,
-                   // ct: ct,
                    finOpers: sortFinOpers,
                    sum: _.sumBy(i, 'amount'),
                    cnt: _.countBy(i, '').undefined,
                 }
              })
-             // .sortBy( ['ctPid', 'ctOrd'] )
              .value();
          // -----------------------------------------
          // Референсный период
@@ -224,19 +229,13 @@ export default {
              .groupBy('ctId')
              .map( ( i, id ) => {
                 const _id = Number(id);
-                // const ct = this.getCostType(_id);
-                const sortFinOpers = _(i).sortBy('ts').value();
                 return {
                    ctId: _id,
-                   // ctPid: ct.pid,
-                   // ctOrd: ct.ord,
-                   // ct: ct,
                    finOpers: [],
                    sum: _.sumBy(i, 'amount'),
                    cnt: _.countBy(i, '').undefined,
                 }
              })
-             // .sortBy( ['ctPid', 'ctOrd'] )
              .value();
          // -----------------------------------------
          // Объединение периодов
