@@ -43,19 +43,18 @@
          </div>
       </Fieldset>
 <!--  Фильтры    -->
-      <Fieldset>
-         <template #legend> Референсный период </template>
+      <Fieldset style="align-self: flex-start">
+         <template #legend> Фильтры </template>
          <div class="Field">
             <label>Статьи</label>
-            <div class="Field">
-               <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
-            </div>
+            <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
          </div>
          <div class="Field">
             <label>Агенты</label>
-            <div class="Field">
-               <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
-            </div>
+            <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
+         </div>
+         <div class="Field">
+            <Button label="Применить" icon="pi pi-check" @click="buildReport()"/>
          </div>
       </Fieldset>
 <!--  --  -->
@@ -273,9 +272,16 @@ export default {
 <style lang="scss" scoped>
 
 .Setup {
+   width: auto;
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: center;
+   margin: 1rem 1rem;
+
    .p-fieldset {
       width: fit-content;
       margin: 0.5rem 0.2rem;
+      padding-top: 0;
    }
 
    .Field {
@@ -292,6 +298,11 @@ export default {
          width: 15rem;
       }
 
+      .p-button {
+         display: block;
+         width: 10rem;
+         margin: 1.8rem auto 0 auto;
+      }
 
 
    }
