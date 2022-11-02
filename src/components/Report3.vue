@@ -280,7 +280,7 @@ export default {
 
    .p-fieldset {
       width: fit-content;
-      margin: 0.5rem 0.2rem;
+      margin: 0.7rem 0.7rem;
       padding-top: 0;
    }
 
