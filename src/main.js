@@ -37,6 +37,7 @@ import Carousel from 'primevue/carousel';
 import FileUpload from 'primevue/fileupload';
 import Image from 'primevue/image';
 import ConfirmPopup from 'primevue/confirmpopup';
+import Panel from 'primevue/panel';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -161,6 +162,7 @@ createApp(App)
     .component('FileUpload', FileUpload)
     .component('Image', Image)
     .component('ConfirmPopup', ConfirmPopup)
+    .component('Panel', Panel)
     .mount('#app');
 
 
