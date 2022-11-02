@@ -1,7 +1,7 @@
 <template>
 
-<!--  Настройки отчета                   -->
-   <div class="Setup" style="display:none">
+<!--  Настройки отчета        style="display:none"           -->
+   <div class="Setup" >
 <!--  Период А    -->
       <Fieldset>
          <template #legend> Отчетный период </template>
@@ -178,6 +178,17 @@ export default {
       }
    },
 
+   computed: {
+      // Выбраны все элементы фильтра по Статьям
+      fCostTypesAllSelected() {
+         return this.costTypes.length === this.fCostTypes.length;
+      },
+      // Выбраны все элементы фильтра по Агентам
+      fAgentsAllSelected() {
+         return this.agents.length === this.fAgents.length;
+      },
+   },
+
    mounted() {
       // Локаль
       moment.locale("RU");
@@ -210,21 +221,42 @@ export default {
          // return moment(ts).format("DD MMM YY ddd HH:mm");
       },
 
+      // Получить статью по ИД
       getCostType(id) {
          return this.costTypes.find( i => i.id === id);
       },
 
+      // Получить агента по ИД
       getAgent(id) {
          return this.agents.find( i => i.id === id);
       },
 
+      // Проверить - статья выбрана в фильтре
+      fCostTypeSelected(id) {
+         return this.fCostTypes.some( i => i.id === id );
+      },
+
+      // Проверить - агент выбран в фильтре
+      fAgentSelected(id) {
+         return this.fAgents.some( i => i.id === id );
+      },
+
+      // Проверить фин операцию на соответствие фильтру
+      checkFilter(i) {
+         const ct = this.fCostTypesAllSelected || this.fCostTypeSelected(i.ctId);
+         const ag = this.fAgentsAllSelected || (this.fAgentSelected(i.agFromId) || this.fAgentSelected(i.agToId));
+         clog(ct, ag, '---')
+         return ct && ag;
+      },
+
+      // Построить отчет по Статьям
       buildCostTypeReport() {
          // -----------------------------------------
          // Отчетный период
          const beginTsA = moment(this.beginA).unix();
          const endTsA = moment(this.endA).unix();
          const dataA = _(this.finOpers)
-             .filter( i => i.ts >= beginTsA && i.ts <= endTsA)
+             .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
              .groupBy('ctId')
              .map( ( i, id ) => {
                 const _id = Number(id);
@@ -242,7 +274,7 @@ export default {
          const beginTsB = moment(this.beginB).unix();
          const endTsB = moment(this.endB).unix();
          const dataB = _(this.finOpers)
-             .filter( i => i.ts >= beginTsB && i.ts <= endTsB)
+             .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
              .groupBy('ctId')
              .map( ( i, id ) => {
                 const _id = Number(id);
@@ -294,6 +326,17 @@ export default {
          return dataAB;
       },
 
+      // Построить отчет
+      buildReport() {
+         // this.reportReady = false;
+         clog(this.project, this.costTypes, this.agents, this.finOpers);
+         // Построение элементов отчета
+         this.rd.costTypes = this.buildCostTypeReport()
+         // --
+         clog(this.rd.costTypes);
+         this.reportReady = true;
+      },
+
       // Отобразить отчет
       async fetchReportData() {
          // Запрос данных
@@ -335,10 +378,7 @@ export default {
             this.agents.forEach( i => this.fAgents.push(i) );
             this.finOpers = response.data.finopers;
             document.title = `Отч 3: ${this.project.name}`;
-            // clog(this.project, this.costTypes, this.agents, this.finOpers);
-            this.rd.costTypes = this.buildCostTypeReport()
-            clog(this.rd.costTypes);
-            this.reportReady = true;
+            this.buildReport();
          });
       },
    }
@@ -385,7 +425,7 @@ export default {
 }
 
 .CostTypeReport {
-   max-width: 50rem;
+   max-width: 60rem;
    margin: 0.5rem auto;
    padding: 0.5rem;
 
