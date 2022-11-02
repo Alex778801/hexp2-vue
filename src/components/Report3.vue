@@ -67,8 +67,9 @@
       <div class="CostTypeReport">
          <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
             <div class="Group">
-               <div class="CheckBox"><Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" /></div>
-               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}"></div>
+               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
+                  <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
+               </div>
                <div class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></div>
                <div class="TotalsA">{{ fs(ct.sumA) }}<br>({{ ct.cntA }})</div>
                <div class="TotalsB">{{ fs(ct.sumB) }}<br>({{ ct.cntB }})</div>
@@ -389,14 +390,10 @@ export default {
 
    .Group {
       display: grid;
-      grid-template-columns: 2rem 1fr 3fr 2fr 2fr;
+      grid-template-columns: 1fr 3fr 2fr 2fr;
       gap: 0.3rem;
       background-color: var(--surface-200);
       height: 4rem;
-
-      .CheckBox {
-
-      }
 
       .TotalsA, .TotalsB {
          text-align: center;
