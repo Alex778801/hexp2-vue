@@ -64,7 +64,7 @@
    <div v-if="reportReady">
 
 <!--  Отчет по Статьям    -->
-      <div class="ReportTable" style="display:none">
+      <div class="ReportTable">
          <table>
             <caption> Отчет по статьям </caption>
             <tr>
@@ -105,15 +105,13 @@
       </div>
 
 <!--  График по месяцам-->
-      <div>
-
-
-
-
+      <div class="GraphMonth">
+         <h3> Суммы по месяцам </h3>
+         <Chart type="bar" :data="monthGraphData" :options="monthGraphOptions" />
       </div>
 
 <!-- Отчет Контрагенты Откуда  -->
-      <div class="ReportTable" style="display:none">
+      <div class="ReportTable">
          <table>
             <caption> Отчет по контрагентам ОТКУДА </caption>
             <tr>
@@ -155,7 +153,7 @@
       </div>
 
 <!-- Отчет Контрагенты Куда  -->
-      <div class="ReportTable" style="display:none">
+      <div class="ReportTable">
          <table>
             <caption> Отчет по контрагентам КУДА </caption>
             <tr>
@@ -237,6 +235,44 @@ export default {
          agents: null,
          // Данные отчета
          rd: [],
+         // Данные графика по месяцам
+         monthGraphData: {
+            labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноядрь', 'Декабрь'],
+            datasets: [
+               {
+                  label: 'Референсный период',
+                  backgroundColor: '#42A5F5',
+                  data: [],
+               },
+            ]
+         },
+         monthGraphOptions: {
+            plugins: {
+               legend: {
+                  labels: {
+                     color: '#495057'
+                  }
+               }
+            },
+            scales: {
+               x: {
+                  ticks: {
+                     color: '#495057'
+                  },
+                  grid: {
+                     color: '#ebedef'
+                  }
+               },
+               y: {
+                  ticks: {
+                     color: '#495057'
+                  },
+                  grid: {
+                     color: '#ebedef'
+                  }
+               }
+            }
+         },
          // Отчет готов
          reportReady: false,
       }
@@ -456,9 +492,9 @@ export default {
                 }
              })
              .value();
-         // --
-         clog(dataB);
-         return dataB;
+         // Выгрузим данные в график
+         // clog(dataB);
+         this.monthGraphData.datasets[0].data = dataB.map( i => i.sum );
       },
 
       // Построить отчет по Агенты ОТКУДА
@@ -620,12 +656,12 @@ export default {
          // this.reportReady = false;
          // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
-         // this.rd.costType = this.buildCostTypeReport()
-         this.rd.month = this.buildMonthReport()
-         // this.rd.agentFrom = this.buildAgentFromReport()
-         // this.rd.agentTo = this.buildAgentToReport()
+         this.rd.costType = this.buildCostTypeReport()
+         this.buildMonthReport()
+         this.rd.agentFrom = this.buildAgentFromReport()
+         this.rd.agentTo = this.buildAgentToReport()
          // --
-         // clog(this.rd.costType, this.rd.month, this.rd.agentFrom, this.rd.agentTo);
+         // clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
          this.reportReady = true;
       },
 
@@ -785,6 +821,12 @@ export default {
    .Cnt {
       color: var(--text-color-secondary);
    }
+}
+
+.GraphMonth {
+   max-width: 60rem;
+   margin: 0.5rem auto;
+   padding: 0.5rem;
 }
 
 // Цвета фона

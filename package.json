@@ -26,6 +26,7 @@
     "@vue/apollo-option": "^4.0.0-alpha.20",
     "apollo-upload-client": "^17.0.0",
     "axios": "^1.1.2",
+    "chart.js": "^3.9.1",
     "ckeditor5-custom-build": "file:ckeditor5",
     "core-js": "^3.8.3",
     "graphql": "^16.6.0",
