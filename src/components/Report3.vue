@@ -1,6 +1,16 @@
 <template>
 
-   111
+   <div v-if="reportReady">
+      <div v-for="(ct, idx) in rd" :key="idx" >
+         <div style="background-color: #6ba1e8">
+            {{ ct.ct.name }} {{ fs(ct.sum) }} {{ ct.cnt }}
+            <Checkbox v-model="ct.expanded" :binary="true" />
+         </div>
+         <div v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
+            {{ fd(fo.ts) }} {{ fo.notes }} {{ fs(fo.amount) }}
+         </div>
+      </div>
+   </div>
 
 </template>
 
@@ -52,13 +62,8 @@ export default {
 
       // Форматировать дату
       fd(ts) {
-         // return moment.unix(ts).format("DD MMM YY ddd HH:mm");
-         return moment(ts).format("DD MMM YY ddd HH:mm");
-      },
-
-      // Форматировать дату 2
-      fd2(ts) {
-         return moment(ts).format("DD MMMM YYYY ddd HH:mm:ss");
+         return moment.unix(ts).format("DD MMM YY ddd HH:mm");
+         // return moment(ts).format("DD MMM YY ddd HH:mm");
       },
 
       getCostType(id) {
@@ -127,7 +132,8 @@ export default {
                       ct: ct,
                       finOpers: i,
                       sum: _.sumBy(i, 'amount'),
-                      cnt: _.countBy(i),
+                      cnt: _.countBy(i, '').undefined,
+                      expanded: true,
                    }
                 })
                 .sortBy( ['ctPid', 'ctOrd'] )
