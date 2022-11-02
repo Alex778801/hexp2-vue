@@ -104,6 +104,14 @@
          </table>
       </div>
 
+<!--  График по месяцам-->
+      <div>
+
+
+
+
+      </div>
+
 <!-- Отчет Контрагенты Откуда  -->
       <div class="ReportTable" style="display:none">
          <table>
