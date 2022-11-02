@@ -157,7 +157,7 @@ export default {
       moment.locale("RU");
       // Настройка периодов - Отчетный
       const now = new Date();
-      let y = now.getFullYear(), m = now.getMonth();
+      let y = now.getFullYear(), m = now.getMonth() - 2;
       this.beginA = new Date(y, m, 1);
       this.endA = new Date(y, m + 1, 0);
       this.monthA = now;
@@ -236,10 +236,14 @@ export default {
             this.finOpers = response.data.finopers;
             document.title = `Отч 3: ${this.project.name}`;
 
-            clog(this.project, this.finOpers, this.costTypes, this.agents);
+            clog(this.project, this.costTypes, this.agents, this.finOpers);
             clog('---');
 
-            this.rd = _(this.finOpers)
+            // Отчетный период
+            const beginTsA = moment(this.beginA).unix();
+            const endTsA = moment(this.endA).unix();
+            const dataA = _(this.finOpers)
+                .filter( i => i.ts >= beginTsA && i.ts <= endTsA)
                 .groupBy('ctId')
                 .map( ( i, id ) => {
                    const _id = Number(id);
@@ -259,9 +263,34 @@ export default {
                 .sortBy( ['ctPid', 'ctOrd'] )
                 .value();
 
-            clog(this.rd);
-
+            // Референсный период
+            const beginTsB = moment(this.beginB).unix();
+            const endTsB = moment(this.endB).unix();
+            const dataB = _(this.finOpers)
+                .filter( i => i.ts >= beginTsB && i.ts <= endTsB)
+                .groupBy('ctId')
+                .map( ( i, id ) => {
+                   const _id = Number(id);
+                   const ct = this.getCostType(_id);
+                   const sortFinOpers = _(i).sortBy('ts').value();
+                   return {
+                      ctId: _id,
+                      ctPid: ct.pid,
+                      ctOrd: ct.ord,
+                      ct: ct,
+                      finOpers: sortFinOpers,
+                      sum: _.sumBy(i, 'amount'),
+                      cnt: _.countBy(i, '').undefined,
+                      expanded: true,
+                   }
+                })
+                .sortBy( ['ctPid', 'ctOrd'] )
+                .value();
             //
+
+
+            clog(dataA, dataB);
+
             this.reportReady = true;
          });
       },
