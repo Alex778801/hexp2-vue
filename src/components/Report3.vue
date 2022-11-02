@@ -278,10 +278,8 @@ export default {
                       ctPid: ct.pid,
                       ctOrd: ct.ord,
                       ct: ct,
-                      finOpers: sortFinOpers,
                       sum: _.sumBy(i, 'amount'),
                       cnt: _.countBy(i, '').undefined,
-                      expanded: true,
                    }
                 })
                 .sortBy( ['ctPid', 'ctOrd'] )
