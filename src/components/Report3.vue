@@ -62,6 +62,7 @@
 
 <!-- Отчет                               -->
    <div v-if="reportReady">
+
 <!--  Отчет по Статьям    -->
       <div class="ReportTable">
          <table>
@@ -100,11 +101,86 @@
             </template>
          </table>
       </div>
-<!-- Отчет Контрагенты Откуда  -->
 
+<!-- Отчет Контрагенты Откуда  -->
+      <div class="ReportTable" style="display:none">
+         <table>
+            <caption> Отчет по контрагентам ОТКУДА </caption>
+            <tr>
+               <th class="bc_yellow">#</th>
+               <th class="bc_yellow">Статья</th>
+               <th class="bc_yellow">Референс</th>
+               <th class="bc_yellow">Отчет</th>
+            </tr>
+            <template v-for="(agFrom, idx) in rd.agentFrom" :key="idx">
+               <tr class="Group">
+                  <td class="ColorBox">
+                     <Checkbox v-if="agFrom.canExpand" v-model="agFrom.expanded" :binary="true" />
+                  </td>
+                  <td class="Name"><router-link :to="'/costtype/' + agFrom.ctId">{{ agFrom.agFrom.name }}</router-link></td>
+                  <td class="TotalsB">{{ fs(agFrom.sumB) }}<br><span class="Cnt">( {{ agFrom.cntB }} )</span></td>
+                  <td class="TotalsA">{{ fs(agFrom.sumA) }}<br><span class="Cnt">( {{ agFrom.cntA }} )</span></td>
+               </tr>
+               <tr class="Element" v-for="(fo, idx) in agFrom.finOpers" :key="idx" :hidden="!agFrom.expanded">
+                  <td colspan="3" class="Ts">
+                     <div class="TsAg">
+                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                        </router-link>
+                        <br>
+                        <span class="Agent">
+                           <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+<!--                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> -->
+                           → <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+                        </span>
+                     </div>
+                     <div class="Notes">{{ fo.notes }}</div>
+                  </td>
+                  <td class="Amount">{{ fs(fo.amount) }}</td>
+               </tr>
+            </template>
+         </table>
+      </div>
 
 <!-- Отчет Контрагенты Куда  -->
-
+      <div class="ReportTable" style="display:none">
+         <table>
+            <caption> Отчет по контрагентам КУДА </caption>
+            <tr>
+               <th class="bc_orange">#</th>
+               <th class="bc_orange">Статья</th>
+               <th class="bc_orange">Референс</th>
+               <th class="bc_orange">Отчет</th>
+            </tr>
+            <template v-for="(agTo, idx) in rd.agentTo" :key="idx">
+               <tr class="Group">
+                  <td class="ColorBox">
+                     <Checkbox v-if="agTo.canExpand" v-model="agTo.expanded" :binary="true" />
+                  </td>
+                  <td class="Name"><router-link :to="'/costtype/' + agTo.ctId">{{ agTo.agTo.name }}</router-link></td>
+                  <td class="TotalsB">{{ fs(agTo.sumB) }}<br><span class="Cnt">( {{ agTo.cntB }} )</span></td>
+                  <td class="TotalsA">{{ fs(agTo.sumA) }}<br><span class="Cnt">( {{ agTo.cntA }} )</span></td>
+               </tr>
+               <tr class="Element" v-for="(fo, idx) in agTo.finOpers" :key="idx" :hidden="!agTo.expanded">
+                  <td colspan="3" class="Ts">
+                     <div class="TsAg">
+                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                        </router-link>
+                        <br>
+                        <span class="Agent">
+                           <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+<!--                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>-->
+                        </span>
+                     </div>
+                     <div class="Notes">{{ fo.notes }}</div>
+                  </td>
+                  <td class="Amount">{{ fs(fo.amount) }}</td>
+               </tr>
+            </template>
+         </table>
+      </div>
 
 <!-- --  -->
    </div>
@@ -334,7 +410,7 @@ export default {
          return dataAB;
       },
 
-      // Построить отчет по Статьям
+      // Построить отчет по Агенты ОТКУДА
       buildAgentFromReport() {
          // -----------------------------------------
          // Отчетный период
@@ -411,6 +487,83 @@ export default {
          return dataAB;
       },
 
+      // Построить отчет по Агенты КУДА
+      buildAgentToReport() {
+         // -----------------------------------------
+         // Отчетный период
+         const beginTsA = moment(this.beginA).unix();
+         const endTsA = moment(this.endA).unix();
+         const dataA = _(this.finOpers)
+             .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
+             .groupBy('agToId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                const sortFinOpers = _(i).sortBy('ts').value();
+                return {
+                   agToId: _id,
+                   finOpers: sortFinOpers,
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .value();
+         // -----------------------------------------
+         // Референсный период
+         const beginTsB = moment(this.beginB).unix();
+         const endTsB = moment(this.endB).unix();
+         const dataB = _(this.finOpers)
+             .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
+             .groupBy('agToId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                return {
+                   agToId: _id,
+                   finOpers: [],
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .value();
+         // -----------------------------------------
+         // Объединение периодов
+         const dataAB = [];
+         _(this.agents)
+             .sortBy( ['pid', 'ord'] )
+             .value()
+             .forEach( agTo => {
+                const a = dataA.find( i => i.agToId === agTo.id );
+                const b = dataB.find( i => i.agToId === agTo.id );
+                if ( a !== undefined ) {
+                   dataAB.push({
+                      agToId: agTo.id,
+                      agTo: agTo,
+                      finOpers: a.finOpers,
+                      sumA: a.sum,
+                      cntA: a.cnt,
+                      sumB: b !== undefined ? b.sum : 0,
+                      cntB: b !== undefined ? b.cnt : 0,
+                      canExpand: true,
+                      expanded: false,
+                   });
+                } else if (b !== undefined) {
+                   dataAB.push({
+                      agToId: agTo.id,
+                      agTo: agTo,
+                      finOpers: [],
+                      sumA: 0,
+                      cntA: 0,
+                      sumB: b.sum,
+                      cntB: b.cnt,
+                      canExpand: false,
+                      expanded: false,
+                   });
+                }
+             });
+         // --
+         // clog(dataA, dataB, '***', dataAB);
+         return dataAB;
+      },
+
       // Построить отчет
       buildReport() {
          // this.reportReady = false;
@@ -418,8 +571,9 @@ export default {
          // Построение элементов отчета
          this.rd.costType = this.buildCostTypeReport()
          this.rd.agentFrom = this.buildAgentFromReport()
+         this.rd.agentTo = this.buildAgentToReport()
          // --
-         clog(this.rd.costTypes, this.rd.agentsFrom);
+         // clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
          this.reportReady = true;
       },
 
