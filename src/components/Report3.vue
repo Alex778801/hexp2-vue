@@ -64,7 +64,7 @@
    <div v-if="reportReady">
 
 <!--  Отчет по Статьям    -->
-      <div class="ReportTable">
+      <div class="ReportTable" style="display:none">
          <table>
             <caption> Отчет по статьям </caption>
             <tr>
@@ -105,7 +105,7 @@
       </div>
 
 <!-- Отчет Контрагенты Откуда  -->
-      <div class="ReportTable">
+      <div class="ReportTable" style="display:none">
          <table>
             <caption> Отчет по контрагентам ОТКУДА </caption>
             <tr>
@@ -147,7 +147,7 @@
       </div>
 
 <!-- Отчет Контрагенты Куда  -->
-      <div class="ReportTable">
+      <div class="ReportTable" style="display:none">
          <table>
             <caption> Отчет по контрагентам КУДА </caption>
             <tr>
@@ -430,6 +430,29 @@ export default {
          return dataAB;
       },
 
+      // Построить отчет по Статьям
+      buildMonthReport() {
+         // -----------------------------------------
+         // Референсный период
+         const beginTsB = moment(this.beginB).unix();
+         const endTsB = moment(this.endB).unix();
+         const dataB = _(this.finOpers)
+             .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
+             .groupBy( i => [ new Date(i.ts * 1000).getMonth() ])
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                return {
+                   month: _id + 1,
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .value();
+         // --
+         clog(dataB);
+         return dataB;
+      },
+
       // Построить отчет по Агенты ОТКУДА
       buildAgentFromReport() {
          // -----------------------------------------
@@ -589,11 +612,12 @@ export default {
          // this.reportReady = false;
          // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
-         this.rd.costType = this.buildCostTypeReport()
-         this.rd.agentFrom = this.buildAgentFromReport()
-         this.rd.agentTo = this.buildAgentToReport()
+         // this.rd.costType = this.buildCostTypeReport()
+         this.rd.month = this.buildMonthReport()
+         // this.rd.agentFrom = this.buildAgentFromReport()
+         // this.rd.agentTo = this.buildAgentToReport()
          // --
-         clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
+         // clog(this.rd.costType, this.rd.month, this.rd.agentFrom, this.rd.agentTo);
          this.reportReady = true;
       },
 
