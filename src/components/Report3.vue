@@ -68,7 +68,9 @@
          <table>
             <caption> Отчет по статьям </caption>
             <tr>
-               <th class="bc_green">#</th>
+               <th class="bc_green">
+                  <Checkbox v-model="ctReportAllCheck" binary />
+               </th>
                <th class="bc_green">Статья</th>
                <th class="bc_green">Референс</th>
                <th class="bc_green">Отчет</th>
@@ -103,11 +105,13 @@
       </div>
 
 <!-- Отчет Контрагенты Откуда  -->
-      <div class="ReportTable" style="display:none">
+      <div class="ReportTable">
          <table>
             <caption> Отчет по контрагентам ОТКУДА </caption>
             <tr>
-               <th class="bc_yellow">#</th>
+               <th class="bc_yellow">
+                  <Checkbox v-model="agFromReportAllCheck" binary />
+               </th>
                <th class="bc_yellow">Статья</th>
                <th class="bc_yellow">Референс</th>
                <th class="bc_yellow">Отчет</th>
@@ -143,11 +147,13 @@
       </div>
 
 <!-- Отчет Контрагенты Куда  -->
-      <div class="ReportTable" style="display:none">
+      <div class="ReportTable">
          <table>
             <caption> Отчет по контрагентам КУДА </caption>
             <tr>
-               <th class="bc_orange">#</th>
+               <th class="bc_orange">
+                  <Checkbox v-model="agToReportAllCheck" binary />
+               </th>
                <th class="bc_orange">Статья</th>
                <th class="bc_orange">Референс</th>
                <th class="bc_orange">Отчет</th>
@@ -207,6 +213,10 @@ export default {
          // Фильтры
          fCostTypes: [],
          fAgents: [],
+         // Вкл/выкл детализаий отчета
+         ctReportAllCheck: null,
+         agFromReportAllCheck: null,
+         agToReportAllCheck: null,
          // ИД проекта
          projectId: Number(this.$route.params.projId),
          // Проект
@@ -260,7 +270,17 @@ export default {
          this.beginB = new Date(y, 0, 1);
          this.endB = new Date(y, 12, 0);
          this.monthB = null;
-      }
+      },
+      // Вкл/выкл детализаий отчета
+      ctReportAllCheck(newVal) {
+         this.rd.costType.forEach( i => { if (i.canExpand) i.expanded = newVal } );
+      },
+      agFromReportAllCheck(newVal) {
+         this.rd.agentFrom.forEach( i => { if (i.canExpand) i.expanded = newVal } );
+      },
+      agToReportAllCheck(newVal) {
+         this.rd.agentTo.forEach( i => { if (i.canExpand) i.expanded = newVal } );
+      },
    },
 
    computed: {
@@ -567,13 +587,13 @@ export default {
       // Построить отчет
       buildReport() {
          // this.reportReady = false;
-         clog(this.project, this.costTypes, this.agents, this.finOpers);
+         // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
          this.rd.costType = this.buildCostTypeReport()
          this.rd.agentFrom = this.buildAgentFromReport()
          this.rd.agentTo = this.buildAgentToReport()
          // --
-         // clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
+         clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
          this.reportReady = true;
       },
 
