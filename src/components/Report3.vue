@@ -1,7 +1,7 @@
 <template>
 
 <!--  Настройки отчета                   -->
-   <div class="Setup">
+   <div class="Setup" style="display:none">
 <!--  Период А    -->
       <Fieldset>
          <template #legend> Отчетный период </template>
@@ -60,13 +60,12 @@
 <!--  --  -->
    </div>
 
-
 <!-- Отчет                               -->
    <div v-if="reportReady">
-      <div v-for="(ct, idx) in rd" :key="idx" >
+      <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
          <div style="background-color: #6ba1e8">
             {{ ct.ct.name }} {{ fs(ct.sum) }} {{ ct.cnt }}
-            <Checkbox v-model="ct.expanded" :binary="true" />
+            <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
          </div>
          <div v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
             {{ fd(fo.ts) }} {{ fo.notes }} {{ fs(fo.amount) }}
@@ -192,6 +191,93 @@ export default {
          return this.agents.find( i => i.id === id);
       },
 
+      buildCostTypeReport() {
+         // -----------------------------------------
+         // Отчетный период
+         const beginTsA = moment(this.beginA).unix();
+         const endTsA = moment(this.endA).unix();
+         const dataA = _(this.finOpers)
+             .filter( i => i.ts >= beginTsA && i.ts <= endTsA)
+             .groupBy('ctId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                // const ct = this.getCostType(_id);
+                const sortFinOpers = _(i).sortBy('ts').value();
+                return {
+                   ctId: _id,
+                   // ctPid: ct.pid,
+                   // ctOrd: ct.ord,
+                   // ct: ct,
+                   finOpers: sortFinOpers,
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             // .sortBy( ['ctPid', 'ctOrd'] )
+             .value();
+         // -----------------------------------------
+         // Референсный период
+         const beginTsB = moment(this.beginB).unix();
+         const endTsB = moment(this.endB).unix();
+         const dataB = _(this.finOpers)
+             .filter( i => i.ts >= beginTsB && i.ts <= endTsB)
+             .groupBy('ctId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                // const ct = this.getCostType(_id);
+                const sortFinOpers = _(i).sortBy('ts').value();
+                return {
+                   ctId: _id,
+                   // ctPid: ct.pid,
+                   // ctOrd: ct.ord,
+                   // ct: ct,
+                   finOpers: [],
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             // .sortBy( ['ctPid', 'ctOrd'] )
+             .value();
+         // -----------------------------------------
+         // Объединение периодов
+         const dataAB = [];
+         _(this.costTypes)
+             .sortBy( ['pid', 'ord'] )
+             .value()
+             .forEach( ct => {
+                const a = dataA.find( i => i.ctId === ct.id );
+                const b = dataB.find( i => i.ctId === ct.id );
+                if ( a !== undefined ) {
+                   dataAB.push({
+                      ctId: ct.id,
+                      ct: ct,
+                      finOpers: a.finOpers,
+                      sumA: a.sum,
+                      cntA: a.cnt,
+                      sumB: b !== undefined ? b.sum : 0,
+                      cntB: b !== undefined ? b.cnt : 0,
+                      canExpand: true,
+                      expanded: true,
+                   });
+                } else if (b !== undefined) {
+                   dataAB.push({
+                      ctId: ct.id,
+                      ct: ct,
+                      finOpers: [],
+                      sumA: 0,
+                      cntA: 0,
+                      sumB: b.sum,
+                      cntB: b.cnt,
+                      canExpand: false,
+                      expanded: false,
+                   });
+                }
+             });
+         // --
+         // clog(dataA, dataB, '***', dataAB);
+         return dataAB;
+      },
+
       // Отобразить отчет
       async fetchReportData() {
          // Запрос данных
@@ -220,8 +306,6 @@ export default {
             query: reportQ,
             variables: {
                projectId: this.projectId,
-               // tsBegin: -1,
-               // tsEnd: -1,
                tsBegin: 0,
                tsEnd: 2147483647,
             },
@@ -235,94 +319,9 @@ export default {
             this.agents.forEach( i => this.fAgents.push(i) );
             this.finOpers = response.data.finopers;
             document.title = `Отч 3: ${this.project.name}`;
-
-            clog(this.project, this.costTypes, this.agents, this.finOpers);
-            clog('---');
-
-            // Отчетный период
-            const beginTsA = moment(this.beginA).unix();
-            const endTsA = moment(this.endA).unix();
-            const dataA = _(this.finOpers)
-                .filter( i => i.ts >= beginTsA && i.ts <= endTsA)
-                .groupBy('ctId')
-                .map( ( i, id ) => {
-                   const _id = Number(id);
-                   const ct = this.getCostType(_id);
-                   const sortFinOpers = _(i).sortBy('ts').value();
-                   return {
-                      ctId: _id,
-                      ctPid: ct.pid,
-                      ctOrd: ct.ord,
-                      ct: ct,
-                      finOpers: sortFinOpers,
-                      sum: _.sumBy(i, 'amount'),
-                      cnt: _.countBy(i, '').undefined,
-                   }
-                })
-                // .sortBy( ['ctPid', 'ctOrd'] )
-                .value();
-
-            // Референсный период
-            const beginTsB = moment(this.beginB).unix();
-            const endTsB = moment(this.endB).unix();
-            const dataB = _(this.finOpers)
-                .filter( i => i.ts >= beginTsB && i.ts <= endTsB)
-                .groupBy('ctId')
-                .map( ( i, id ) => {
-                   const _id = Number(id);
-                   const ct = this.getCostType(_id);
-                   const sortFinOpers = _(i).sortBy('ts').value();
-                   return {
-                      ctId: _id,
-                      ctPid: ct.pid,
-                      ctOrd: ct.ord,
-                      ct: ct,
-                      finOpers: [],
-                      sum: _.sumBy(i, 'amount'),
-                      cnt: _.countBy(i, '').undefined,
-                   }
-                })
-                // .sortBy( ['ctPid', 'ctOrd'] )
-                .value();
-
-            // Объединение периодов
-            const dataAB = [];
-            _(this.costTypes)
-               .sortBy( ['pid', 'ord'] )
-               .value()
-               .forEach( ct => {
-                  const a = dataA.find( i => i.ctId === ct.id );
-                  const b = dataB.find( i => i.ctId === ct.id );
-                  if ( a !== undefined ) {
-                     dataAB.push({
-                        ctId: a.ctId,
-                        ct: a.ct,
-                        finOpers: a.finOpers,
-                        sumA: a.sum,
-                        cntA: a.cnt,
-                        sumB: b !== undefined ? b.sum : 0,
-                        cntB: b !== undefined ? b.cnt : 0,
-                        canExpand: true,
-                        expanded: true,
-                     });
-                  } else if (b !== undefined) {
-                     dataAB.push({
-                        ctId: b.ctId,
-                        ct: b.ct,
-                        finOpers: [],
-                        sumA: 0,
-                        cntA: 0,
-                        sumB: b.sum,
-                        cntB: b.cnt,
-                        canExpand: false,
-                        expanded: false,
-                     });
-                  }
-            });
-
-            clog(dataA, dataB);
-            clog('***', dataAB);
-
+            // clog(this.project, this.costTypes, this.agents, this.finOpers);
+            this.rd.costTypes = this.buildCostTypeReport()
+            clog(this.rd.costTypes);
             this.reportReady = true;
          });
       },
