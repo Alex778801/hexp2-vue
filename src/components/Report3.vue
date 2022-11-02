@@ -107,7 +107,7 @@ export default {
          // Агенты
          agents: null,
          // Данные отчета
-         rd: {},
+         rd: [],
          // Отчет готов
          reportReady: false,
       }
@@ -257,10 +257,9 @@ export default {
                       finOpers: sortFinOpers,
                       sum: _.sumBy(i, 'amount'),
                       cnt: _.countBy(i, '').undefined,
-                      expanded: true,
                    }
                 })
-                .sortBy( ['ctPid', 'ctOrd'] )
+                // .sortBy( ['ctPid', 'ctOrd'] )
                 .value();
 
             // Референсный период
@@ -278,16 +277,51 @@ export default {
                       ctPid: ct.pid,
                       ctOrd: ct.ord,
                       ct: ct,
+                      finOpers: [],
                       sum: _.sumBy(i, 'amount'),
                       cnt: _.countBy(i, '').undefined,
                    }
                 })
-                .sortBy( ['ctPid', 'ctOrd'] )
+                // .sortBy( ['ctPid', 'ctOrd'] )
                 .value();
-            //
 
+            // Объединение периодов
+            const dataAB = [];
+            _(this.costTypes)
+               .sortBy( ['pid', 'ord'] )
+               .value()
+               .forEach( ct => {
+                  const a = dataA.find( i => i.ctId === ct.id );
+                  const b = dataB.find( i => i.ctId === ct.id );
+                  if ( a !== undefined ) {
+                     dataAB.push({
+                        ctId: a.ctId,
+                        ct: a.ct,
+                        finOpers: a.finOpers,
+                        sumA: a.sum,
+                        cntA: a.cnt,
+                        sumB: b !== undefined ? b.sum : 0,
+                        cntB: b !== undefined ? b.cnt : 0,
+                        canExpand: true,
+                        expanded: true,
+                     });
+                  } else if (b !== undefined) {
+                     dataAB.push({
+                        ctId: b.ctId,
+                        ct: b.ct,
+                        finOpers: [],
+                        sumA: 0,
+                        cntA: 0,
+                        sumB: b.sum,
+                        cntB: b.cnt,
+                        canExpand: false,
+                        expanded: false,
+                     });
+                  }
+            });
 
             clog(dataA, dataB);
+            clog('***', dataAB);
 
             this.reportReady = true;
          });
