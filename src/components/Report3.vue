@@ -2,6 +2,7 @@
 
 <!--  Настройки отчета                   -->
    <div class="Setup">
+<!--  Период А    -->
       <Fieldset>
          <template #legend> Отчетный период </template>
          <div class="Field">
@@ -21,6 +22,7 @@
             <Calendar v-model="yearA" view="year" dateFormat="yy" showIcon/>
          </div>
       </Fieldset>
+<!--  Период В    -->
       <Fieldset>
          <template #legend> Референсный период </template>
          <div class="Field">
@@ -40,6 +42,23 @@
             <Calendar v-model="yearB" view="year" dateFormat="yy" showIcon/>
          </div>
       </Fieldset>
+<!--  Фильтры    -->
+      <Fieldset>
+         <template #legend> Референсный период </template>
+         <div class="Field">
+            <label>Статьи</label>
+            <div class="Field">
+               <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
+            </div>
+         </div>
+         <div class="Field">
+            <label>Агенты</label>
+            <div class="Field">
+               <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
+            </div>
+         </div>
+      </Fieldset>
+<!--  --  -->
    </div>
 
 
@@ -67,7 +86,7 @@ import {clog} from "@/components/tools/vue-utils";
 import moment from "moment/moment";
 
 export default {
-   name: "Report1",
+   name: "Report3",
 
    data() {
       return {
@@ -75,6 +94,9 @@ export default {
          beginA: null, endA: null, monthA: null, yearA: null,
          // Период B
          beginB: null, endB: null, monthB: null, yearB: null,
+         // Фильтры
+         fCostTypes: [],
+         fAgents: [],
          // ИД проекта
          projectId: Number(this.$route.params.projId),
          // Проект
@@ -179,6 +201,8 @@ export default {
             query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
                project(id: $projectId) {
                   id, name, path,
+                  ctList { id, pid, name, ord, out, color, },
+                  agList { id, pid, name, ord, },
                },
                finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
                   id,
@@ -191,28 +215,26 @@ export default {
                   amount,
                   notes,
               },
-              costTypes {
-                id, pid, name, ord, out, color,
-              },
-              agents {
-                id, pid, name, ord,
-              }
             }
          `);
          await apolloClient.query({
             query: reportQ,
             variables: {
                projectId: this.projectId,
-               tsBegin: -1,
-               tsEnd: -1,
+               // tsBegin: -1,
+               // tsEnd: -1,
+               tsBegin: 0,
+               tsEnd: 2147483647,
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Выгрузка данных
             this.project = response.data.project;
+            this.costTypes = response.data.project.ctList;
+            this.costTypes.forEach( i => this.fCostTypes.push(i) );
+            this.agents = response.data.project.agList;
+            this.agents.forEach( i => this.fAgents.push(i) );
             this.finOpers = response.data.finopers;
-            this.costTypes = response.data.costTypes;
-            this.agents = response.data.agents;
             document.title = `Отч 3: ${this.project.name}`;
 
             clog(this.project, this.finOpers, this.costTypes, this.agents);
@@ -250,6 +272,30 @@ export default {
 
 <style lang="scss" scoped>
 
+.Setup {
+   .p-fieldset {
+      width: fit-content;
+      margin: 0.5rem 0.2rem;
+   }
+
+   .Field {
+      width: 15.2rem;
+
+      label {
+         color: var(--primary-500);
+         display: inline-block;
+         width: 7rem;
+         margin: 0.7rem 0 0.3rem 0.3rem;
+      }
+
+      .p-calendar, .p-multiselect {
+         width: 15rem;
+      }
+
+
+
+   }
+}
 
 
 </style>

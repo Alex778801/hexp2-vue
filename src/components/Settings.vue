@@ -5,7 +5,7 @@
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title> Масштаб интерфейса </template>
          <template #content>
-               <h5>{{scaleInterface * 100}} %</h5>
+               <h5>{{ Math.round(scaleInterface * 100) }} %</h5>
                <Slider v-model="scaleInterface" :step="0.025" :min="0.5" :max="1.5"/>
                <p class="mt-3 text-sm">Отрегулируйте ползунком желаемый масштаб интерфейса.
                Настройка задается индивидуально для каждого устройства и браузера</p>
@@ -32,7 +32,7 @@
             <Button label="Сохранить" icon="fa fa-save" class="p-button-sm" style="float: right;"  @click="saveTheme()"/>
          </template>
       </Card>
-      <!--  Использовать 2 колонки в справочниках  -->
+<!--  Использовать 2 колонки в справочниках  -->
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title>  Компоновка справочников </template>
          <template #content>
