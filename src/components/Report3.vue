@@ -1,7 +1,7 @@
 <template>
 
 <!--  Настройки отчета        style="display:none"           -->
-   <div class="Setup" >
+   <div class="Setup" style="display:none">
 <!--  Период А    -->
       <Fieldset>
          <template #legend> Отчетный период </template>
@@ -64,7 +64,7 @@
    <div v-if="reportReady">
 
 <!--  Отчет по Статьям    -->
-      <div class="CostTypeReport">
+      <div class="CostTypeReport" style="display:none">
          <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
             <div class="Group">
                <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
@@ -88,6 +88,27 @@
                <div class="Amount">{{ fs(fo.amount) }}</div>
             </div>
          </div>
+      </div>
+
+
+      <div class="ReportTable">
+         <table>
+            <caption> Отчет по статьям </caption>
+            <tr>
+               <th>#</th>
+               <th>Статья</th>
+               <th>Отчет</th>
+               <th>Референс</th>
+            </tr>
+            <tr class="Group" v-for="(ct, idx) in rd.costTypes" :key="idx" >
+               <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
+                  <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
+               </td>
+               <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
+               <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
+               <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
+            </tr>
+         </table>
       </div>
 
 
@@ -423,6 +444,56 @@ export default {
 
    }
 }
+
+.ReportTable {
+   max-width: 60rem;
+   margin: 0.5rem auto;
+   padding: 0.5rem;
+
+   table {
+      width: 100%;
+   }
+
+   caption {
+      font-size: 1.4rem;
+      margin: 1rem;
+   }
+
+   a {
+      color: var(--primary-color);
+      text-decoration: none;
+   }
+
+   table, th, td {
+      border: 1px solid var(--surface-600);
+      border-collapse: collapse;
+   }
+
+   th, td {
+      height: 3rem;
+      padding: 0.5rem;
+      color: var(--text-color)
+   }
+
+   th, .Group {
+      background-color: var(--surface-100);
+   }
+
+   .ColorBox {
+      text-align: center;
+      width: 3rem;
+   }
+
+   .TotalsA, .TotalsB {
+      width: 6rem;
+      text-align: center;
+   }
+
+   .Cnt {
+      color: var(--text-color-secondary);
+   }
+}
+
 
 .CostTypeReport {
    max-width: 60rem;
