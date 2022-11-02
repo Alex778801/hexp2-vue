@@ -183,7 +183,7 @@ export default {
       moment.locale("RU");
       // Настройка периодов - Отчетный
       const now = new Date();
-      let y = now.getFullYear(), m = now.getMonth() - 2;
+      let y = now.getFullYear() - 1, m = now.getMonth() - 2;
       this.beginA = new Date(y, m, 1);
       this.endA = new Date(y, m + 1, 0);
       this.monthA = now;
@@ -387,16 +387,34 @@ export default {
 .CostTypeReport {
    max-width: 50rem;
    margin: 0.5rem auto;
+   padding: 0.5rem;
 
    .Group {
       display: grid;
       grid-template-columns: 1fr 3fr 2fr 2fr;
-      gap: 0.3rem;
-      background-color: var(--surface-200);
+      align-items: stretch;
+      grid-gap: 0.3rem;
       height: 4rem;
+      background-color: var(--surface-100);
+      margin: 0.2rem 0;
+      border: 0.1rem solid var(--surface-600);
+
+      :nth-child(3n) {
+         background-color: var(--surface-200);
+      }
+
+      .ColorBox {
+         align-self: stretch;
+         padding: 1.2rem 0.9rem;
+      }
+
+      .Name {
+         padding: 0.3rem;
+      }
 
       .TotalsA, .TotalsB {
-         text-align: center;
+         text-align: right;
+         padding: 0.5rem;
       }
    }
 }
