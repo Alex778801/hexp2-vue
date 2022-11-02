@@ -62,17 +62,23 @@
 
 <!-- Отчет                               -->
    <div v-if="reportReady">
+
+<!--  Отчет по Статьям    -->
       <div class="CostTypeReport">
          <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
-            <div class="Group" style="background-color: #6ba1e8">
+            <div class="Group">
                <div class="CheckBox"><Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" /></div>
-               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">!</div>
+               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}"></div>
                <div class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></div>
-               <div class="TotalsA">{{ fs(ct.sumA) }} ({{ ct.cntA }})</div>
-               <div class="TotalsB">{{ fs(ct.sumB) }} ({{ ct.cntB }})</div>
+               <div class="TotalsA">{{ fs(ct.sumA) }}<br>({{ ct.cntA }})</div>
+               <div class="TotalsB">{{ fs(ct.sumB) }}<br>({{ ct.cntB }})</div>
             </div>
             <div class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
-               <div class="Ts">{{ fd(fo.ts) }}</div>
+               <div class="Ts">
+                  <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                     <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                  </router-link>
+               </div>
                <div class="Agents">
                   <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
                   <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
@@ -82,7 +88,17 @@
             </div>
          </div>
       </div>
+
+
+<!-- Отчет Контрагенты Откуда  -->
+
+
+<!-- Отчет Контрагенты Куда  -->
+
+
+<!-- --  -->
    </div>
+
 </template>
 
 <script>
@@ -367,5 +383,25 @@ export default {
    }
 }
 
+.CostTypeReport {
+   max-width: 50rem;
+   margin: 0.5rem auto;
+
+   .Group {
+      display: grid;
+      grid-template-columns: 2rem 1fr 3fr 2fr 2fr;
+      gap: 0.3rem;
+      background-color: var(--surface-200);
+      height: 4rem;
+
+      .CheckBox {
+
+      }
+
+      .TotalsA, .TotalsB {
+         text-align: center;
+      }
+   }
+}
 
 </style>
