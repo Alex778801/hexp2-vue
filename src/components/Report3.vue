@@ -72,7 +72,7 @@
                <th class="bc_green">Референс</th>
                <th class="bc_green">Отчет</th>
             </tr>
-            <template v-for="(ct, idx) in rd.costTypes" :key="idx">
+            <template v-for="(ct, idx) in rd.costType" :key="idx">
                <tr class="Group">
                   <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
                      <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
@@ -334,14 +334,92 @@ export default {
          return dataAB;
       },
 
+      // Построить отчет по Статьям
+      buildAgentFromReport() {
+         // -----------------------------------------
+         // Отчетный период
+         const beginTsA = moment(this.beginA).unix();
+         const endTsA = moment(this.endA).unix();
+         const dataA = _(this.finOpers)
+             .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
+             .groupBy('agFromId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                const sortFinOpers = _(i).sortBy('ts').value();
+                return {
+                   agFromId: _id,
+                   finOpers: sortFinOpers,
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .value();
+         // -----------------------------------------
+         // Референсный период
+         const beginTsB = moment(this.beginB).unix();
+         const endTsB = moment(this.endB).unix();
+         const dataB = _(this.finOpers)
+             .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
+             .groupBy('agFromId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                return {
+                   agFromId: _id,
+                   finOpers: [],
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .value();
+         // -----------------------------------------
+         // Объединение периодов
+         const dataAB = [];
+         _(this.agents)
+             .sortBy( ['pid', 'ord'] )
+             .value()
+             .forEach( agFrom => {
+                const a = dataA.find( i => i.agFromId === agFrom.id );
+                const b = dataB.find( i => i.agFromId === agFrom.id );
+                if ( a !== undefined ) {
+                   dataAB.push({
+                      agFromId: agFrom.id,
+                      agFrom: agFrom,
+                      finOpers: a.finOpers,
+                      sumA: a.sum,
+                      cntA: a.cnt,
+                      sumB: b !== undefined ? b.sum : 0,
+                      cntB: b !== undefined ? b.cnt : 0,
+                      canExpand: true,
+                      expanded: false,
+                   });
+                } else if (b !== undefined) {
+                   dataAB.push({
+                      agFromId: agFrom.id,
+                      agFrom: agFrom,
+                      finOpers: [],
+                      sumA: 0,
+                      cntA: 0,
+                      sumB: b.sum,
+                      cntB: b.cnt,
+                      canExpand: false,
+                      expanded: false,
+                   });
+                }
+             });
+         // --
+         // clog(dataA, dataB, '***', dataAB);
+         return dataAB;
+      },
+
       // Построить отчет
       buildReport() {
          // this.reportReady = false;
-         // clog(this.project, this.costTypes, this.agents, this.finOpers);
+         clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
-         this.rd.costTypes = this.buildCostTypeReport()
+         this.rd.costType = this.buildCostTypeReport()
+         this.rd.agentFrom = this.buildAgentFromReport()
          // --
-         // clog(this.rd.costTypes);
+         clog(this.rd.costTypes, this.rd.agentsFrom);
          this.reportReady = true;
       },
 
