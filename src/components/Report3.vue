@@ -116,7 +116,8 @@ export default {
             this.finOpers = response.data.finopers;
             this.costTypes = response.data.costTypes;
             this.agents = response.data.agents;
-            // document.title = `Отч 1: ${this.rd.proj}`;
+            document.title = `Отч 3: ${this.project.name}`;
+
             clog(this.project, this.finOpers, this.costTypes, this.agents);
             clog('---');
 
@@ -125,12 +126,13 @@ export default {
                 .map( ( i, id ) => {
                    const _id = Number(id);
                    const ct = this.getCostType(_id);
+                   const sortFinOpers = _(i).sortBy('ts').value();
                    return {
                       ctId: _id,
                       ctPid: ct.pid,
                       ctOrd: ct.ord,
                       ct: ct,
-                      finOpers: i,
+                      finOpers: sortFinOpers,
                       sum: _.sumBy(i, 'amount'),
                       cnt: _.countBy(i, '').undefined,
                       expanded: true,
