@@ -62,56 +62,44 @@
 
 <!-- Отчет                               -->
    <div v-if="reportReady">
-
 <!--  Отчет по Статьям    -->
-      <div class="CostTypeReport" style="display:none">
-         <div v-for="(ct, idx) in rd.costTypes" :key="idx" >
-            <div class="Group">
-               <div class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
-                  <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
-               </div>
-               <div class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></div>
-               <div class="TotalsA">{{ fs(ct.sumA) }}<br>({{ ct.cntA }})</div>
-               <div class="TotalsB">{{ fs(ct.sumB) }}<br>({{ ct.cntB }})</div>
-            </div>
-            <div class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
-               <div class="Ts">
-                  <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
-                     <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
-                  </router-link>
-               </div>
-               <div class="Agents">
-                  <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
-                  <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
-               </div>
-               <div class="Notes">{{ fo.notes }}</div>
-               <div class="Amount">{{ fs(fo.amount) }}</div>
-            </div>
-         </div>
-      </div>
-
-
       <div class="ReportTable">
          <table>
             <caption> Отчет по статьям </caption>
             <tr>
-               <th>#</th>
-               <th>Статья</th>
-               <th>Отчет</th>
-               <th>Референс</th>
+               <th class="bc_green">#</th>
+               <th class="bc_green">Статья</th>
+               <th class="bc_green">Референс</th>
+               <th class="bc_green">Отчет</th>
             </tr>
-            <tr class="Group" v-for="(ct, idx) in rd.costTypes" :key="idx" >
-               <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
-                  <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
-               </td>
-               <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
-               <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
-               <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
-            </tr>
+            <template v-for="(ct, idx) in rd.costTypes" :key="idx">
+               <tr class="Group">
+                  <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
+                     <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
+                  </td>
+                  <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
+                  <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
+                  <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
+               </tr>
+               <tr class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
+                  <td colspan="3" class="Ts">
+                     <div class="TsAg">
+                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                        </router-link>
+                        <br>
+                        <span class="Agent">
+                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+                        </span>
+                     </div>
+                     <div class="Notes">{{ fo.notes }}</div>
+                  </td>
+                  <td class="Amount">{{ fs(fo.amount) }}</td>
+               </tr>
+            </template>
          </table>
       </div>
-
-
 <!-- Отчет Контрагенты Откуда  -->
 
 
@@ -215,7 +203,7 @@ export default {
       moment.locale("RU");
       // Настройка периодов - Отчетный
       const now = new Date();
-      let y = now.getFullYear() - 1, m = now.getMonth() - 2;
+      let y = now.getFullYear(), m = now.getMonth() - 2;
       this.beginA = new Date(y, m, 1);
       this.endA = new Date(y, m + 1, 0);
       this.monthA = now;
@@ -266,7 +254,6 @@ export default {
       checkFilter(i) {
          const ct = this.fCostTypesAllSelected || this.fCostTypeSelected(i.ctId);
          const ag = this.fAgentsAllSelected || (this.fAgentSelected(i.agFromId) || this.fAgentSelected(i.agToId));
-         clog(ct, ag, '---')
          return ct && ag;
       },
 
@@ -326,7 +313,7 @@ export default {
                       sumB: b !== undefined ? b.sum : 0,
                       cntB: b !== undefined ? b.cnt : 0,
                       canExpand: true,
-                      expanded: true,
+                      expanded: false,
                    });
                 } else if (b !== undefined) {
                    dataAB.push({
@@ -350,11 +337,11 @@ export default {
       // Построить отчет
       buildReport() {
          // this.reportReady = false;
-         clog(this.project, this.costTypes, this.agents, this.finOpers);
+         // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
          this.rd.costTypes = this.buildCostTypeReport()
          // --
-         clog(this.rd.costTypes);
+         // clog(this.rd.costTypes);
          this.reportReady = true;
       },
 
@@ -440,8 +427,6 @@ export default {
          width: 10rem;
          margin: 1.8rem auto 0 auto;
       }
-
-
    }
 }
 
@@ -475,6 +460,10 @@ export default {
       color: var(--text-color)
    }
 
+   th {
+      height: 4rem;
+   }
+
    th, .Group {
       background-color: var(--surface-100);
    }
@@ -484,9 +473,29 @@ export default {
       width: 3rem;
    }
 
-   .TotalsA, .TotalsB {
+   :deep(.p-checkbox), :deep(.p-checkbox-box), :deep(.p-checkbox-box), :deep(.p-highlight) {
+      background-color: var(--surface-500) !important;
+      border-color: var(--surface-500) !important;
+      border-radius: 0.3rem;
+   }
+
+   .TotalsA, .TotalsB, .Amount {
       width: 6rem;
       text-align: center;
+   }
+
+   .TsAg, .Notes {
+      display: inline-block;
+      vertical-align: top;
+   }
+
+   .Agent a {
+      font-style: italic;
+      color: var(--primary-300);
+   }
+
+   .Notes {
+      padding-left: 1rem;
    }
 
    .Cnt {
@@ -494,40 +503,38 @@ export default {
    }
 }
 
+// Цвета фона
 
-.CostTypeReport {
-   max-width: 60rem;
-   margin: 0.5rem auto;
-   padding: 0.5rem;
+.bc_green {
+   background-color: #b4cf90 !important;
+}
 
-   .Group {
-      display: grid;
-      grid-template-columns: 1fr 3fr 2fr 2fr;
-      align-items: stretch;
-      grid-gap: 0.3rem;
-      height: 4rem;
-      background-color: var(--surface-100);
-      margin: 0.2rem 0;
-      border: 0.1rem solid var(--surface-600);
+.bc_yellow {
+   background-color: #f7e59c !important;
+}
 
-      :nth-child(3n) {
-         background-color: var(--surface-200);
-      }
+.bc_yellow_50 {
+   background-color: #fff7d9 !important;
+}
 
-      .ColorBox {
-         align-self: stretch;
-         padding: 1.2rem 0.9rem;
-      }
+.bc_orange {
+   background-color: #eccaad !important;
+}
 
-      .Name {
-         padding: 0.3rem;
-      }
+.bc_orange_50 {
+   background-color: #fff1e6 !important;
+}
 
-      .TotalsA, .TotalsB {
-         text-align: right;
-         padding: 0.5rem;
-      }
-   }
+.bc_purple {
+   background-color: #dab5fc !important;
+}
+
+.bc_brown {
+   background-color: #aba1a1 !important;
+}
+
+.bc_blue {
+   background-color: #c4d6eb !important;
 }
 
 </style>
