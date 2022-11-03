@@ -104,6 +104,12 @@
          </table>
       </div>
 
+<!--  График по статьям    -->
+      <div class="GraphMonth">
+         <h3> Суммы по статьям </h3>
+         <Chart type="pie" :data="ctGraphData" :options="ctGraphOptions" />
+      </div>
+
 <!--  График по месяцам   -->
       <div class="GraphMonth">
          <h3> Суммы по месяцам </h3>
@@ -235,6 +241,26 @@ export default {
          agents: null,
          // Данные отчета
          rd: [],
+         // Данные графика по статьям
+         ctGraphData: {
+            labels: [],
+            datasets: [
+               {
+                  data: [],
+                  backgroundColor: ["#42A5F5","#66BB6A","#FFA726"],
+                  hoverBackgroundColor: ["#64B5F6","#81C784","#FFB74D"]
+               }
+            ]
+         },
+         ctGraphOptions: {
+            plugins: {
+               legend: {
+                  labels: {
+                     color: '#495057'
+                  }
+               }
+            }
+         },
          // Данные графика по месяцам
          monthGraphData: {
             labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноядрь', 'Декабрь'],
@@ -480,8 +506,35 @@ export default {
          return dataAB;
       },
 
-      // Построить отчет по Статьям
-      buildMonthReport() {
+      // Построить график по Статьям
+      buildCtGraph() {
+         // -----------------------------------------
+         // Отчетный период
+         const beginTsA = moment(this.beginA).unix();
+         const endTsA = moment(this.endA).unix();
+         const dataA = _(this.finOpers)
+             .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
+             .groupBy('ctId')
+             .map( ( i, id ) => {
+                const _id = Number(id);
+                return {
+                   ctId: _id,
+                   sum: _.sumBy(i, 'amount'),
+                   cnt: _.countBy(i, '').undefined,
+                }
+             })
+             .sortBy('sum')
+             .value();
+         // Выгрузим данные в график
+         // clog(dataA);
+         this.ctGraphData.datasets[0].data = dataA.map( i => i.sum );
+         this.ctGraphData.datasets[0].backgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
+         this.ctGraphData.datasets[0].hoverBackgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
+         this.ctGraphData.labels = dataA.map( i => this.getCostType(i.ctId).name );
+      },
+
+      // Построить график по Месяцам
+      buildMonthGraph() {
          // -----------------------------------------
          // Референсный период
          const beginTsB = moment(this.beginB).unix();
@@ -663,7 +716,8 @@ export default {
          // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
          this.rd.costType = this.buildCostTypeReport();
-         this.buildMonthReport();
+         this.buildCtGraph();
+         this.buildMonthGraph();
          this.rd.agentFrom = this.buildAgentFromReport();
          this.rd.agentTo = this.buildAgentToReport();
          // --
