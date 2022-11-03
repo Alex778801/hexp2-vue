@@ -1,7 +1,7 @@
 <template>
 
 <!--  Настройки отчета        style="display:none"           -->
-   <div class="Setup" style="display:none">
+   <div class="Setup">
 <!--  Период А    -->
       <Fieldset>
          <template #legend> Отчетный период </template>
@@ -104,7 +104,7 @@
          </table>
       </div>
 
-<!--  График по месяцам-->
+<!--  График по месяцам   -->
       <div class="GraphMonth">
          <h3> Суммы по месяцам </h3>
          <Chart type="bar" :data="monthGraphData" :options="monthGraphOptions" />
@@ -152,7 +152,7 @@
          </table>
       </div>
 
-<!-- Отчет Контрагенты Куда  -->
+<!-- Отчет Контрагенты Куда    -->
       <div class="ReportTable">
          <table>
             <caption> Отчет по контрагентам КУДА </caption>
@@ -281,13 +281,14 @@ export default {
    watch: {
       // При выборе месяца A
       monthA(newVal) {
-         if (newVal != null)
+         if (newVal == null)
             return;
          const y = this.monthA.getFullYear(), m = this.monthA.getMonth();
          this.beginA = new Date(y, m, 1);
          this.endA = new Date(y, m + 1, 0);
          this.yearA = null;
       },
+
       // При выборе года A
       yearA(newVal) {
          if (newVal == null)
@@ -297,6 +298,7 @@ export default {
          this.endA = new Date(y, 12, 0);
          this.monthA = null;
       },
+
       // При выборе месяца B
       monthB(newVal) {
          if (newVal == null)
@@ -306,6 +308,7 @@ export default {
          this.endB = new Date(y, m + 1, 0);
          this.yearB = null;
       },
+
       // При выборе года B
       yearB(newVal) {
          if (newVal == null)
@@ -315,13 +318,16 @@ export default {
          this.endB = new Date(y, 12, 0);
          this.monthB = null;
       },
+
       // Вкл/выкл детализаий отчета
       ctReportAllCheck(newVal) {
          this.rd.costType.forEach( i => { if (i.canExpand) i.expanded = newVal } );
       },
+
       agFromReportAllCheck(newVal) {
          this.rd.agentFrom.forEach( i => { if (i.canExpand) i.expanded = newVal } );
       },
+
       agToReportAllCheck(newVal) {
          this.rd.agentTo.forEach( i => { if (i.canExpand) i.expanded = newVal } );
       },
@@ -343,7 +349,7 @@ export default {
       moment.locale("RU");
       // Настройка периодов - Отчетный
       const now = new Date();
-      let y = now.getFullYear(), m = now.getMonth() - 2;
+      let y = now.getFullYear(), m = now.getMonth();
       this.beginA = new Date(y, m, 1);
       this.endA = new Date(y, m + 1, 0);
       this.monthA = now;
@@ -656,10 +662,10 @@ export default {
          // this.reportReady = false;
          // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
-         this.rd.costType = this.buildCostTypeReport()
-         this.buildMonthReport()
-         this.rd.agentFrom = this.buildAgentFromReport()
-         this.rd.agentTo = this.buildAgentToReport()
+         this.rd.costType = this.buildCostTypeReport();
+         this.buildMonthReport();
+         this.rd.agentFrom = this.buildAgentFromReport();
+         this.rd.agentTo = this.buildAgentToReport();
          // --
          // clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
          this.reportReady = true;
