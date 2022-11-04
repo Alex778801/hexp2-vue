@@ -3,8 +3,8 @@
 
       <template #end>
          <div class="p-inputgroup">
-            <InputText placeholder="строка поиска" style="width: 12em"/>
-            <Button icon="fa fa-search"/>
+            <InputText placeholder="строка поиска" style="width: 12em" v-model="findStr"/>
+            <Button icon="fa fa-search" @click="$router.push({ path: `/search/${findStr}`})"/>
          </div>
       </template>
    </Menubar>
@@ -20,6 +20,7 @@ export default {
 
    data() {
       return {
+         findStr: '',
          items: [
             { label: 'hExpenses',icon: 'fa fa-home', disabled: true },
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-projects' },

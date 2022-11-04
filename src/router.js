@@ -16,6 +16,7 @@ import Budget           from "@/components/Budget";
 import Report1          from "@/components/Report1";
 import Report2          from "@/components/Report2";
 import Report3          from "@/components/Report3";
+import Search           from "@/components/Search";
 
 export default createRouter({
     history: createWebHistory(),
@@ -34,5 +35,6 @@ export default createRouter({
         { path: '/report/1/:projId',    component: Report1, meta: { title: 'Отчет 1'} },
         { path: '/report/2/:projId',    component: Report2, meta: { title: 'Отчет 2'} },
         { path: '/report/3/:projId',    component: Report3, meta: { title: 'Отчет 3'} },
+        { path: '/search/:findStr',     component: Search, meta: { title: 'Поиск'} },
     ]
 })

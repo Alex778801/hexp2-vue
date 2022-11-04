@@ -166,6 +166,3 @@ createApp(App)
     .component('Panel', Panel)
     .component('Chart', Chart)
     .mount('#app');
-
-
-
