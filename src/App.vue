@@ -1,7 +1,7 @@
 <template>
    <Toast />
    <MainMenu v-if="loggedIn" />
-   <router-view v-if="loggedIn" />
+   <router-view v-if="loggedIn" :key="$route.path"/>
    <AuthDlg v-if="!loggedIn"/>
 </template>
 

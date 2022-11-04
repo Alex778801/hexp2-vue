@@ -1,11 +1,15 @@
 <template>
 
+   <div v-if="!searchStrOk" class="m-2 p-1">
+      <h3>Введите более двух символов для поиска!</h3>
+   </div>
+
    <div v-if="reportReady" id="ReportBody" class="m-2 p-1">
 
       <h3>Строка поиска: <span class="hl">{{ findStr }}</span></h3>
 
-      <h3> Операции </h3>
-      <div class="SerachLine" v-for="(fo, idx) in rd.operL" :key="idx" >
+      <h2> Операции </h2>
+      <div class="SearchLine" v-for="(fo, idx) in rd.operL" :key="idx" >
          <div class="SearchRes" v-html="'<strong>' + (idx + 1) + '.</strong> ' + fo.notes"></div>
          <div><router-link :to="'/project/' + fo.projId">{{ fo.proj }}</router-link></div>
          <div><router-link :to="'/finoper/' + fo.operId">{{ fd(fo.moment) }}</router-link></div>
@@ -13,9 +17,12 @@
          <div>{{ fs(fo.amount)}}</div>
       </div>
 
-      <h3> Проекты </h3>
-      <div v-for="(proj, idx) in rd.projL" :key="idx" v-html="proj.info">
-      </div>
+      <h2> Проекты </h2>
+         <div class="SearchLine" v-for="(proj, idx) in rd.projL" :key="idx">
+            <div class="SearchRes" v-html="'<strong>' + (idx + 1) + '.</strong> ' + proj.info"></div>
+            <div><router-link :to="'/project/' + proj.id">{{ proj.name }}</router-link></div>
+            <div><router-link :to="'/project-info/' + proj.id">Инфо: {{ proj.name }}</router-link></div>
+         </div>
 
    </div>
 
@@ -96,7 +103,7 @@ export default {
          }).then((response) => {
             // Выгрузка данных
             this.rd = JSON.parse(response.data.search001);
-            clog(this.rd);
+            // clog(this.rd);
             this.reportReady = true;
          });
       },
@@ -121,11 +128,11 @@ export default {
 
 }
 
-:deep(.SearchRes > span) {
+:deep(.SearchRes span) {
    @extend .hl;
 }
 
-.SerachLine {
+.SearchLine {
    display: flex;
    flex-wrap: wrap;
    gap: 0.5rem;

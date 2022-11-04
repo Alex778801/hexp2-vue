@@ -35,6 +35,6 @@ export default createRouter({
         { path: '/report/1/:projId',    component: Report1, meta: { title: 'Отчет 1'} },
         { path: '/report/2/:projId',    component: Report2, meta: { title: 'Отчет 2'} },
         { path: '/report/3/:projId',    component: Report3, meta: { title: 'Отчет 3'} },
-        { path: '/search/:findStr',     component: Search, meta: { title: 'Поиск'} },
+        { path: '/search/:findStr',     component: Search, name: 'search', meta: { title: 'Поиск'} },
     ]
 })
