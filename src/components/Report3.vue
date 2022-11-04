@@ -69,7 +69,8 @@
             <caption> Отчет по статьям </caption>
             <tr>
                <th class="bc_green">
-                  <Checkbox v-model="ctReportAllCheck" binary />
+                  <i class="OutlineFont" :class="{'fa fa-plus': !ctReportAllCheck, 'fa fa-minus': ctReportAllCheck}"
+                     @click="ctReportAllCheck=!ctReportAllCheck"/>
                </th>
                <th class="bc_green">Статья</th>
                <th class="bc_green">Референс</th>
@@ -78,7 +79,8 @@
             <template v-for="(ct, idx) in rd.costType" :key="idx">
                <tr class="Group">
                   <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
-                     <Checkbox v-if="ct.canExpand" v-model="ct.expanded" :binary="true" />
+                         <i class="OutlineFont" :class="{'fa fa-plus': !ct.expanded, 'fa fa-minus': ct.expanded}"
+                            v-show="ct.canExpand" @click="ct.expanded=!ct.expanded"/>
                   </td>
                   <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
                   <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
@@ -122,7 +124,8 @@
             <caption> Отчет по контрагентам ОТКУДА </caption>
             <tr>
                <th class="bc_yellow">
-                  <Checkbox v-model="agFromReportAllCheck" binary />
+                  <i class="OutlineFont" :class="{'fa fa-plus': !agFromReportAllCheck, 'fa fa-minus': agFromReportAllCheck}"
+                     @click="agFromReportAllCheck=!agFromReportAllCheck"/>
                </th>
                <th class="bc_yellow">Статья</th>
                <th class="bc_yellow">Референс</th>
@@ -131,7 +134,8 @@
             <template v-for="(agFrom, idx) in rd.agentFrom" :key="idx">
                <tr class="Group">
                   <td class="ColorBox">
-                     <Checkbox v-if="agFrom.canExpand" v-model="agFrom.expanded" :binary="true" />
+                     <i class="OutlineFont" :class="{'fa fa-plus': !agFrom.expanded, 'fa fa-minus': agFrom.expanded}"
+                        v-show="agFrom.canExpand" @click="agFrom.expanded=!agFrom.expanded"/>
                   </td>
                   <td class="Name"><router-link :to="'/costtype/' + agFrom.ctId">{{ agFrom.agFrom.name }}</router-link></td>
                   <td class="TotalsB">{{ fs(agFrom.sumB) }}<br><span class="Cnt">( {{ agFrom.cntB }} )</span></td>
@@ -164,7 +168,8 @@
             <caption> Отчет по контрагентам КУДА </caption>
             <tr>
                <th class="bc_orange">
-                  <Checkbox v-model="agToReportAllCheck" binary />
+                  <i class="OutlineFont" :class="{'fa fa-plus': !agToReportAllCheck, 'fa fa-minus': agToReportAllCheck}"
+                     @click="agToReportAllCheck=!agToReportAllCheck"/>
                </th>
                <th class="bc_orange">Статья</th>
                <th class="bc_orange">Референс</th>
@@ -173,7 +178,8 @@
             <template v-for="(agTo, idx) in rd.agentTo" :key="idx">
                <tr class="Group">
                   <td class="ColorBox">
-                     <Checkbox v-if="agTo.canExpand" v-model="agTo.expanded" :binary="true" />
+                     <i class="OutlineFont" :class="{'fa fa-plus': !agTo.expanded, 'fa fa-minus': agTo.expanded}"
+                        v-show="agTo.canExpand" @click="agTo.expanded=!agTo.expanded"/>
                   </td>
                   <td class="Name"><router-link :to="'/costtype/' + agTo.ctId">{{ agTo.agTo.name }}</router-link></td>
                   <td class="TotalsB">{{ fs(agTo.sumB) }}<br><span class="Cnt">( {{ agTo.cntB }} )</span></td>
@@ -774,6 +780,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.OutlineFont {
+   //-webkit-text-fill-color: transparent;
+   -webkit-text-stroke: 1px white;
+}
 
 .Setup {
    width: auto;
