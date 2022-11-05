@@ -26,7 +26,7 @@
       </div>
 <!--  Статья -->
       <div class="Field">
-         <label class="text-primary OutlineFont pr-2" :style="{'background-color': getCostTypeColor()}"> Статья </label>
+         <label class="text-primary OutlineFont pr-2" style="border-radius: 0.3rem" :style="{'background-color': getCostTypeColor()}"> Статья </label>
          <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." showClear
                       v-model="oper.costType.id"  :disabled="oper.readOnly"/>
       </div>
@@ -124,7 +124,7 @@ import gql from "graphql-tag";
 import {replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
-import {__backendMediaDir__} from "@/setup";
+import {__backendAddr__, __backendMediaDir__} from "@/setup";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
