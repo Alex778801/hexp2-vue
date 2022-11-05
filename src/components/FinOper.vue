@@ -2,7 +2,7 @@
 
 <!-- eslint-disable -->
 
-<div>
+<div class="MainContainer">
 
 <!-- Верхняя плашка -->
    <Toolbar class="m-1 p-2 top-infobar">
@@ -80,35 +80,16 @@
       </template>
    </Toolbar>
 
-<!-- ФОТО карусель -->
-   <Carousel :value="oper.photoList" :numVisible="1" :numScroll="1">
-      <template #item="slotProps">
-         <div class="photo-item">
-            <div class="photo-content">
-               <!-- ФОТО панель инструментов -->
-               <div>
-               <Toolbar class="mt-2 py-2 px-0">
-                  <template #start>
-                     <!-- Кнопка УДАЛИТЬ фото        -->
-                     <ConfirmPopup></ConfirmPopup>
-                     <Button icon="fa fa-trash" class="p-button-danger p-button-outlined ml-2 butWide1" @click="deletePhoto($event, slotProps.data.id)"/>
-                  </template>
-                  <template #end>
-                     <!-- Кнопка вращение фото влево            -->
-                     <Button icon="fa fa-undo-alt" class="p-button-outlined butWide1 mr-2" @click="actionPhoto(slotProps.data.id, 2)"/>
-                     <!-- Кнопка вращение Фото вправо           -->
-                     <Button icon="fa fa-redo-alt" class="p-button-outlined butWide1 mr-2" @click="actionPhoto(slotProps.data.id, 3)"/>
-                  </template>
-               </Toolbar>
-               <!-- Изображение               -->
-               </div>
-               <div class="m-1">
-                  <img class="w-full" :src="mediaRoot + slotProps.data.image"/>
-               </div>
-            </div>
-         </div>
-      </template>
-   </Carousel>
+<!-- Фото галерея -->
+   <div v-for="(photo, idx) in oper.photoList" :key="idx" class="m-1">
+      <img class="w-full" :src="mediaRoot + photo.image"/>
+      <div class="ImageToolbar" >
+         <ConfirmPopup></ConfirmPopup>
+         <Button icon="fa fa-trash" class="p-button-danger ml-2 mr-2" @click="deletePhoto($event, photo.id)"/>
+         <Button icon="fa fa-undo-alt" class="mr-2" @click="actionPhoto(photo.id, 2)"/>
+         <Button icon="fa fa-redo-alt" class="mr-2" @click="actionPhoto(photo.id, 3)"/>
+      </div>
+   </div>
 
 </div>
 
@@ -143,6 +124,8 @@ export default {
          ts: null,
          // Список доступа ACL
          aclListUser: null,
+         // Текущее фото
+         curPhotoIdx: 0,
          // Данные изменены пользователем
          dataChanged: false,
       }
@@ -357,6 +340,11 @@ export default {
 
 <style lang="scss" scoped>
 
+.MainContainer {
+   max-width: 70rem;
+   margin: 0 auto;
+}
+
 .Fields {
    .Field {
       display: grid;
@@ -364,6 +352,7 @@ export default {
       gap: 0.4rem;
       align-items: stretch;
       margin: 0.5rem 0;
+      //max-width: 50rem;
 
       label {
          padding-top: 0.6rem;
@@ -379,24 +368,12 @@ export default {
    -webkit-text-stroke: 0.025rem white;
 }
 
-//.sizes {
-//   .p-inputtext {
-//      display: block;
-//      margin-bottom: .5rem;
-//
-//      &:last-child {
-//         margin-bottom: 0;
-//      }
-//   }
-//}
-//
-//.field .p-inputtext, {
-//   display: block;
-//}
-//
-//.field * {
-//   width: 100%;
-//   max-width: 50rem;
-//}
+.ImageToolbar {
+   position: relative;
+   top: -1.8rem;
+   right: 0.1rem;
+   text-align: right;
+   height: 0.8rem
+}
 
 </style>
