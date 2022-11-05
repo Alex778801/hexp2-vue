@@ -17,33 +17,36 @@
    </Toolbar>
 
 <!-- Поля  -->
-   <div class="Fields m-2">
+   <div legend="Поля"  class="m-2">
 <!--  Дата -->
-      <div class="Field">
-         <label class="text-primary"> Дата </label>
-         <Calendar autocomplete="off" dateFormat="dd MM yy (D)" showTime showIcon
+      <div class="field">
+         <label for="ts" class="text-primary"> Дата </label>
+         <Calendar inputId="ts" autocomplete="off" dateFormat="dd MM yy (D)" :showTime="true" :showIcon="true"
                     v-model="ts"  :disabled="oper.readOnly"/>
       </div>
 <!--  Статья -->
-      <div class="Field">
-         <label class="text-primary OutlineFont pr-2" :style="{'background-color': getCostTypeColor()}"> Статья </label>
-         <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." showClear
+      <div class="field">
+         <label for="costType" class="text-primary"> Статья </label>
+         <span style="min-height: 1rem; display: inline-flex; align-items: center;">
+            <div class="w-6rem text-center mr-2 h-2rem" :style="{'background-color': getCostTypeColor()}"> &nbsp </div>
+            <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." :showClear="true"
                       v-model="oper.costType.id"  :disabled="oper.readOnly"/>
+         </span>
       </div>
 <!--  Агент откуда -->
-      <div class="Field">
+      <div class="field">
          <label for="agentFrom" class="text-primary"> Агент Откуда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." :showClear="true"
                    v-model="oper.agentFrom.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Агент куда -->
-      <div class="Field">
+      <div class="field">
          <label for="agentTo" class="text-primary"> Агент куда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." :showClear="true"
                    v-model="oper.agentTo.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Сумма -->
-      <div class="Field w-full" >
+      <div class="field w-full" >
          <label for="amount" class="text-primary"> Сумма </label>
          <span style="min-height: 1rem; display: inline-flex; align-items: center;">
             <InputNumber id="finoper_amount" v-model="oper.amount" :showClear="true"
@@ -52,12 +55,12 @@
          </span>
       </div>
 <!--  Примечание -->
-      <div class="Field" style="margin-top: -2.1rem; margin-bottom: 0">
-         <label for="notes" class="text-primary" style="text-align: left"> Примечание </label>
-         <Textarea v-model="oper.notes" :autoResize="true" rows="4" style="grid-column: 1 / 3"/>
+      <div class="field">
+         <label for="notes" class="text-primary"> Примечание </label>
+         <Textarea v-model="oper.notes" :autoResize="true" rows="5" cols="30"/>
       </div>
       <!--  Владелец    -->
-      <div class="Field">
+      <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
          <Dropdown id="owner" v-model="oper.user" :options="aclListUser" optionValue="id" optionLabel="label"
                    :filter="true" placeholder="список учетных записей..." :disabled="oper.readOnly"/>
@@ -357,46 +360,24 @@ export default {
 
 <style lang="scss" scoped>
 
-.Fields {
-   .Field {
-      display: grid;
-      grid-template-columns: 6rem auto;
-      gap: 0.4rem;
-      align-items: stretch;
-      margin: 0.5rem 0;
+.sizes {
+   .p-inputtext {
+      display: block;
+      margin-bottom: .5rem;
 
-      label {
-         padding-top: 0.6rem;
-         text-align: right;
+      &:last-child {
+         margin-bottom: 0;
       }
-
    }
-
 }
 
-.OutlineFont {
-   //-webkit-text-fill-color: transparent;
-   -webkit-text-stroke: 0.025rem white;
+.field .p-inputtext, {
+   display: block;
 }
 
-//.sizes {
-//   .p-inputtext {
-//      display: block;
-//      margin-bottom: .5rem;
-//
-//      &:last-child {
-//         margin-bottom: 0;
-//      }
-//   }
-//}
-//
-//.field .p-inputtext, {
-//   display: block;
-//}
-//
-//.field * {
-//   width: 100%;
-//   max-width: 50rem;
-//}
+.field * {
+   width: 100%;
+   max-width: 50rem;
+}
 
 </style>
