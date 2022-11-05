@@ -10,7 +10,7 @@
 
       <h2> Операции </h2>
       <div class="SearchLine" v-for="(fo, idx) in rd.operL" :key="idx" >
-         <div class="SearchRes" v-html="'<strong>' + (idx + 1) + '.</strong> ' + fo.notes"></div>
+         <div v-html="'<strong>' + (idx + 1) + '.</strong> ' + fo.notes"></div>
          <div><router-link :to="'/project/' + fo.projId">{{ fo.proj }}</router-link></div>
          <div><router-link :to="'/finoper/' + fo.operId">{{ fd(fo.moment) }}</router-link></div>
          <div><strong>{{ fo.ct }}</strong>: {{fo.agF}} → {{fo.agT}}</div>
@@ -19,7 +19,7 @@
 
       <h2> Проекты </h2>
          <div class="SearchLine" v-for="(proj, idx) in rd.projL" :key="idx">
-            <div class="SearchRes" v-html="'<strong>' + (idx + 1) + '.</strong> ' + proj.info"></div>
+            <div v-html="'<strong>' + (idx + 1) + '.</strong> ' + proj.info"></div>
             <div><router-link :to="'/project/' + proj.id">{{ proj.name }}</router-link></div>
             <div><router-link :to="'/project-info/' + proj.id">Инфо: {{ proj.name }}</router-link></div>
          </div>
@@ -122,14 +122,10 @@ export default {
 
 }
 
-.hl {
+:deep(.hl) {
    font-weight: bold;
    color: red !important;
 
-}
-
-:deep(.SearchRes span) {
-   @extend .hl;
 }
 
 .SearchLine {
