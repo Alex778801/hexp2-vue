@@ -369,13 +369,6 @@ export default {
       border: solid 0.25rem var(--primary-500);
       border-radius: 0.5rem;
    }
-
 }
-
-
-
-
-
-
 
 </style>

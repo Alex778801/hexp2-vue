@@ -114,7 +114,6 @@ export default {
 <style lang="scss" scoped>
 
 .OutlineFont {
-   //-webkit-text-fill-color: transparent;
    -webkit-text-stroke: 1px white;
 }
 

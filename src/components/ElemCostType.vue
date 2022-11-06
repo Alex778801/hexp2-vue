@@ -168,16 +168,6 @@ export default {
 </script>
 
 
-<style>
-
-.p-fieldset-legend {
-   font-size: 0.9rem !important;
-   padding: 0.5rem !important;
-}
-
-</style>
-
-
 <style lang="scss" scoped>
 
 .sizes {

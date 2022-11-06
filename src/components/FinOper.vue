@@ -305,39 +305,6 @@ export default {
 </script>
 
 
-<style>
-
-.p-fieldset-legend {
-   font-size: 0.9rem !important;
-   padding: 0.5rem !important;
-}
-
-#finoper_amount {
-   width: 14rem;
-}
-
-#finoper_amount input {
-   width: 14rem;
-   font-weight: bold;
-   text-align: center;
-   font-size: 2rem;
-}
-
-.IncomeSum input {
-   color: var(--incomeColor)
-}
-
-.OutcomeSum input {
-   color: var(--outcomeColor)
-}
-
-.p-carousel-container .p-link {
-   display: none !important;
-}
-
-</style>
-
-
 <style lang="scss" scoped>
 
 .MainContainer {
@@ -359,12 +326,24 @@ export default {
          text-align: right;
       }
 
-   }
+      #finoper_amount :deep(input) {
+         width: 14rem;
+         font-weight: bold;
+         text-align: center;
+         font-size: 2rem;
+      }
 
+      .IncomeSum :deep(input) {
+         color: var(--incomeColor)
+      }
+
+      .OutcomeSum :deep(input) {
+         color: var(--outcomeColor)
+      }
+   }
 }
 
 .OutlineFont {
-   //-webkit-text-fill-color: transparent;
    -webkit-text-stroke: 0.025rem white;
 }
 

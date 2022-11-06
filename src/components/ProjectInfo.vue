@@ -43,7 +43,6 @@ import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/ru';
 import {MyCustomUploadAdapterPlugin} from "@/components/tools/CKEuploadAdapter";
 
-
 export default {
    name: "ProjectInfo",
 
@@ -166,14 +165,11 @@ export default {
       cancel() {
          this.$router.go(-1);
       },
-
    }
 }
 
 </script>
 
 <style lang="scss" scoped>
-
-
 
 </style>
