@@ -1,5 +1,6 @@
 <template>
 
+   <div class="prn2col">
    <div class="flex justify-content-center">
 
       <div v-if="reportReady" id="ReportBody" class="m-2">
@@ -193,7 +194,7 @@
          </table>
 
    <!--     Нижняя панель инструментов -->
-         <Toolbar class="mx-0 my-1 p-2">
+         <Toolbar class="mx-0 my-1 p-2 no-print">
             <template #end>
                <!--  Кнопки действий формы      -->
                <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="$router.go(-1)"/>
@@ -202,6 +203,7 @@
 
       </div>
 
+   </div>
    </div>
 
 </template>
@@ -282,35 +284,8 @@ export default {
 }
 </script>
 
+
 <style scoped>
-
-@supports (-webkit-touch-callout: none) {
-   @media print {
-      body {
-         zoom: 80%;
-         font-size: 0.6em;
-      }
-      .no-print, .no-print *  {
-         display: none !important;
-      }
-   }
-}
-
-@media print
-{
-   .no-print, .no-print *  {
-      display: none !important;
-   }
-
-   body {
-      zoom: 70%;
-      column-count: 2;
-      -webkit-column-count: 2;
-      -moz-column-count: 2;
-      -webkit-filter: grayscale(100%);
-      filter: grayscale(100%);
-   }
-}
 
 #ReportBody {
    width: 100%;

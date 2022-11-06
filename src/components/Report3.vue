@@ -1,212 +1,216 @@
 <template>
 
-<!--  Настройки отчета        style="display:none"           -->
-   <div class="Setup">
-<!--  Период А    -->
-      <Fieldset>
-         <template #legend> Отчетный период </template>
-         <div class="Field">
-            <label>Дата начала</label>
-            <Calendar v-model="beginA" dateFormat="dd MM yy (D)" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Дата конца</label>
-            <Calendar v-model="endA" dateFormat="dd MM yy (D)" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Месяц/год</label>
-            <Calendar v-model="monthA" view="month" dateFormat="MM yy" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Год</label>
-            <Calendar v-model="yearA" view="year" dateFormat="yy" showIcon/>
-         </div>
-      </Fieldset>
-<!--  Период В    -->
-      <Fieldset>
-         <template #legend> Референсный период </template>
-         <div class="Field">
-            <label>Дата начала</label>
-            <Calendar v-model="beginB" dateFormat="dd MM yy (D)" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Дата конца</label>
-            <Calendar v-model="endB" dateFormat="dd MM yy (D)" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Месяц/год</label>
-            <Calendar v-model="monthB" view="month" dateFormat="MM yy" showIcon/>
-         </div>
-         <div class="Field">
-            <label>Год</label>
-            <Calendar v-model="yearB" view="year" dateFormat="yy" showIcon/>
-         </div>
-      </Fieldset>
-<!--  Фильтры    -->
-      <Fieldset style="align-self: flex-start">
-         <template #legend> Фильтры </template>
-         <div class="Field">
-            <label>Статьи</label>
-            <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
-         </div>
-         <div class="Field">
-            <label>Агенты</label>
-            <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
-         </div>
-         <div class="Field">
-            <Button label="Применить" icon="pi pi-check" @click="buildReport()"/>
-         </div>
-      </Fieldset>
-<!--  --  -->
-   </div>
+   <div class="prn1col">
 
-<!-- Отчет                               -->
-   <div v-if="reportReady">
-
-<!--  Отчет по Статьям    -->
-      <div class="ReportTable">
-         <table>
-            <caption> Отчет по статьям </caption>
-            <tr>
-               <th class="bc_green">
-                  <i class="OutlineFont" :class="{'fa fa-plus': !ctReportAllCheck, 'fa fa-minus': ctReportAllCheck}"
-                     @click="ctReportAllCheck=!ctReportAllCheck"/>
-               </th>
-               <th class="bc_green">Статья</th>
-               <th class="bc_green">Референс</th>
-               <th class="bc_green">Отчет</th>
-            </tr>
-            <template v-for="(ct, idx) in rd.costType" :key="idx">
-               <tr class="Group">
-                  <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
-                         <i class="OutlineFont" :class="{'fa fa-plus': !ct.expanded, 'fa fa-minus': ct.expanded}"
-                            v-show="ct.canExpand" @click="ct.expanded=!ct.expanded"/>
-                  </td>
-                  <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
-                  <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
-                  <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
-               </tr>
-               <tr class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
-                  <td colspan="3" class="Ts">
-                     <div class="TsAg">
-                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
-                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
-                        </router-link>
-                        <br>
-                        <span class="Agent">
-                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
-                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
-                        </span>
-                     </div>
-                     <div class="Notes">{{ fo.notes }}</div>
-                  </td>
-                  <td class="Amount">{{ fs(fo.amount) }}</td>
-               </tr>
-            </template>
-         </table>
+   <!--  Настройки отчета        style="display:none"           -->
+      <div class="Setup">
+   <!--  Период А    -->
+         <Fieldset>
+            <template #legend> Отчетный период </template>
+            <div class="Field">
+               <label>Дата начала</label>
+               <Calendar v-model="beginA" dateFormat="dd MM yy (D)" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Дата конца</label>
+               <Calendar v-model="endA" dateFormat="dd MM yy (D)" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Месяц/год</label>
+               <Calendar v-model="monthA" view="month" dateFormat="MM yy" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Год</label>
+               <Calendar v-model="yearA" view="year" dateFormat="yy" showIcon/>
+            </div>
+         </Fieldset>
+   <!--  Период В    -->
+         <Fieldset>
+            <template #legend> Референсный период </template>
+            <div class="Field">
+               <label>Дата начала</label>
+               <Calendar v-model="beginB" dateFormat="dd MM yy (D)" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Дата конца</label>
+               <Calendar v-model="endB" dateFormat="dd MM yy (D)" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Месяц/год</label>
+               <Calendar v-model="monthB" view="month" dateFormat="MM yy" showIcon/>
+            </div>
+            <div class="Field">
+               <label>Год</label>
+               <Calendar v-model="yearB" view="year" dateFormat="yy" showIcon/>
+            </div>
+         </Fieldset>
+   <!--  Фильтры    -->
+         <Fieldset style="align-self: flex-start">
+            <template #legend> Фильтры </template>
+            <div class="Field">
+               <label>Статьи</label>
+               <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
+            </div>
+            <div class="Field">
+               <label>Агенты</label>
+               <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
+            </div>
+            <div class="Field">
+               <Button label="Применить" icon="pi pi-check" @click="buildReport()"/>
+            </div>
+         </Fieldset>
+   <!--  --  -->
       </div>
 
-<!--  График по статьям    -->
-      <div class="GraphMonth">
-         <h3> Суммы по статьям </h3>
-         <Chart type="pie" :data="ctGraphData" :options="ctGraphOptions" />
+   <!-- Отчет                               -->
+      <div v-if="reportReady">
+
+   <!--  Отчет по Статьям    -->
+         <div class="ReportTable">
+            <table>
+               <caption> Отчет по статьям </caption>
+               <tr>
+                  <th class="bc_green">
+                     <i class="OutlineFont" :class="{'fa fa-plus': !ctReportAllCheck, 'fa fa-minus': ctReportAllCheck}"
+                        @click="ctReportAllCheck=!ctReportAllCheck"/>
+                  </th>
+                  <th class="bc_green">Статья</th>
+                  <th class="bc_green">Референс</th>
+                  <th class="bc_green">Отчет</th>
+               </tr>
+               <template v-for="(ct, idx) in rd.costType" :key="idx">
+                  <tr class="Group">
+                     <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
+                            <i class="OutlineFont" :class="{'fa fa-plus': !ct.expanded, 'fa fa-minus': ct.expanded}"
+                               v-show="ct.canExpand" @click="ct.expanded=!ct.expanded"/>
+                     </td>
+                     <td class="Name"><router-link :to="'/costtype/' + ct.ctId">{{ ct.ct.name }}</router-link></td>
+                     <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
+                     <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
+                  </tr>
+                  <tr class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
+                     <td colspan="3" class="Ts">
+                        <div class="TsAg">
+                           <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                              <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                           </router-link>
+                           <br>
+                           <span class="Agent">
+                              <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                              <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+                           </span>
+                        </div>
+                        <div class="Notes">{{ fo.notes }}</div>
+                     </td>
+                     <td class="Amount">{{ fs(fo.amount) }}</td>
+                  </tr>
+               </template>
+            </table>
+         </div>
+
+   <!--  График по статьям    -->
+         <div class="GraphMonth">
+            <h3> Суммы по статьям </h3>
+            <Chart type="pie" :data="ctGraphData" :options="ctGraphOptions" />
+         </div>
+
+   <!--  График по месяцам   -->
+         <div class="GraphMonth">
+            <h3> Суммы по месяцам </h3>
+            <Chart type="bar" :data="monthGraphData" :options="monthGraphOptions" />
+         </div>
+
+   <!-- Отчет Контрагенты Откуда  -->
+         <div class="ReportTable">
+            <table>
+               <caption> Отчет по контрагентам ОТКУДА </caption>
+               <tr>
+                  <th class="bc_yellow">
+                     <i class="OutlineFont" :class="{'fa fa-plus': !agFromReportAllCheck, 'fa fa-minus': agFromReportAllCheck}"
+                        @click="agFromReportAllCheck=!agFromReportAllCheck"/>
+                  </th>
+                  <th class="bc_yellow">Статья</th>
+                  <th class="bc_yellow">Референс</th>
+                  <th class="bc_yellow">Отчет</th>
+               </tr>
+               <template v-for="(agFrom, idx) in rd.agentFrom" :key="idx">
+                  <tr class="Group">
+                     <td class="ColorBox">
+                        <i class="OutlineFont" :class="{'fa fa-plus': !agFrom.expanded, 'fa fa-minus': agFrom.expanded}"
+                           v-show="agFrom.canExpand" @click="agFrom.expanded=!agFrom.expanded"/>
+                     </td>
+                     <td class="Name"><router-link :to="'/costtype/' + agFrom.ctId">{{ agFrom.agFrom.name }}</router-link></td>
+                     <td class="TotalsB">{{ fs(agFrom.sumB) }}<br><span class="Cnt">( {{ agFrom.cntB }} )</span></td>
+                     <td class="TotalsA">{{ fs(agFrom.sumA) }}<br><span class="Cnt">( {{ agFrom.cntA }} )</span></td>
+                  </tr>
+                  <tr class="Element" v-for="(fo, idx) in agFrom.finOpers" :key="idx" :hidden="!agFrom.expanded">
+                     <td colspan="3" class="Ts">
+                        <div class="TsAg">
+                           <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                              <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                           </router-link>
+                           <br>
+                           <span class="Agent">
+                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+   <!--                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> -->
+                              → <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+                           </span>
+                        </div>
+                        <div class="Notes">{{ fo.notes }}</div>
+                     </td>
+                     <td class="Amount">{{ fs(fo.amount) }}</td>
+                  </tr>
+               </template>
+            </table>
+         </div>
+
+   <!-- Отчет Контрагенты Куда    -->
+         <div class="ReportTable">
+            <table>
+               <caption> Отчет по контрагентам КУДА </caption>
+               <tr>
+                  <th class="bc_orange">
+                     <i class="OutlineFont" :class="{'fa fa-plus': !agToReportAllCheck, 'fa fa-minus': agToReportAllCheck}"
+                        @click="agToReportAllCheck=!agToReportAllCheck"/>
+                  </th>
+                  <th class="bc_orange">Статья</th>
+                  <th class="bc_orange">Референс</th>
+                  <th class="bc_orange">Отчет</th>
+               </tr>
+               <template v-for="(agTo, idx) in rd.agentTo" :key="idx">
+                  <tr class="Group">
+                     <td class="ColorBox">
+                        <i class="OutlineFont" :class="{'fa fa-plus': !agTo.expanded, 'fa fa-minus': agTo.expanded}"
+                           v-show="agTo.canExpand" @click="agTo.expanded=!agTo.expanded"/>
+                     </td>
+                     <td class="Name"><router-link :to="'/costtype/' + agTo.ctId">{{ agTo.agTo.name }}</router-link></td>
+                     <td class="TotalsB">{{ fs(agTo.sumB) }}<br><span class="Cnt">( {{ agTo.cntB }} )</span></td>
+                     <td class="TotalsA">{{ fs(agTo.sumA) }}<br><span class="Cnt">( {{ agTo.cntA }} )</span></td>
+                  </tr>
+                  <tr class="Element" v-for="(fo, idx) in agTo.finOpers" :key="idx" :hidden="!agTo.expanded">
+                     <td colspan="3" class="Ts">
+                        <div class="TsAg">
+                           <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                              <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                           </router-link>
+                           <br>
+                           <span class="Agent">
+                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+                              <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+   <!--                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>-->
+                           </span>
+                        </div>
+                        <div class="Notes">{{ fo.notes }}</div>
+                     </td>
+                     <td class="Amount">{{ fs(fo.amount) }}</td>
+                  </tr>
+               </template>
+            </table>
+         </div>
+
+   <!-- --  -->
       </div>
 
-<!--  График по месяцам   -->
-      <div class="GraphMonth">
-         <h3> Суммы по месяцам </h3>
-         <Chart type="bar" :data="monthGraphData" :options="monthGraphOptions" />
-      </div>
-
-<!-- Отчет Контрагенты Откуда  -->
-      <div class="ReportTable">
-         <table>
-            <caption> Отчет по контрагентам ОТКУДА </caption>
-            <tr>
-               <th class="bc_yellow">
-                  <i class="OutlineFont" :class="{'fa fa-plus': !agFromReportAllCheck, 'fa fa-minus': agFromReportAllCheck}"
-                     @click="agFromReportAllCheck=!agFromReportAllCheck"/>
-               </th>
-               <th class="bc_yellow">Статья</th>
-               <th class="bc_yellow">Референс</th>
-               <th class="bc_yellow">Отчет</th>
-            </tr>
-            <template v-for="(agFrom, idx) in rd.agentFrom" :key="idx">
-               <tr class="Group">
-                  <td class="ColorBox">
-                     <i class="OutlineFont" :class="{'fa fa-plus': !agFrom.expanded, 'fa fa-minus': agFrom.expanded}"
-                        v-show="agFrom.canExpand" @click="agFrom.expanded=!agFrom.expanded"/>
-                  </td>
-                  <td class="Name"><router-link :to="'/costtype/' + agFrom.ctId">{{ agFrom.agFrom.name }}</router-link></td>
-                  <td class="TotalsB">{{ fs(agFrom.sumB) }}<br><span class="Cnt">( {{ agFrom.cntB }} )</span></td>
-                  <td class="TotalsA">{{ fs(agFrom.sumA) }}<br><span class="Cnt">( {{ agFrom.cntA }} )</span></td>
-               </tr>
-               <tr class="Element" v-for="(fo, idx) in agFrom.finOpers" :key="idx" :hidden="!agFrom.expanded">
-                  <td colspan="3" class="Ts">
-                     <div class="TsAg">
-                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
-                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
-                        </router-link>
-                        <br>
-                        <span class="Agent">
-                           <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
-<!--                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> -->
-                           → <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
-                        </span>
-                     </div>
-                     <div class="Notes">{{ fo.notes }}</div>
-                  </td>
-                  <td class="Amount">{{ fs(fo.amount) }}</td>
-               </tr>
-            </template>
-         </table>
-      </div>
-
-<!-- Отчет Контрагенты Куда    -->
-      <div class="ReportTable">
-         <table>
-            <caption> Отчет по контрагентам КУДА </caption>
-            <tr>
-               <th class="bc_orange">
-                  <i class="OutlineFont" :class="{'fa fa-plus': !agToReportAllCheck, 'fa fa-minus': agToReportAllCheck}"
-                     @click="agToReportAllCheck=!agToReportAllCheck"/>
-               </th>
-               <th class="bc_orange">Статья</th>
-               <th class="bc_orange">Референс</th>
-               <th class="bc_orange">Отчет</th>
-            </tr>
-            <template v-for="(agTo, idx) in rd.agentTo" :key="idx">
-               <tr class="Group">
-                  <td class="ColorBox">
-                     <i class="OutlineFont" :class="{'fa fa-plus': !agTo.expanded, 'fa fa-minus': agTo.expanded}"
-                        v-show="agTo.canExpand" @click="agTo.expanded=!agTo.expanded"/>
-                  </td>
-                  <td class="Name"><router-link :to="'/costtype/' + agTo.ctId">{{ agTo.agTo.name }}</router-link></td>
-                  <td class="TotalsB">{{ fs(agTo.sumB) }}<br><span class="Cnt">( {{ agTo.cntB }} )</span></td>
-                  <td class="TotalsA">{{ fs(agTo.sumA) }}<br><span class="Cnt">( {{ agTo.cntA }} )</span></td>
-               </tr>
-               <tr class="Element" v-for="(fo, idx) in agTo.finOpers" :key="idx" :hidden="!agTo.expanded">
-                  <td colspan="3" class="Ts">
-                     <div class="TsAg">
-                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
-                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
-                        </router-link>
-                        <br>
-                        <span class="Agent">
-                           <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
-                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
-<!--                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>-->
-                        </span>
-                     </div>
-                     <div class="Notes">{{ fo.notes }}</div>
-                  </td>
-                  <td class="Amount">{{ fs(fo.amount) }}</td>
-               </tr>
-            </template>
-         </table>
-      </div>
-
-<!-- --  -->
    </div>
 
 </template>
@@ -779,10 +783,10 @@ export default {
 }
 </script>
 
+
 <style lang="scss" scoped>
 
 .OutlineFont {
-   //-webkit-text-fill-color: transparent;
    -webkit-text-stroke: 1px white;
 }
 

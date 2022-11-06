@@ -1,5 +1,5 @@
 <template>
-   <Menubar :model="items" class="m-1">
+   <Menubar :model="items" class="m-1 no-print">
 
       <template #end>
          <div class="p-inputgroup">

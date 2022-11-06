@@ -81,6 +81,25 @@ body {
    max-width: var(--screen-width) !important;
 }
 
+@media print
+{
+   .no-print, .no-print *  {
+      display: none !important;
+   }
+
+   .prn1col {
+      zoom: 70% !important;
+      column-count: 1 !important;
+      filter: grayscale(100%) !important;
+   }
+
+   .prn2col {
+      zoom: 70% !important;
+      column-count: 2 !important;
+      filter: grayscale(100%) !important;
+   }
+}
+
 label {
    font-size: 0.85rem;
 }
@@ -120,7 +139,6 @@ button {
    padding-left: 2.1rem !important;
    padding-right: 2.1rem !important;
 }
-
 
 /* Кнопка с подстветкой - отображать режим */
 .EnBtn {
