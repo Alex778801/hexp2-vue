@@ -62,31 +62,31 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="project.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="project.user" :options="aclListOwner" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                    :disabled="project.readOnly"/>
       </div>
 <!--  Чтение READ    -->
       <div class="field">
          <label for="acl_read" class="text-primary"> Чтение фин операций</label>
-         <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <MultiSelect id="acl_read" v-model="acl_read" :options="aclList" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                       :disabled="project.readOnly"/>
       </div>
 <!--  Создание CRT    -->
       <div class="field">
          <label for="acl_crt" class="text-primary"> Создание фин операций</label>
-         <MultiSelect id="acl_read" v-model="acl_crt" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <MultiSelect id="acl_read" v-model="acl_crt" :options="aclList" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                       :disabled="project.readOnly"/>
       </div>
 <!--  Изменение MOD   -->
       <div class="field">
          <label for="acl_o_mod" class="text-primary"> Модификация фин операций</label>
-         <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <MultiSelect id="acl_o_mod" v-model="acl_mod" :options="aclList" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                       :disabled="project.readOnly"/>
       </div>
 <!--  Отчеты REPORT  -->
       <div class="field">
          <label for="acl_read" class="text-primary"> Построение отчетов фин операций </label>
-         <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <MultiSelect id="acl_read" v-model="acl_report" :options="aclList" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                       :disabled="project.readOnly"/>
       </div>
    </Fieldset>

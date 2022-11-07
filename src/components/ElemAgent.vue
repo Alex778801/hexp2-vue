@@ -30,7 +30,7 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="agent.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="agent.user" :options="aclListOwner" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                    :disabled="agent.readOnly"/>
       </div>
    </Fieldset>

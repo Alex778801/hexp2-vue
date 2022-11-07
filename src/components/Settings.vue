@@ -6,7 +6,7 @@
          <template #title> Масштаб интерфейса </template>
          <template #content>
                <h5>{{ Math.round(scaleInterface * 100) }} %</h5>
-               <Slider v-model="scaleInterface" :step="0.025" :min="0.5" :max="1.5"/>
+               <Slider v-model="scaleInterface" step="0.025" min="0.5" max="1.5"/>
                <p class="mt-3 text-sm">Отрегулируйте ползунком желаемый масштаб интерфейса.
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>
@@ -16,7 +16,7 @@
          <template #title>  Ширина экрана </template>
          <template #content>
             <h5>{{ screenWidth }} em</h5>
-            <Slider v-model="screenWidth" :step="5" :min="50" :max="201"/>
+            <Slider v-model="screenWidth" step="5" min="50" max="201"/>
             <p class="mt-3 text-sm">Отрегулируйте ползунком ширину рабочей области экрана.
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>

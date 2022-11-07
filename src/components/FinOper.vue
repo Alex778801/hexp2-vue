@@ -74,7 +74,7 @@
       <template #end>
          <!-- Конпка новое ФОТО        -->
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" name="demo[]" chooseLabel="+" accept="image/*"
-                     :customUpload="true" @uploader="newPhoto" :auto="true"/>
+                     customUpload @uploader="newPhoto" auto/>
          <!--  Кнопки действий формы      -->
          <Button label="Сохран" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
          <Button label="Отмена" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>

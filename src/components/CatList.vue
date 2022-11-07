@@ -92,7 +92,7 @@
    </div>
 
 <!-- Контекстное меню объекта каталога  -->
-   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" :popup="true" />
+   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" popup />
    <ContextMenu ref="itemMenuContext" :model="itemMenuContent" />
 
 <!-- Диалог ввода строки -->

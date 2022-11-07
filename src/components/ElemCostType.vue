@@ -24,7 +24,7 @@
       </div>
 <!--  Расходная/приходная    -->
       <div class="field1">
-         <Checkbox inputId="isOutcome" v-model="costType.isOutcome" :binary="true" />
+         <Checkbox inputId="isOutcome" v-model="costType.isOutcome" binary />
          <label for="isOutcome" class="pl-2"> Расходная статья </label>
       </div>
 <!--  Цвет    -->
@@ -41,7 +41,7 @@
 <!--  Владелец    -->
       <div class="field">
          <label for="owner" class="text-primary"> Владелец </label>
-         <Dropdown id="owner" v-model="costType.user" :options="aclListOwner" optionValue="id" optionLabel="label" :filter="true" placeholder="список учетных записей..."
+         <Dropdown id="owner" v-model="costType.user" :options="aclListOwner" optionValue="id" optionLabel="label" filter placeholder="список учетных записей..."
                    :disabled="costType.readOnly"/>
       </div>
    </Fieldset>

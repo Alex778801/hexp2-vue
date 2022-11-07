@@ -30,7 +30,7 @@
                     :disabled="dragMode" :readonly="project.readOnly">
          </InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
-                      v-model="item.amount" @input="onChangeAmount($event, item)" :maxFractionDigits="0" :min="0"
+                      v-model="item.amount" @input="onChangeAmount($event, item)" maxFractionDigits="0" min="0"
                       :disabled="dragMode" :readonly="project.readOnly">
          </InputNumber>
       </div>

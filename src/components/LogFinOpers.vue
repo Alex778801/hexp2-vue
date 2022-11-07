@@ -65,7 +65,7 @@
 <!--           Кнопка Сортировка                -->
                <Button icon="fa fa-sort-amount-up" class="text-center text-sm w-8rem" aria-haspopup="true" aria-controls="sort_menu"
                        :label="sortModeCaptions[sortMode]" @click="sortMenuToggle"/>
-               <Menu id="sortMenu" ref="sortMenu" :model="sortMenuContent" :popup="true" />
+               <Menu id="sortMenu" ref="sortMenu" :model="sortMenuContent" popup/>
             </div>
             <div class="p-inputgroup mr-2">
 <!--           Кнопка Инфо                      -->
@@ -74,7 +74,7 @@
                <Button icon="fa fa-usd-circle" @click="$router.push({ path: `/budget/${projectId}`})"/>
 <!--           Кнопка Отчеты                    -->
                <Button icon="fa fa-chart-line" aria-haspopup="true" aria-controls="reportMenu" @click="reportMenuToggle"/>
-               <Menu id="reportMenu" ref="reportMenu" :model="reportMenuContent" :popup="true" />
+               <Menu id="reportMenu" ref="reportMenu" :model="reportMenuContent" popup/>
             </div>
             <div class="p-inputgroup mr-2">
 <!--           Кнопка Новая операция            -->
@@ -99,7 +99,7 @@
    </div>
 
 <!-- Контекстное меню объекта каталога  -->
-   <Menu id="itemContextMenu" ref="itemContextMenu" :model="itemContextMenuContent" :popup="true" />
+   <Menu id="itemContextMenu" ref="itemContextMenu" :model="itemContextMenuContent" popup/>
    <ContextMenu ref="itemContextMenu" :model="itemContextMenuContent" />
 
 <!-- Диалог ввода строки -->
