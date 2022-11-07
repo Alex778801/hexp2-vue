@@ -139,7 +139,7 @@
                         <i class="OutlineFont" :class="{'fa fa-plus': !agFrom.expanded, 'fa fa-minus': agFrom.expanded}"
                            v-show="agFrom.canExpand" @click="agFrom.expanded=!agFrom.expanded"/>
                      </td>
-                     <td class="Name"><router-link :to="'/costtype/' + agFrom.ctId">{{ agFrom.agFrom.name }}</router-link></td>
+                     <td class="Name"><router-link :to="'/agent/' + agFrom.agFromId">{{ agFrom.agFrom.name }}</router-link></td>
                      <td class="TotalsB">{{ fs(agFrom.sumB) }}<br><span class="Cnt">( {{ agFrom.cntB }} )</span></td>
                      <td class="TotalsA">{{ fs(agFrom.sumA) }}<br><span class="Cnt">( {{ agFrom.cntA }} )</span></td>
                   </tr>
@@ -183,7 +183,7 @@
                         <i class="OutlineFont" :class="{'fa fa-plus': !agTo.expanded, 'fa fa-minus': agTo.expanded}"
                            v-show="agTo.canExpand" @click="agTo.expanded=!agTo.expanded"/>
                      </td>
-                     <td class="Name"><router-link :to="'/costtype/' + agTo.ctId">{{ agTo.agTo.name }}</router-link></td>
+                     <td class="Name"><router-link :to="'/agent/' + agTo.agToId">{{ agTo.agTo.name }}</router-link></td>
                      <td class="TotalsB">{{ fs(agTo.sumB) }}<br><span class="Cnt">( {{ agTo.cntB }} )</span></td>
                      <td class="TotalsA">{{ fs(agTo.sumA) }}<br><span class="Cnt">( {{ agTo.cntA }} )</span></td>
                   </tr>

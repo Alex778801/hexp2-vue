@@ -360,7 +360,8 @@ export default {
             // Редактировать группу
             if (this.urlEditGroup !== '')
                // @ts-ignore:
-               openWindow(`${this.urlEditGroup}/${item.id}`);
+               // openWindow(`${this.urlEditGroup}/${item.id}`);
+               this.$router.push({ path: `${this.urlEditGroup}/${item.id}` })
             else {
                this.$refs.inputTextDlg.show(
                    `[${item.id}] Введите имя группы`,
