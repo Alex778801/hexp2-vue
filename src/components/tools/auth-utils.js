@@ -13,7 +13,8 @@ export const authUtils = {
    notifications: [(loggedIn, event)=>{}],
    // Инициализация
    init() {
-      this.clearSessionData();
+      //this.clearSessionData();
+      this.verifyToken();
    },
    // Подписаться на уведомления авторизации
    subscribeNotification(callback) {
@@ -26,6 +27,7 @@ export const authUtils = {
    // Очистить данные авторизации
    clearSessionData() {
       localStorage.removeItem("token");
+      localStorage.removeItem("login");
       this.username = '';
       this.loggedIn = false;
    },
@@ -46,6 +48,7 @@ export const authUtils = {
          }
       }).then( (response) => {
          localStorage.setItem("token", response.data.tokenAuth.token);
+         localStorage.setItem("login", username);
          this.username = username;
          this.loggedIn = true;
          this.sendNotifications(true, 'login ok');
@@ -74,6 +77,8 @@ export const authUtils = {
             token: localStorage.getItem("token")
          }
       }).then((response) => {
+         this.username = localStorage.getItem("login");
+         this.loggedIn = true;
          this.sendNotifications(true, 'token verify ok');
       }).catch((error) => {
          this.clearSessionData();

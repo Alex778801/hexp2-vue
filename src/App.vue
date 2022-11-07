@@ -26,7 +26,7 @@ export default {
    data() {
       return {
          // Пользователь авторизован
-         loggedIn: false,
+         loggedIn: authUtils.loggedIn,
       }
    },
 
