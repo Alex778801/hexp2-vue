@@ -106,7 +106,7 @@
                <!-- Изображение               -->
                </div>
                <div class="m-1">
-                  <img class="w-full" :src="mediaRoot + slotProps.data.image"/>
+                  <img class="w-full" :src="mediaRoot + '/' + slotProps.data.image"/>
                </div>
             </div>
          </div>
@@ -232,7 +232,7 @@ export default {
          payload.append('ownerId', this.oper.owner.id);
          payload.append('file', file);
          payload.append('operId', this.operId);
-         await axios.post(`${__backendAddr__}/uploadFinOperPhoto/`, payload).then((response) => {
+         await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
             this.fetchData();
          }).catch((error) => console.log(error))
       },

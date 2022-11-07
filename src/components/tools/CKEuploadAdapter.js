@@ -3,7 +3,7 @@ import axios from "axios";
 
 /* eslint-disable */
 
-import {__backendAddr__} from "@/setup";
+import {__backendAddr__, __backendUploads__} from "@/setup";
 
 export class MyUploadAdapter {
 
@@ -40,7 +40,7 @@ export class MyUploadAdapter {
       // integration to choose the right communication channel. This example uses
       // a POST request with JSON as a data structure but your configuration
       // could be different.
-      xhr.open( 'POST', `${__backendAddr__}/uploadProjectInfo/`, true );
+      xhr.open( 'POST', `${__backendAddr__}${__backendUploads__}/uploadProjectInfo/`, true );
       xhr.responseType = 'json';
    }
 

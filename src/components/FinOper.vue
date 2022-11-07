@@ -82,7 +82,7 @@
 
 <!-- Фото галерея -->
    <div v-for="(photo, idx) in oper.photoList" :key="idx" class="m-1">
-      <img class="w-full" :src="mediaRoot + photo.image"/>
+      <img class="w-full" :src="mediaRoot + '/' + photo.image"/>
       <div class="ImageToolbar" >
          <ConfirmPopup></ConfirmPopup>
          <Button icon="fa fa-trash" class="p-button-danger ml-2 mr-2" @click="deletePhoto($event, photo.id)"/>
@@ -105,7 +105,7 @@ import gql from "graphql-tag";
 import {replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
-import {__backendAddr__, __backendMediaDir__} from "@/setup";
+import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -212,7 +212,7 @@ export default {
          payload.append('ownerId', this.oper.owner.id);
          payload.append('file', file);
          payload.append('operId', this.operId);
-         await axios.post(`${__backendAddr__}/uploadFinOperPhoto/`, payload).then((response) => {
+         await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
             this.fetchData();
          }).catch((error) => console.log(error))
       },
