@@ -637,9 +637,9 @@ export default {
       text-align: start;
       font-size: 0.95rem;
       color: var(--surface-700);;
-      line-height: 1.1rem;
-      max-height: 3.3em;
-      overflow: hidden;
+      line-height: 1.2rem;
+      max-height: 11.45rem;
+      overflow: auto;
       text-overflow: ellipsis;
    }
 }
@@ -731,7 +731,7 @@ export default {
       color: var(--surface-500);
       position: absolute;
       right: 1rem;
-      top: 2rem;
+      top: 1.8rem;
       height: 2rem;
       display: table;
    }
@@ -743,7 +743,7 @@ export default {
       color: var(--surface-500);
       position: absolute;
       right: 1rem;
-      top: 3.1rem;
+      top: 2.7rem;
       height: 2rem;
       display: table;
    }

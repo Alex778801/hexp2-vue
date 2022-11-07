@@ -54,7 +54,8 @@
 <!--  Примечание -->
       <div class="Field" style="margin-top: -2.1rem; margin-bottom: 0">
          <label for="notes" class="text-primary" style="text-align: left"> Примечание </label>
-         <Textarea v-model="oper.notes" :autoResize="true" rows="4" style="grid-column: 1 / 3"/>
+<!--         autoResize-->
+         <Textarea v-model="oper.notes" rows="4" style="grid-column: 1 / 3"/>
       </div>
       <!--  Владелец    -->
       <div class="Field">
