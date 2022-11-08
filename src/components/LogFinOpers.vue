@@ -366,18 +366,26 @@ export default {
                project(id: $projectId) {
                   id, name, path,
                },
+               costTypes {
+                 id, name, out, color,
+               },
+               agents {
+                 id, name,
+               },
+               users {
+                 id, username, color,
+               },
                finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
                   id,
                   ts,
-                  costType { id, name, ord, out, color },
-                  agentFrom { id, name, ord },
-                  agentTo { id, name, ord },
-                  user,
-                  ucol,
+                  ctId,
+                  agFromId,
+                  agToId,
+                  ownerId,
                   amount,
                   notes,
                   pq,
-              }
+               },
             }
          `);
          await apolloClient.query({
@@ -391,7 +399,24 @@ export default {
             }).then((response) => {
             // Копируем данные из ответа
             this.project = response.data.project;
-            this.list = [...response.data.finopers];
+            const fos = response.data.finopers;
+            const cts = response.data.costTypes;
+            const ags = response.data.agents;
+            const uss = response.data.users;
+            // Объединяем данные
+            this.list = _(fos)
+                .map( fo => {
+                   const newFo = fo;
+                   newFo.costType = cts.find( i => i.id === fo.ctId);
+                   newFo.agentFrom = ags.find( i => i.id === fo.agFromId);
+                   newFo.agentTo = ags.find( i => i.id === fo.agToId);
+                   const us = uss.find( i => i.id === fo.ownerId )
+                   newFo.user = us.username;
+                   newFo.ucol = us.color;
+                   return newFo
+                })
+                .value();
+            // clog(this.list);
             document.title = `Журнал: ${this.project.name}`;
             // Сортировка
             this.sortList();
