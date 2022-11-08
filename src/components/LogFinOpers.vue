@@ -128,7 +128,7 @@ import ConfirmDlg from "./tools/ConfirmDlg.vue";
 import DateIntervalDlg from "./tools/DateIntervalDlg.vue";
 import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
 import {authUtils} from "./tools/auth-utils";
-import {clog, isMobile,} from './tools/vue-utils';
+import {clog, isMobile, numFromUrlParam,} from './tools/vue-utils';
 
 
 export default {
@@ -178,9 +178,9 @@ export default {
          // Журнал операций
          list: [],
          // Дата начала
-         tsBegin: -1,
+         tsBegin:  numFromUrlParam(this.$route.query.tsBegin),
          // Дата конца
-         tsEnd: -1,
+         tsEnd:  numFromUrlParam(this.$route.query.tsEnd),
          // Режим сортировки
          sortMode: 0,
          // Быстрый фильтр
@@ -349,6 +349,9 @@ export default {
             (begin, end) => {
                this.tsBegin = moment(begin).unix();
                this.tsEnd = moment(end).unix();
+               // обновим get параметры
+               this.$router.push({query: {'tsBegin': this.tsBegin, 'tsEnd': this.tsEnd}});
+               // --
                this.fetchList();
             })
       },

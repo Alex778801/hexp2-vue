@@ -321,9 +321,11 @@ export default {
 
       // Обновить историю браузера
       updateHistory() {
-          // let curPureUrl = window.location.href.split('?')[0];
-          // window.history.replaceState(null, null, `${curPureUrl}?parentId=${this.curPid}${this.editMode ? '&editMode' : ''}`);
-          this.$router.push({query: {'parentId': this.curPid, 'editMode': this.editMode}});
+         // let curPureUrl = window.location.href.split('?')[0];
+         // window.history.replaceState(null, null, `${curPureUrl}?parentId=${this.curPid}${this.editMode ? '&editMode' : ''}`);
+         // --
+         // обновим get параметры
+         this.$router.push({query: {'parentId': this.curPid, 'editMode': this.editMode}});
       },
 
       // Перейти на уровень вверх
