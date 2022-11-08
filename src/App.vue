@@ -1,6 +1,6 @@
 <template>
    <Toast />
-   <MainMenu v-if="loggedIn" />
+   <MainMenu v-if="loggedIn" :dbLogoName="sysParams?.dbLogoName"/>
    <router-view v-if="loggedIn" :key="$route.path"/>
    <AuthDlg v-if="!loggedIn"/>
 </template>
@@ -12,6 +12,8 @@ import {clog} from "@/components/tools/vue-utils";
 import { authUtils } from "@/components/tools/auth-utils";
 import AuthDlg from "@/components/tools/AuthDlg";
 import MainMenu from "@/components/MainMenu";
+import gql from "graphql-tag";
+import {apolloClient} from "@/apollo-config";
 
 const { schema } = require('/schema.json');
 
@@ -25,6 +27,8 @@ export default {
 
    data() {
       return {
+         // Системные параметры
+         sysParams: null,
          // Пользователь авторизован
          loggedIn: authUtils.loggedIn,
       }
@@ -33,26 +37,44 @@ export default {
    watch: {
       // Заголовок страницы
       $route: {
-         immediate: true,
          handler(to, from) {
             document.title = to.meta.title || 'hExpenses';
-         }
+         },
+         immediate: true,
       },
    },
 
    mounted() {
       // Подписка на уведомления авторизации
       authUtils.subscribeNotification(this.authNotif);
+
       // !!!!!!!!!!!! Автологин
       // authUtils.login('admin', '111');
       // authUtils.login('user_test', '222');
+
+      // Загрузка системных параметров
+      this.loadSysParams();
    },
 
    methods: {
       // Уведомления авторизации
       authNotif(loggedIn, event) {
          this.loggedIn = loggedIn;
-      }
+      },
+
+      // Загрузка системных параметров
+      async loadSysParams() {
+         // Запрос справочника
+         const sysParamsQ = gql(`
+            #graphql
+            query { sysParams }
+         `);
+         await apolloClient.query({query: sysParamsQ, fetchPolicy: "no-cache"}).then((response) => {
+            // Копируем данные из ответа
+            this.sysParams = JSON.parse(response.data.sysParams);
+            // clog(this.sysParams);
+         }).catch((error) => authUtils.err(error));
+      },
    }
 
 }

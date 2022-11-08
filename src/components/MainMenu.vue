@@ -1,6 +1,5 @@
 <template>
    <Menubar :model="items" class="m-1 no-print">
-
       <template #end>
          <div class="p-inputgroup">
             <InputText placeholder="строка поиска" style="width: 12em" v-model="findStr" @keyup.enter="search()"/>
@@ -19,11 +18,13 @@ import {clog} from "@/components/tools/vue-utils";
 export default {
    name: "MainMenu",
 
+   props: ['dbLogoName'],
+
    data() {
       return {
          findStr: this.$route.params.findStr,
          items: [
-            { label: 'hExpenses',icon: 'fa fa-home', disabled: true },
+            { label: '', icon: 'fa fa-home', disabled: true },
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-projects' },
             { label: 'Статьи', icon: 'fa fa-coins', to: '/cat-costtypes' },
             { label: 'Агенты', icon: 'fa fa-user-tie', to: '/cat-agents' },
@@ -31,7 +32,18 @@ export default {
             { label: `Выход (${authUtils.username})`,
                icon: 'fa fa-power-off',
                command: () => { authUtils.logout() } }
-         ]
+         ],
+      }
+   },
+
+   watch: {
+      // Изменение лого имени - обновляем вручную составной объект для реактивности
+      dbLogoName: {
+         handler(newVal, oldVal) {
+            this.items[0].label = newVal;
+         },
+         immediate: true,
+         deep: true
       }
    },
 
