@@ -23,7 +23,7 @@
       </Card>
 <!--  Тема оформления    -->
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
-         <template #title> Тема офорлмения </template>
+         <template #title> Тема оформления </template>
          <template #content>
             <Dropdown class="w-12" v-model="themeIdx" :options="themes" optionLabel="name" optionValue="idx" placeholder="выберите тему" />
             <p class="mt-3 text-sm"> Внимание! Темы по разному адаптированны
@@ -36,7 +36,6 @@
       <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
          <template #title>  Компоновка справочников </template>
          <template #content>
-
             <div class="field-radiobutton">
                <RadioButton inputId="catUse1col" name="catUse2col" value="false" v-model="catUse2col" />
                <label for="catUse1col">Одна колонка</label>
@@ -45,7 +44,6 @@
                <RadioButton inputId="catUse2col" name="catUse2col" value="true" v-model="catUse2col" />
                <label for="catUse2col">Две колонки</label>
             </div>
-
             <p class="mt-3 text-sm">Задайте колво колонок при отображении списка справочника.
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>

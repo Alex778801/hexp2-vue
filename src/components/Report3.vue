@@ -114,6 +114,28 @@
             <Chart type="pie" :data="ctGraphData" :options="ctGraphOptions" />
          </div>
 
+<!--     Детализация графика по статьям    -->
+         <div class="ReportTable">
+            <table v-if="ctGraphDetailShow">
+               <tr class="Element" v-for="(fo, idx) in ctGraphDetailList" :key="idx">
+                  <td colspan="3" class="Ts">
+                     <div class="TsAg">
+                        <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
+                           <span :style="{'color': fo.ucol}">@{{ fo.user}} </span>
+                        </router-link>
+                        <br>
+                        <span class="Agent">
+                                    <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                                    <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
+                                 </span>
+                     </div>
+                     <div class="Notes">{{ fo.notes }}</div>
+                  </td>
+                  <td class="Amount">{{ fs(fo.amount) }}</td>
+               </tr>
+            </table>
+         </div>
+
    <!--  График по месяцам   -->
          <div class="GraphMonth">
             <h3> Суммы по месяцам </h3>
@@ -263,14 +285,15 @@ export default {
             ]
          },
          ctGraphOptions: {
-            plugins: {
-               legend: {
-                  labels: {
-                     color: '#495057'
-                  }
+            legend: {
+               labels: {
+                  color: '#495057'
                }
-            }
+            },
+            'onClick': this.onCtGraphClick,
          },
+         ctGraphDetailShow: false,
+         ctGraphDetailList: [],
          // Данные графика по месяцам
          monthGraphData: {
             labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноядрь', 'Декабрь'],
@@ -398,6 +421,16 @@ export default {
    },
 
    methods: {
+
+      // Детализация при клике сегмента круга на графике детализации по статьям
+      onCtGraphClick(evt, item) {
+         const idx = item[0].index;
+         const ctId = this.ctGraphData.datasets[0].ctIds[idx];
+         this.ctGraphDetailList = this.rd.costType.find( i => i.ctId === ctId ).finOpers;
+         this.ctGraphDetailShow = true;
+         clog(evt, idx, ctId, this.ctGraphDetailList);
+      },
+
       // Форматирование суммы
       fs(sum) {
          if (sum !== undefined && sum !== null && !isNaN(sum))
@@ -538,6 +571,7 @@ export default {
          // Выгрузим данные в график
          // clog(dataA);
          this.ctGraphData.datasets[0].data = dataA.map( i => i.sum );
+         this.ctGraphData.datasets[0].ctIds = dataA.map( i => i.ctId );
          this.ctGraphData.datasets[0].backgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
          this.ctGraphData.datasets[0].hoverBackgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
          this.ctGraphData.labels = dataA.map( i => this.getCostType(i.ctId).name );
@@ -732,6 +766,7 @@ export default {
          this.rd.agentTo = this.buildAgentToReport();
          // --
          // clog(this.rd.costType, this.rd.agentFrom, this.rd.agentTo);
+         this.ctGraphDetailShow = false;
          this.reportReady = true;
       },
 
