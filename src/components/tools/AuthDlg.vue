@@ -57,7 +57,7 @@ export default {
       },
       // Уведомения авторизации
       authNotif(loggedIn, event) {
-         this.loginError = !loggedIn;
+         this.loginError = event === 'login failed';
          this.passwordFld = '';
       }
    }

@@ -391,7 +391,6 @@ export default {
                          });
                          this.fetchList();
                       }).catch((error) => {
-                         this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                          authUtils.err(error);
                       })
                       // --
@@ -435,7 +434,6 @@ export default {
                       });
                       this.fetchList();
                    }).catch((error) => {
-                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -472,7 +470,6 @@ export default {
                       });
                       this.fetchList();
                    }).catch((error) => {
-                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -515,7 +512,6 @@ export default {
                       this.checkedItems = [];
                       this.fetchList();
                    }).catch((error) => {
-                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                    // --
@@ -560,7 +556,6 @@ export default {
                this.clipboard = [];
                this.fetchList();
             }).catch((error) => {
-               this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                authUtils.err(error);
             })
             // --
@@ -606,7 +601,6 @@ export default {
             });
             this.fetchList();
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
          // --
@@ -635,7 +629,6 @@ export default {
             });
             this.fetchList();
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
          // --
@@ -671,7 +664,6 @@ export default {
                    });
                    this.fetchList();
                 }).catch((error) => {
-                   this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                    authUtils.err(error);
                 })
                 // --

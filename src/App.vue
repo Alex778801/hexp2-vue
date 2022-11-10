@@ -45,11 +45,13 @@ export default {
    },
 
    mounted() {
+      // Инит системы авторизации
+      authUtils.init(this.$toast);
       // Подписка на уведомления авторизации
       authUtils.subscribeNotification(this.authNotif);
 
       // !!!!!!!!!!!! Автологин
-      authUtils.login('admin', '111');
+      // authUtils.login('admin', '111');
       // authUtils.login('user_test', '222');
 
       // Загрузка системных параметров

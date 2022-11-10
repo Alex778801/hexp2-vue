@@ -7,23 +7,33 @@ import {clog} from "@/components/tools/vue-utils";
 export const authUtils = {
    // Статус авторизации
    loggedIn: false,
+
    // Имя зарегистрированного пользователя
    username: '',
+
    // Колбэки событий авторизации
    notifications: [(loggedIn, event)=>{}],
+
+   // Выскакивающие плашки оповещений
+   toast: null,
+
    // Инициализация
-   init() {
+   init(toast) {
+      this.toast = toast;
       //this.clearSessionData();
       this.verifyToken();
    },
+
    // Подписаться на уведомления авторизации
    subscribeNotification(callback) {
       this.notifications.push(callback)
    },
+
    // Разослать уведомления авторизации
    sendNotifications(loggedIn, event) {
      this.notifications.forEach( n => n(loggedIn, event) );
    },
+
    // Очистить данные авторизации
    clearSessionData() {
       localStorage.removeItem("token");
@@ -31,6 +41,7 @@ export const authUtils = {
       this.username = '';
       this.loggedIn = false;
    },
+
    // Вход в систему
    async login(username, password) {
       const loginM = gql(`
@@ -58,11 +69,13 @@ export const authUtils = {
          clog('AUTH login failed:', error);
       });
    },
+
    // Выход из системы
    logout() {
       this.clearSessionData();
       this.sendNotifications(false, 'logout');
    },
+
    // Проверка валидности логина
    async verifyToken() {
       const verifyM = gql(`
@@ -86,14 +99,26 @@ export const authUtils = {
          clog('AUTH token verify failed:', error);
       });
    },
+
    // Обработка ошибок
    err(error)  {
-      if (String(error).includes('Error decoding signature')) {
-         this.clearSessionData();
-         this.sendNotifications(false, 'token not valid');
-      }
       clog('AUTH error:', error);
+      const errStr = String(error);
+      // ошибка в сигнатуре токене
+      if (errStr.includes('Error decoding signature')) {
+         this.clearSessionData();
+         this.sendNotifications(false, 'token is not valid');
+         this.toast.add({severity: 'error', summary: `Ошибка`, detail: 'Токен авторизации не действителен'});
+      }
+      // срок действия токен истек
+      else if (errStr.includes('Signature has expired')) {
+         this.clearSessionData();
+         this.sendNotifications(false, 'token has expired');
+         // this.toast.add({severity: 'error', summary: `Ошибка`, detail: 'Срок действия токена авторизации истек'});
+      }
+      else {
+         this.toast.add({severity: 'error', summary: `Ошибка`, detail: errStr});
+      }
+      // --
    }
 }
-
-authUtils.init();

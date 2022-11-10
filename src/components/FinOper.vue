@@ -251,7 +251,6 @@ export default {
          }).then((response) => {
             this.fetchData();
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
       },
@@ -290,7 +289,6 @@ export default {
                life: 2000
             });
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
          this.$router.go(-1);

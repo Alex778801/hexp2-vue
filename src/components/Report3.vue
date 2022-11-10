@@ -422,15 +422,6 @@ export default {
 
    methods: {
 
-      // Детализация при клике сегмента круга на графике детализации по статьям
-      onCtGraphClick(evt, item) {
-         const idx = item[0].index;
-         const ctId = this.ctGraphData.datasets[0].ctIds[idx];
-         this.ctGraphDetailList = this.rd.costType.find( i => i.ctId === ctId ).finOpers;
-         this.ctGraphDetailShow = true;
-         clog(evt, idx, ctId, this.ctGraphDetailList);
-      },
-
       // Форматирование суммы
       fs(sum) {
          if (sum !== undefined && sum !== null && !isNaN(sum))
@@ -575,6 +566,15 @@ export default {
          this.ctGraphData.datasets[0].backgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
          this.ctGraphData.datasets[0].hoverBackgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
          this.ctGraphData.labels = dataA.map( i => this.getCostType(i.ctId).name );
+      },
+
+      // Детализация при клике сегмента круга на графике детализации по статьям
+      onCtGraphClick(evt, item) {
+         const idx = item[0].index;
+         const ctId = this.ctGraphData.datasets[0].ctIds[idx];
+         this.ctGraphDetailList = this.rd.costType.find( i => i.ctId === ctId ).finOpers;
+         this.ctGraphDetailShow = true;
+         // clog(evt, idx, ctId, this.ctGraphDetailList);
       },
 
       // Построить график по Месяцам

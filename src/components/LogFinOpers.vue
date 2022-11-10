@@ -421,8 +421,7 @@ export default {
             // Сортировка
             this.sortList();
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
-            authUtils.err(error)
+            authUtils.err(error);
          });
       },
 
@@ -494,12 +493,11 @@ export default {
                       });
                       this.fetchList();
                    }).catch((error) => {
-                      this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                       authUtils.err(error);
                    })
                 });
             // --
-         }).catch((error) => console.log(error))
+         }).catch( (error) => authUtils.err(error) )
       },
 
       // Копировать операцию
@@ -528,7 +526,6 @@ export default {
             });
             this.fetchList();
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
       },
@@ -563,7 +560,6 @@ export default {
                    });
                    this.fetchList();
                 }).catch((error) => {
-                   this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
                    authUtils.err(error);
                 })
                 // --
@@ -591,7 +587,6 @@ export default {
             const newOperId = response.data.createFinoper.newOperId;
             this.$router.push({ path: `/finoper/${newOperId}`})
          }).catch((error) => {
-            this.$toast.add({severity: 'error', summary: `Модуль AUTH`, detail: String(error)});
             authUtils.err(error);
          })
       }
