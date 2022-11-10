@@ -48,12 +48,16 @@
       </div>
       <div class="field" style="max-width: 20em;">
          <label for="prefFinOperLogIntvN" class="text-primary"> Параметр интеравала журнала </label>
-         <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons min="1" max="1000"
+         <InputNumber inputId="prefFinOperLogIntvN" v-model="project.prefFinOperLogIntvN" showButtons :min="1" :max="1000"
                       :disabled="project.readOnly"/>
       </div>
 <!--  Заметки проекта    -->
       <div class="field">
          <router-link :to="'/project-info/' + projectId" class="text-primary font-bold my-1">Заметки проекта</router-link>
+      </div>
+<!--  Журнало операций проекта    -->
+      <div class="field">
+         <router-link :to="'/log-finopers/' + projectId" class="text-primary font-bold my-1">Журнал операций проекта</router-link>
       </div>
    </Fieldset>
 
