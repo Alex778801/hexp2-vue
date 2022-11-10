@@ -110,7 +110,7 @@ export const authUtils = {
          this.sendNotifications(false, 'token is not valid');
          this.toast.add({severity: 'error', summary: `Ошибка`, detail: 'Токен авторизации не действителен'});
       }
-      // срок действия токен истек
+      // срок действия токена истек
       else if (errStr.includes('Signature has expired')) {
          this.clearSessionData();
          this.sendNotifications(false, 'token has expired');

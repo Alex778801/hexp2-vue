@@ -117,7 +117,16 @@
 <!--     Детализация графика по статьям    -->
          <div class="ReportTable">
             <table v-if="ctGraphDetailShow">
-               <tr class="Element" v-for="(fo, idx) in ctGraphDetailList" :key="idx">
+               <tr class="Group">
+                  <td class="ColorBox" :style="{'background-color': getCostType(ctGraphDetailHeader.ctId).color}">
+                     <i class="OutlineFont" :class="{'fa fa-plus': !ctGraphDetailExpanded, 'fa fa-minus': ctGraphDetailExpanded}"
+                        @click="ctGraphDetailExpanded=!ctGraphDetailExpanded"/>
+                  </td>
+                  <td class="Name"><router-link :to="'/costtype/' + ctGraphDetailHeader.ctId">{{ ctGraphDetailHeader.ct.name }}</router-link></td>
+                  <td class="TotalsB">{{ fs(ctGraphDetailHeader.sumB) }}<br><span class="Cnt">( {{ ctGraphDetailHeader.cntB }} )</span></td>
+                  <td class="TotalsA">{{ fs(ctGraphDetailHeader.sumA) }}<br><span class="Cnt">( {{ ctGraphDetailHeader.cntA }} )</span></td>
+               </tr>
+               <tr class="Element" v-for="(fo, idx) in ctGraphDetailList" :key="idx" :hidden="!ctGraphDetailExpanded">
                   <td colspan="3" class="Ts">
                      <div class="TsAg">
                         <router-link :to="'/finoper/' + fo.id">{{ fd(fo.ts) }}
@@ -293,6 +302,8 @@ export default {
             'onClick': this.onCtGraphClick,
          },
          ctGraphDetailShow: false,
+         ctGraphDetailExpanded: true,
+         ctGraphDetailHeader: {},
          ctGraphDetailList: [],
          // Данные графика по месяцам
          monthGraphData: {
@@ -572,7 +583,9 @@ export default {
       onCtGraphClick(evt, item) {
          const idx = item[0].index;
          const ctId = this.ctGraphData.datasets[0].ctIds[idx];
-         this.ctGraphDetailList = this.rd.costType.find( i => i.ctId === ctId ).finOpers;
+         const ct = this.rd.costType.find( i => i.ctId === ctId );
+         this.ctGraphDetailHeader = ct;
+         this.ctGraphDetailList = ct.finOpers;
          this.ctGraphDetailShow = true;
          // clog(evt, idx, ctId, this.ctGraphDetailList);
       },
