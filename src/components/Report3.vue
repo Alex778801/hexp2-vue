@@ -79,6 +79,7 @@
                   <th class="bc_green">Отчет</th>
                </tr>
                <template v-for="(ct, idx) in rd.costType" :key="idx">
+                  <!-- группа - статья -->
                   <tr class="Group">
                      <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
                             <i class="OutlineFont" :class="{'fa fa-plus': !ct.expanded, 'fa fa-minus': ct.expanded}"
@@ -88,6 +89,7 @@
                      <td class="TotalsB">{{ fs(ct.sumB) }}<br><span class="Cnt">( {{ ct.cntB }} )</span></td>
                      <td class="TotalsA">{{ fs(ct.sumA) }}<br><span class="Cnt">( {{ ct.cntA }} )</span></td>
                   </tr>
+                  <!-- элемент - фин операция -->
                   <tr class="Element" v-for="(fo, idx) in ct.finOpers" :key="idx" :hidden="!ct.expanded">
                      <td colspan="3" class="Ts">
                         <div class="TsAg">
@@ -105,6 +107,13 @@
                      <td class="Amount">{{ fs(fo.amount) }}</td>
                   </tr>
                </template>
+               <!-- подвал - общий итог -->
+               <tr>
+                  <th colspan="2">И Т О Г О :</th>
+                  <th> {{ fs(rd.costType.reduce( (sum, i) => sum + i.sumB, 0 )) }}</th>
+                  <th> {{ fs(rd.costType.reduce( (sum, i) => sum + i.sumA, 0 )) }}</th>
+               </tr>
+               <!--  -->
             </table>
          </div>
 
@@ -117,6 +126,7 @@
 <!--     Детализация графика по статьям    -->
          <div class="ReportTable">
             <table v-if="ctGraphDetailShow">
+               <!-- группа - статья -->
                <tr class="Group">
                   <td class="ColorBox" :style="{'background-color': getCostType(ctGraphDetailHeader.ctId).color}">
                      <i class="OutlineFont" :class="{'fa fa-plus': !ctGraphDetailExpanded, 'fa fa-minus': ctGraphDetailExpanded}"
@@ -126,6 +136,7 @@
                   <td class="TotalsB">{{ fs(ctGraphDetailHeader.sumB) }}<br><span class="Cnt">( {{ ctGraphDetailHeader.cntB }} )</span></td>
                   <td class="TotalsA">{{ fs(ctGraphDetailHeader.sumA) }}<br><span class="Cnt">( {{ ctGraphDetailHeader.cntA }} )</span></td>
                </tr>
+               <!-- элемент - фин операция -->
                <tr class="Element" v-for="(fo, idx) in ctGraphDetailList" :key="idx" :hidden="!ctGraphDetailExpanded">
                   <td colspan="3" class="Ts">
                      <div class="TsAg">
