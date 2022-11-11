@@ -41,6 +41,7 @@ export default createRouter({
     scrollBehavior(to, from, savedPosition) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
+                // clog(to, savedPosition);
                 resolve(savedPosition)
             }, 1000)
         })

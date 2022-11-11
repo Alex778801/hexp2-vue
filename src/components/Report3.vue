@@ -407,10 +407,10 @@ export default {
       },
 
       // При изменении даты начала и конца периода А и B
-      beginA(newVal) { this.updateGetParams() },
-      endA(newVal)   { this.updateGetParams() },
-      beginB(newVal) { this.updateGetParams() },
-      endB(newVal)   { this.updateGetParams() },
+      // beginA(newVal) { this.updateGetParams() },
+      // endA(newVal)   { this.updateGetParams() },
+      // beginB(newVal) { this.updateGetParams() },
+      // endB(newVal)   { this.updateGetParams() },
 
       // Вкл/выкл детализаий отчета
       ctReportAllCheck(newVal) {
@@ -808,6 +808,7 @@ export default {
 
       // Построить отчет
       buildReport() {
+         this.updateGetParams();
          // this.reportReady = false;
          // clog(this.project, this.costTypes, this.agents, this.finOpers);
          // Построение элементов отчета
