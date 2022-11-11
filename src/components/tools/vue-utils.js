@@ -39,6 +39,11 @@ export function numFromUrlParam(value) {
    return Number(isNaN(Number(value)) ? -1 : Number(value));
 }
 
+// Преобразовать unix timestamp в дату или вернуть null
+export function DateFromTsOrNull(ts) {
+   return ts === -1 ? null : new Date(ts * 1000);
+}
+
 // Найти элемент в списке по его id
 export function findItemById(id, list) {
    return list.find( i => i.id == id);

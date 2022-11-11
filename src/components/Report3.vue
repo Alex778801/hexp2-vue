@@ -262,7 +262,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog} from "@/components/tools/vue-utils";
+import {clog, DateFromTsOrNull, numFromUrlParam} from "@/components/tools/vue-utils";
 import moment from "moment/moment";
 
 export default {
@@ -271,9 +271,15 @@ export default {
    data() {
       return {
          // Период А
-         beginA: null, endA: null, monthA: null, yearA: null,
+         beginA: DateFromTsOrNull(numFromUrlParam(this.$route.query.beginA)),
+         endA: DateFromTsOrNull(numFromUrlParam(this.$route.query.endA)),
+         monthA: null,
+         yearA: null,
          // Период B
-         beginB: null, endB: null, monthB: null, yearB: null,
+         beginB: DateFromTsOrNull(numFromUrlParam(this.$route.query.beginB)),
+         endB: DateFromTsOrNull(numFromUrlParam(this.$route.query.endB)),
+         monthB: null,
+         yearB: null,
          // Фильтры
          fCostTypes: [],
          fAgents: [],
@@ -400,6 +406,12 @@ export default {
          this.monthB = null;
       },
 
+      // При изменении даты начала и конца периода А и B
+      beginA(newVal) { this.updateGetParams() },
+      endA(newVal)   { this.updateGetParams() },
+      beginB(newVal) { this.updateGetParams() },
+      endB(newVal)   { this.updateGetParams() },
+
       // Вкл/выкл детализаий отчета
       ctReportAllCheck(newVal) {
          this.rd.costType.forEach( i => { if (i.canExpand) i.expanded = newVal } );
@@ -428,21 +440,38 @@ export default {
    mounted() {
       // Локаль
       moment.locale("RU");
-      // Настройка периодов - Отчетный
+      // Опорные даты
       const now = new Date();
       let y = now.getFullYear(), m = now.getMonth();
-      this.beginA = new Date(y, m, 1);
-      this.endA = new Date(y, m + 1, 0);
-      this.monthA = now;
+      // Настройка периодов - Отчетный
+      if (this.beginA == null) {
+         this.beginA = new Date(y, m, 1);
+         this.monthA = this.beginA;
+      }
+      if (this.endA == null)
+         this.endA = new Date(y, m + 1, 0);
       // Настройка периодов - Референсный
-      this.beginB = new Date(y, 0, 1);
-      this.endB = new Date(y, 12, 0);
-      this.yearB = now;
+      if (this.beginB == null) {
+         this.beginB = new Date(y, 0, 1);
+         this.yearB = this.beginB;
+      }
+      if (this.endB == null)
+         this.endB = new Date(y, 12, 0);
       // Получить данные отчета
       this.fetchReportData();
    },
 
    methods: {
+      // Обновить get параметры страницы
+      updateGetParams() {
+         this.$router.push({query: {
+            'beginA': moment(this.beginA).unix(),
+            'endA': moment(this.endA).unix(),
+            'beginB': moment(this.beginB).unix(),
+            'endB': moment(this.endB).unix(),
+         }});
+      },
+
       // Форматирование суммы
       fs(sum) {
          if (sum !== undefined && sum !== null && !isNaN(sum))
