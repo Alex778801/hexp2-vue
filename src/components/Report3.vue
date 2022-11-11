@@ -464,7 +464,7 @@ export default {
    methods: {
       // Обновить get параметры страницы
       updateGetParams() {
-         this.$router.push({query: {
+         this.$router.replace({query: {
             'beginA': moment(this.beginA).unix(),
             'endA': moment(this.endA).unix(),
             'beginB': moment(this.beginB).unix(),

@@ -47,7 +47,8 @@
             <div class="Amount " :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
             <div class="Ts">{{ frmTs2(item.ts) }}</div>
             <div class="CostType " :class="{'Income': !item.costType?.out}">{{ item.costType?.name }}</div>
-            <div class="AgentFrom">{{ item.agentFrom?.name }}<br><span class="AgentTo">{{ item.agentTo?.name }}</span></div>
+            <div class="AgentFrom">{{ item.agentFrom?.name }}<br>
+               <span class="AgentTo">{{ item.agentTo?.name }}</span></div>
             <div class="User" :style="{'color': item.ucol}">{{ item.user }}</div>
             <div class="Notes">{{ item.notes }}</div>
          </div>
@@ -241,6 +242,11 @@ export default {
    },
 
    methods: {
+      // Обновить get параметры страницы
+      updateGetParams() {
+         this.$router.replace({query: {'tsBegin': this.tsBegin, 'tsEnd': this.tsEnd}});
+      },
+
       // Меню сортировки
       sortMenuToggle(event) {
          this.$refs.sortMenu.toggle(event);
@@ -293,36 +299,40 @@ export default {
          switch (this.sortMode) {
             // Дата
             case 0:
-               this.list.sort( (a, b) => b.ts - a.ts );
+               this.list = _.orderBy(this.list, [
+                  'ts'
+               ], ['desc']);
                break;
             // Статья
             case 1:
-               this.list.sort( (a, b) => {
-                  if (a.costType?.ord === b.costType?.ord) return b.ts - a.ts;
-                  else return a.costType?.ord - b.costType?.ord;
-               });
+               this.list = _.orderBy(this.list, [
+                  function(i) { return i.costType?.pid },
+                  function(i) { return i.costType?.ord },
+                  'ts'
+               ], ['asc', 'asc', 'desc']);
                break;
             // Аг Откуда
             case 2:
-               this.list.sort( (a, b) => {
-                  if (a.agentFrom?.ord === b.agentFrom?.ord) return b.ts - a.ts;
-                  else return a.agentFrom?.ord - b.agentFrom?.ord;
-               });
+               this.list = _.orderBy(this.list, [
+                  function(i) { return i.agentFrom?.pid },
+                  function(i) { return i.agentFrom?.ord },
+                  'ts'
+                  ], ['asc', 'asc', 'desc']);
                break;
             // Аг Куда
             case 3:
-               this.list.sort( (a, b) => {
-                  if (a.agentTo?.ord === b.agentTo?.ord) return b.ts - a.ts;
-                  else return a.agentTo?.ord - b.agentTo?.ord;
-               });
+               this.list = _.orderBy(this.list, [
+                  function(i) { return i.agentTo?.pid },
+                  function(i) { return i.agentTo?.ord },
+                  'ts'
+               ], ['asc', 'asc', 'desc']);
                break;
             // Владелец
             case 4:
-               this.list.sort( (a, b) => {
-                  if (a.user === b.user) return b.ts - a.ts;
-                  else if (a.user > b.user) return 1;
-                      else return -1;
-               });
+               this.list = _.orderBy(this.list, [
+                  'user',
+                  'ts'
+               ], ['asc', 'desc']);
                break;
          }
       },
@@ -349,9 +359,7 @@ export default {
             (begin, end) => {
                this.tsBegin = moment(begin).unix();
                this.tsEnd = moment(end).unix();
-               // обновим get параметры
-               this.$router.push({query: {'tsBegin': this.tsBegin, 'tsEnd': this.tsEnd}});
-               // --
+               this.updateGetParams();
                this.fetchList();
             })
       },
@@ -367,10 +375,10 @@ export default {
                   id, name, path,
                },
                costTypes {
-                 id, name, out, color,
+                 id, pid, ord, name, out, color,
                },
                agents {
-                 id, name,
+                 id, pid, ord, name,
                },
                users {
                  id, username, color,
