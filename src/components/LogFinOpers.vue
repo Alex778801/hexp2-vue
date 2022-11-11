@@ -183,7 +183,7 @@ export default {
          // Дата конца
          tsEnd:  numFromUrlParam(this.$route.query.tsEnd),
          // Режим сортировки
-         sortMode: 0,
+         sortMode: numFromUrlParam(this.$route.query.sortMode),
          // Быстрый фильтр
          qFilter: '',
          // Мигание кнопки обновление при обновлении
@@ -244,7 +244,7 @@ export default {
    methods: {
       // Обновить get параметры страницы
       updateGetParams() {
-         this.$router.replace({query: {'tsBegin': this.tsBegin, 'tsEnd': this.tsEnd}});
+         this.$router.replace({query: {'sortMode': this.sortMode, 'tsBegin': this.tsBegin, 'tsEnd': this.tsEnd}});
       },
 
       // Меню сортировки
@@ -296,6 +296,9 @@ export default {
          if (mode > -1) {
             this.sortMode = mode;
          }
+         if (this.sortMode === -1 )
+            this.sortMode = 0
+         this.updateGetParams();
          switch (this.sortMode) {
             // Дата
             case 0:
