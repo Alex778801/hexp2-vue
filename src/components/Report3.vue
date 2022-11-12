@@ -65,6 +65,9 @@
    <!-- Отчет                               -->
       <div v-if="reportReady">
 
+   <!-- Заголовок  -->
+         <h2 class="ReportTable text-center mt-5">{{ project.path }}{{ project.name }}</h2>
+
    <!--  Отчет по Статьям    -->
          <div class="ReportTable">
             <table>
@@ -437,7 +440,7 @@ export default {
       },
    },
 
-   created() {
+   mounted() {
       // Локаль
       moment.locale("RU");
       // Опорные даты

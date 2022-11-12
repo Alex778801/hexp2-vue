@@ -38,7 +38,8 @@ export default {
       // Заголовок страницы
       $route: {
          handler(to, from) {
-            document.title = to.meta.title || 'hExpenses';
+            if (to?.path !== from?.path)
+               document.title = to.meta.title || 'hExpenses';
          },
          immediate: true,
       },

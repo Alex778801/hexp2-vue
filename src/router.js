@@ -47,7 +47,7 @@ export default createRouter({
         // })
         //
         // clog(from.path !== to.path)
-        // clog(from.path, to.path)
+        // clog('---', from.path, to.path)
         //
         return new Promise((resolve, reject) => {
             if (savedPosition && from.path !== to.path && from.path !== '/') {
