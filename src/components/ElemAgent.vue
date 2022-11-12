@@ -18,9 +18,8 @@
    <Fieldset legend="Поля"  class="mt-2">
 <!--  Имя -->
       <div class="field">
-         <label for="name" class="text-primary"> Имя </label>
-         <InputText id="name" type="username" aria-describedby="name-help" v-model="agent.name"
-                    :disabled="agent.readOnly" />
+         <label class="text-primary"> Имя </label>
+         <InputText v-model="agent.name" :disabled="agent.readOnly" />
       </div>
    </Fieldset>
 

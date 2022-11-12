@@ -437,7 +437,7 @@ export default {
       },
    },
 
-   mounted() {
+   created() {
       // Локаль
       moment.locale("RU");
       // Опорные даты

@@ -155,6 +155,8 @@ export default {
 
    data() {
       return {
+         // Идет процесс получения данных
+         fetchInProgress: false,
          // Пункты контекстного меню объекта каталога
          itemMenuContent: [
             { label: 'Редактировать', icon: 'fa fa-pen', command:() => { this.itemMenu_editItem() } },
@@ -302,6 +304,10 @@ export default {
 
       // Получить справочник
       async fetchList() {
+         // Если уже запущена функция получения данных - выходим
+         if (this.fetchInProgress)
+            return;
+         this.fetchInProgress = true;
          // Запрос справочника
          const listQ = gql(this.modelQ);
          await apolloClient.query({query: listQ, fetchPolicy: "no-cache"}).then((response) => {
@@ -316,7 +322,11 @@ export default {
                 }
             )
             // clog(this.list);
-         }).catch((error) => authUtils.err(error));
+         }).catch((error) => {
+            authUtils.err(error);
+         }).finally( () => {
+            this.fetchInProgress = false;
+         });
       },
 
       // Обновить историю браузера

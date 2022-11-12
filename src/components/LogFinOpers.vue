@@ -147,6 +147,8 @@ export default {
 
    data() {
       return {
+         // Идет процесс получения данных
+         fetchInProgress: false,
          // Режимы сортировки
          sortModeCaptions: ["Дата", "Статья", "Аг откуд", "Аг куда", "Автор"],
          sortMenuContent: [
@@ -369,6 +371,10 @@ export default {
 
       // Получить журнал
       async fetchList() {
+         // Если уже запущена функция получения данных - выходим
+         if (this.fetchInProgress)
+            return;
+         this.fetchInProgress = true;
          // clog('fetchList - finopes');
          // Запрос журнала
          const listQ = gql(`
@@ -433,6 +439,8 @@ export default {
             this.sortList();
          }).catch((error) => {
             authUtils.err(error);
+         }).finally( () => {
+            this.fetchInProgress = false;
          });
       },
 

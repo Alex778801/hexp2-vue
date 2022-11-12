@@ -38,12 +38,27 @@ export default createRouter({
         { path: '/report/3/:projId',    component: Report3, meta: { title: 'Отчет 3'} },
         { path: '/search/:findStr',     component: Search, name: 'search', meta: { title: 'Поиск'} },
     ],
-    scrollBehavior(to, from, savedPosition) {
+        scrollBehavior(to, from, savedPosition) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 // clog(to, savedPosition);
                 resolve(savedPosition)
             }, 1000)
         })
+        // return new Promise((resolve, reject) => {
+        //     if (savedPosition) {
+                // create an Observer instance
+                const resizeObserver = new ResizeObserver(entries => {
+                    if(entries[0].target.clientHeight >= savedPosition.top + screen.height) {
+                        resolve(savedPosition);
+                        resizeObserver.disconnect();
+                    }
+                });
+                // start observing a DOM node
+                resizeObserver.observe(document.body);
+        //     } else {
+        //         resolve({ top: 0 });
+        //     }
+        // })
     },
 })

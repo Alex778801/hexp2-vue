@@ -16,7 +16,7 @@ const httpLink = createHttpLink({
 const authLink = setContext((_, { headers }) => {
     // Обновим токен, чтобы продлить его срок жизни
     // Задержка нужна, чтобы текущий запрос выполнился со старым токеном
-    setTimeout( () => { authUtils.refreshToken() }, 2000);
+    setTimeout( () => { authUtils.refreshToken() }, 100);
     // Данные jwt авторизации
     const token = localStorage.getItem('token');
     return {
