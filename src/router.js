@@ -38,27 +38,31 @@ export default createRouter({
         { path: '/report/3/:projId',    component: Report3, meta: { title: 'Отчет 3'} },
         { path: '/search/:findStr',     component: Search, name: 'search', meta: { title: 'Поиск'} },
     ],
-        scrollBehavior(to, from, savedPosition) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // clog(to, savedPosition);
-                resolve(savedPosition)
-            }, 1000)
-        })
+    scrollBehavior(to, from, savedPosition) {
         // return new Promise((resolve, reject) => {
-        //     if (savedPosition) {
+        //     setTimeout(() => {
+        //         // clog(to, savedPosition);
+        //         resolve(savedPosition)
+        //     }, 1000)
+        // })
+        //
+        // clog(from.path !== to.path)
+        // clog(from.path, to.path)
+        //
+        return new Promise((resolve, reject) => {
+            if (savedPosition && from.path !== to.path && from.path !== '/') {
                 // create an Observer instance
                 const resizeObserver = new ResizeObserver(entries => {
-                    if(entries[0].target.clientHeight >= savedPosition.top + screen.height) {
+                    if (entries[0].target.clientHeight >= savedPosition.top) { // + screen.height
                         resolve(savedPosition);
                         resizeObserver.disconnect();
                     }
                 });
                 // start observing a DOM node
                 resizeObserver.observe(document.body);
-        //     } else {
-        //         resolve({ top: 0 });
-        //     }
-        // })
+            } else {
+                resolve({ top: 0 });
+            }
+        })
     },
 })
