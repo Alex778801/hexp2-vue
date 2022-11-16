@@ -216,7 +216,6 @@ export default {
          const file = event.files[0]
          const payload = new FormData();
          payload.append('token', localStorage.getItem('token'));
-         payload.append('ownerId', this.oper.owner.id);
          payload.append('file', file);
          payload.append('operId', this.operId);
          await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
