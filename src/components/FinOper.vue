@@ -27,19 +27,19 @@
 <!--  Статья -->
       <div class="Field">
          <label class="text-primary OutlineFont pr-2" style="border-radius: 0.3rem" :style="{'background-color': getCostTypeColor()}"> Статья </label>
-         <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." showClear
+         <Dropdown :options="oper.ctList" optionLabel="name" optionValue="id" placeholder="статья..." showClear filter :scroll-height="isMobile ? '35em' : '60em'"
                       v-model="oper.costType.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Агент откуда -->
       <div class="Field">
          <label for="agentFrom" class="text-primary"> Агент Откуда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear filter :scroll-height="isMobile ? '35em' : '60em'"
                    v-model="oper.agentFrom.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Агент куда -->
       <div class="Field">
          <label for="agentTo" class="text-primary"> Агент куда </label>
-         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear
+         <Dropdown :options="oper.agList" optionLabel="name" optionValue="id" placeholder="агент..." showClear filter :scroll-height="isMobile ? '35em' : '60em'"
                    v-model="oper.agentTo.id"  :disabled="oper.readOnly"/>
       </div>
 <!--  Сумма -->
@@ -103,7 +103,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {replaceNulls} from "@/components/tools/vue-utils";
+import {isMobile, replaceNulls} from "@/components/tools/vue-utils";
 
 import axios from 'axios'
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
@@ -142,6 +142,12 @@ export default {
       },
       ts() { this.dataChanged = true },
       // --
+   },
+
+   computed: {
+      isMobile() {
+         return isMobile();
+      }
    },
 
    mounted() {
