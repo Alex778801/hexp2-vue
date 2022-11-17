@@ -64,6 +64,14 @@ export const settingsUtils = {
       localStorage.setItem('settings--cat-use2col', use);
    },
    //------------------------------------------------------------------------------------------------------------------
+   // Размер файлов фотографий
+   loadPhotoFileSize() {
+      return Number(localStorage.getItem('settings--photo-file-size') || '700');
+   },
+   savePhotoFileSize(size) {
+      localStorage.setItem('settings--photo-file-size', size);
+   },
+   //------------------------------------------------------------------------------------------------------------------
 }
 
 settingsUtils.init();

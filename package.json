@@ -31,6 +31,7 @@
     "core-js": "^3.8.3",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
+    "image-conversion": "^2.1.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "node-polyfill-webpack-plugin": "^2.0.1",
@@ -38,7 +39,6 @@
     "primeflex": "^3.2.1",
     "primevue": "^3.17.0",
     "raw-loader": "^4.0.2",
-    "sharp": "^0.31.2",
     "vue": "^3.2.13",
     "vue-router": "^4.1.5"
   },

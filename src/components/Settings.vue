@@ -48,7 +48,16 @@
                Настройка задается индивидуально для каждого устройства и браузера</p>
          </template>
       </Card>
-
+<!--  Размер файла фото при отправке    -->
+      <Card class="flex justify-content-center m-2" style="width: 20rem; margin-bottom: 2em">
+         <template #title>  Размер файлов фотографий </template>
+         <template #content>
+            <h5>{{ photoFileSize }} кБ</h5>
+            <Slider v-model="photoFileSize" :step="100" :min="500" :max="4000" />
+            <p class="mt-3 text-sm">Отрегулируйте ползунком желаемый размер файлов фото6 посылаемых на сервер.
+               По умолчанию 700 кБ. Настройка задается индивидуально для каждого устройства и браузера</p>
+         </template>
+      </Card>
 
    </div>
 
@@ -58,6 +67,7 @@
 /* eslint-disable */
 
 import { settingsUtils } from "./tools/settings-utils"
+import {clog} from "@/components/tools/vue-utils";
 
 export default {
    name: "Settings",
@@ -73,6 +83,8 @@ export default {
          themeIdx: settingsUtils.loadTheme().idx,
          // 2 колонки в списке справочника
          catUse2col: settingsUtils.loadCatUse2col() ? 'true' : 'false',
+         // Размер файлов фото
+         photoFileSize: settingsUtils.loadPhotoFileSize(),
       }
    },
 
@@ -95,6 +107,10 @@ export default {
       catUse2col(newVal) {
          settingsUtils.saveCatUse2col(newVal);
       },
+      // Размер файлов фото
+      photoFileSize(newVal) {
+         settingsUtils.savePhotoFileSize(newVal);
+      }
    },
 
    methods: {

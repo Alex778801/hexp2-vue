@@ -73,8 +73,16 @@
       </template>
       <template #end>
          <!-- Конпка новое ФОТО        -->
+
+
+
+
+
+
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" chooseLabel="+" accept="image/*, image/heic"
                      customUpload @uploader="newPhoto" auto/>
+
+
          <!--  Кнопки действий формы      -->
          <Button label="Сохр" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
          <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
@@ -104,10 +112,11 @@ import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
 import {isMobile, replaceNulls} from "@/components/tools/vue-utils";
-
 import axios from 'axios'
+import {compress, compressAccurately} from 'image-conversion';
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
-// import sharp from "sharp";
+import * as imageConversion from "image-conversion";
+import {settingsUtils} from "@/components/tools/settings-utils";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -214,22 +223,18 @@ export default {
 
       // Добавить новое фото
       async newPhoto(event) {
-         const file = event.files[0]
-         // await sharp(file)
-         //     .withMetadata()
-         //     .resize(512, 512)
-         //     .jpeg({ quality: 90 })
-         //     .toBuffer()
-         //     .then( async ({data, info}) => {
-                const payload = new FormData();
-                payload.append('token', localStorage.getItem('token'));
-                payload.append('file', file);
-                payload.append('operId', this.operId);
-                await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
-                   this.fetchData();
-                }).catch((error) => console.log(error))
-             // })
-             // .catch((error) => console.log(error));
+         const file = event.files[0];
+         const photoFileSize = settingsUtils.loadPhotoFileSize();
+         imageConversion.compressAccurately(file, photoFileSize).then(async res => {
+            // console.log(res);
+            const payload = new FormData();
+            payload.append('token', localStorage.getItem('token'));
+            payload.append('file', res);
+            payload.append('operId', this.operId);
+            await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
+               this.fetchData();
+            }).catch((error) => console.log(error))
+         })
       },
 
       // Удалить фото - подтверждение

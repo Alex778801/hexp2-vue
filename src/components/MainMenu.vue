@@ -1,5 +1,5 @@
 <template>
-   <Menubar :model="items" class="m-1 no-print" :class="{'bg-primary-50': String(dbLogoName).substring(0, 1) === '!'}">
+   <Menubar :model="items" class="m-1 no-print" :class="{'bg-primary-100': String(dbLogoName).substring(0, 1) === '!'}">
       <template #end>
          <div class="p-inputgroup">
             <InputText placeholder="строка поиска" style="width: 12em" v-model="findStr" @keyup.enter="search()"/>
