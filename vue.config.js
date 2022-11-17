@@ -10,6 +10,19 @@ module.exports = defineConfig({
         secure:false,
         pathRewrite: {'^/media': '/media'},
       },
+      '^/admin': {
+        target: 'http://192.168.1.222:8000',
+        changeOrigin: true,
+        secure:false,
+        pathRewrite: {'^/admin': '/admin'},
+      },
+      '^/static': {
+        target: 'http://192.168.1.222:8000',
+        changeOrigin: true,
+        secure:false,
+        pathRewrite: {'^/static': '/static'},
+      },
+
     }
   }
 
