@@ -22,7 +22,12 @@ module.exports = defineConfig({
         secure:false,
         pathRewrite: {'^/static': '/static'},
       },
-
+      '^/gp': {
+        target: 'http://192.168.1.222:8000',
+        changeOrigin: true,
+        secure:false,
+        pathRewrite: {'^/gp': '/gp'},
+      },
     }
   }
 

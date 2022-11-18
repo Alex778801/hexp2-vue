@@ -129,6 +129,7 @@ import ConfirmDlg from "./tools/ConfirmDlg.vue";
 import DateIntervalDlg from "./tools/DateIntervalDlg.vue";
 import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
 import {authUtils} from "./tools/auth-utils";
+import { isProxy, toRaw } from 'vue';
 import {clog, isMobile, numFromUrlParam,} from './tools/vue-utils';
 
 
@@ -237,7 +238,7 @@ export default {
       // Мобильный/декстопный браузер?
       isMobile() {
          return isMobile();
-      }
+      },
    },
 
    watch: {
@@ -369,13 +370,76 @@ export default {
             })
       },
 
-      // Получить журнал
-      async fetchList() {
+      // Получить журнал - общий вызов
+      fetchList() {
+         if (this.$root.$data.sysParams.directSQL === '1')
+            this.fetchListSQL();
+         else
+            this.fetchListDjango();
+      },
+
+      // Получить журнал через SQL
+      async fetchListSQL() {
          // Если уже запущена функция получения данных - выходим
          if (this.fetchInProgress)
             return;
          this.fetchInProgress = true;
-         // clog('fetchList - finopes');
+         // clog('fetchList - finopes SQL');
+         // Запрос журнала
+         const listQ = gql(`
+            #graphql
+            query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
+                finopersSQL(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd)
+            }
+         `);
+         await apolloClient.query({
+            query: listQ,
+            variables: {
+               projectId: this.projectId,
+               tsBegin: this.tsBegin,
+               tsEnd: this.tsEnd,
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            // Копируем данные из ответа
+            const tmp = JSON.parse(response.data.finopersSQL);
+            this.project = tmp.project[0];
+            const fos = tmp.finopers;
+            const cts = tmp.costTypes;
+            const ags = tmp.agents;
+            const uss = tmp.users;
+            // clog(tmp, this.project, fos, cts, ags, uss);
+            // Объединяем данные
+            this.list = _(fos)
+                .map( fo => {
+                   const newFo = fo;
+                   newFo.costType = cts.find( i => i.id === fo.ctId );
+                   newFo.agentFrom = ags.find( i => i.id === fo.agFromId );
+                   newFo.agentTo = ags.find( i => i.id === fo.agToId );
+                   const us = uss.find( i => i.id === fo.ownerId )
+                   newFo.user = us.username;
+                   newFo.ucol = us.color;
+                   return newFo
+                })
+                .value();
+            // clog(this.list);
+            document.title = `Журнал: ${this.project.name}`;
+            // Сортировка
+            this.sortList();
+         }).catch((error) => {
+            authUtils.err(error);
+         }).finally( () => {
+            this.fetchInProgress = false;
+         });
+      },
+
+      // Получить журнал через Django
+      async fetchListDjango() {
+         // Если уже запущена функция получения данных - выходим
+         if (this.fetchInProgress)
+            return;
+         this.fetchInProgress = true;
+         // clog('fetchList - finopes Django');
          // Запрос журнала
          const listQ = gql(`
             #graphql

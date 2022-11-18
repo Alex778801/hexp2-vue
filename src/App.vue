@@ -1,7 +1,7 @@
 <template>
    <Toast />
    <MainMenu v-if="loggedIn" :dbLogoName="sysParams?.dbLogoName"/>
-   <router-view v-if="loggedIn" :key="$route.path"/>
+   <router-view v-if="loggedIn && sysParamsReady" :key="$route.path"/>
    <AuthDlg v-if="!loggedIn"/>
 </template>
 
@@ -29,6 +29,7 @@ export default {
       return {
          // Системные параметры
          sysParams: null,
+         sysParamsReady: false,
          // Пользователь авторизован
          loggedIn: authUtils.loggedIn,
       }
@@ -54,15 +55,16 @@ export default {
       // !!!!!!!!!!!! Автологин
       // authUtils.login('admin', '111');
       // authUtils.login('user_test', '222');
-
-      // Загрузка системных параметров
-      this.loadSysParams();
    },
 
    methods: {
       // Уведомления авторизации
       authNotif(loggedIn, event) {
          this.loggedIn = loggedIn;
+         if (loggedIn) {
+            // Загрузка системных параметров
+            this.loadSysParams();
+         }
       },
 
       // Загрузка системных параметров
@@ -76,6 +78,7 @@ export default {
             // Копируем данные из ответа
             this.sysParams = JSON.parse(response.data.sysParams);
             // clog(this.sysParams);
+            this.sysParamsReady = true;
          }).catch((error) => authUtils.err(error));
       },
    }
