@@ -818,8 +818,81 @@ export default {
          this.reportReady = true;
       },
 
-      // Отобразить отчет
-      async fetchReportData() {
+      // Получить исходные данные для отчета
+      fetchReportData() {
+         if (this.$root.$data.sysParams.directSQL === '1')
+            this.fetchReportDataSQL();
+         else
+            this.fetchReportDataDjango();
+      },
+
+      // Получить исходные данные для отчета через Django
+      async fetchReportDataSQL() {
+         // Запрос данных
+         const reportQ = gql(`
+            #graphql
+            query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
+                finopersSQL(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd)
+            }
+         `);
+         await apolloClient.query({
+            query: reportQ,
+            variables: {
+               projectId: this.projectId,
+               tsBegin: 0,
+               tsEnd: 2147483647,
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            // Копируем данные из ответа
+            const tmp = JSON.parse(response.data.finopersSQL);
+            this.project = tmp.project[0];
+            const fos = tmp.finopers;
+            const cts = tmp.costTypes;
+            const ags = tmp.agents;
+            const uss = tmp.users;
+            // Объединяем данные
+            this.finOpers = _(fos)
+                .map( fo => {
+                   const newFo = fo;
+                   newFo.costType = cts.find( i => i.id === fo.ctId);
+                   newFo.agentFrom = ags.find( i => i.id === fo.agFromId);
+                   newFo.agentTo = ags.find( i => i.id === fo.agToId);
+                   const us = uss.find( i => i.id === fo.ownerId )
+                   newFo.user = us.username;
+                   newFo.ucol = us.color;
+                   return newFo
+                })
+                .value();
+            // Подготовка фильтров - Статьи
+            this.costTypes = _(this.finOpers)
+                .groupBy('ctId')
+                .map( i => i[0].costType )
+                .value();
+            this.fCostTypes =  this.costTypes;
+            // Подготовка фильтров - Агенты Откуда
+            this.agentsFrom = _(this.finOpers)
+                .groupBy('agFromId')
+                .map( i => i[0].agentFrom )
+                .compact()
+                .value();
+            this.fAgentsFrom = this.agentsFrom;
+            // Подготовка фильтров - Агенты Куда
+            this.agentsTo = _(this.finOpers)
+                .groupBy('agToId')
+                .map( i => i[0].agentTo )
+                .compact()
+                .value();
+            this.fAgentsTo = this.agentsTo;
+            // clog(this.project, this.finOpers, this.fCostTypes, this.fAgentsFrom, this.agentsTo);
+            // --
+            document.title = `Отч 3: ${this.project.name}`;
+            this.buildReport();
+         });
+      },
+
+      // Получить исходные данные для отчета через Django
+      async fetchReportDataDjango() {
          // Запрос данных
          const reportQ = gql(`
             #graphql
