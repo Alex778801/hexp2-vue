@@ -52,12 +52,8 @@
                <MultiSelect v-model="fCostTypes" :options="costTypes" optionLabel="name" filter/>
             </div>
             <div class="Field">
-               <label>Агенты Откуда</label>
-               <MultiSelect v-model="fAgentsFrom" :options="agentsFrom" optionLabel="name" filter/>
-            </div>
-            <div class="Field">
-               <label>Агенты Куда</label>
-               <MultiSelect v-model="fAgentsTo" :options="agentsTo" optionLabel="name" filter/>
+               <label>Агенты</label>
+               <MultiSelect v-model="fAgents" :options="agents" optionLabel="name" filter/>
             </div>
             <div class="Field">
                <Button label="Применить" icon="pi pi-check" @click="buildReport()"/>
@@ -88,7 +84,7 @@
                <template v-for="(ct, idx) in rd.costType" :key="idx">
                   <!-- группа - статья -->
                   <tr class="Group">
-                     <td class="ColorBox" :style="{'background-color': ct.ct.color}">
+                     <td class="ColorBox" :style="{'background-color': getCostType(ct.ctId).color}">
                             <i class="OutlineFont" :class="{'fa fa-plus': !ct.expanded, 'fa fa-minus': ct.expanded}"
                                v-show="ct.canExpand" @click="ct.expanded=!ct.expanded"/>
                      </td>
@@ -105,8 +101,8 @@
                            </router-link>
                            <br>
                            <span class="Agent">
-                              <router-link :to="'/agent/' + fo.agFromId">{{fo.agentFrom?.name}}</router-link> →
-                              <router-link :to="'/agent/' + fo.agToId">{{fo.agentTo?.name}}</router-link>
+                              <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                              <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
                            </span>
                         </div>
                         <div class="Notes">{{ fo.notes }}</div>
@@ -135,7 +131,7 @@
             <table v-if="ctGraphDetailShow">
                <!-- группа - статья -->
                <tr class="Group">
-                  <td class="ColorBox" :style="{'background-color': ctGraphDetailHeader.ct.color}">
+                  <td class="ColorBox" :style="{'background-color': getCostType(ctGraphDetailHeader.ctId).color}">
                      <i class="OutlineFont" :class="{'fa fa-plus': !ctGraphDetailExpanded, 'fa fa-minus': ctGraphDetailExpanded}"
                         @click="ctGraphDetailExpanded=!ctGraphDetailExpanded"/>
                   </td>
@@ -152,8 +148,8 @@
                         </router-link>
                         <br>
                         <span class="Agent">
-                                    <router-link :to="'/agent/' + fo.agFromId">{{fo.agentFrom?.name}}</router-link> →
-                                    <router-link :to="'/agent/' + fo.agToId">{{fo.agentTo?.name}}</router-link>
+                                    <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+                                    <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
                                  </span>
                      </div>
                      <div class="Notes">{{ fo.notes }}</div>
@@ -200,8 +196,9 @@
                            </router-link>
                            <br>
                            <span class="Agent">
-                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{fo.costType?.name}}</strong></router-link> :
-                              → <router-link :to="'/agent/' + fo.agToId">{{fo.agentTo?.name}}</router-link>
+                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+   <!--                           <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> -->
+                              → <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>
                            </span>
                         </div>
                         <div class="Notes">{{ fo.notes }}</div>
@@ -243,8 +240,9 @@
                            </router-link>
                            <br>
                            <span class="Agent">
-                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{fo.costType?.name}}</strong></router-link> :
-                              <router-link :to="'/agent/' + fo.agFromId">{{fo.agentFrom?.name}}</router-link> →
+                              <router-link :to="'/costtype/' + fo.ctId"><strong>{{getCostType(fo.ctId)?.name}}</strong></router-link> :
+                              <router-link :to="'/agent/' + fo.agFromId">{{getAgent(fo.agFromId)?.name}}</router-link> →
+   <!--                           <router-link :to="'/agent/' + fo.agToId">{{getAgent(fo.agToId)?.name}}</router-link>-->
                            </span>
                         </div>
                         <div class="Notes">{{ fo.notes }}</div>
@@ -287,8 +285,7 @@ export default {
          yearB: null,
          // Фильтры
          fCostTypes: [],
-         fAgentsFrom: [],
-         fAgentsTo: [],
+         fAgents: [],
          // Вкл/выкл детализаий отчета
          ctReportAllCheck: null,
          agFromReportAllCheck: null,
@@ -301,10 +298,8 @@ export default {
          finOpers: null,
          // Статьи
          costTypes: null,
-         // Агенты откуда
-         agentsFrom: null,
-         // Агенты куда
-         agentsTo: null,
+         // Агенты
+         agents: null,
          // Данные отчета
          rd: [],
          // Данные графика по статьям
@@ -439,13 +434,9 @@ export default {
       fCostTypesAllSelected() {
          return this.costTypes.length === this.fCostTypes.length;
       },
-      // Выбраны все элементы фильтра по Агентам Откуда
-      fAgentsFromAllSelected() {
-         return this.agentsFrom.length === this.fAgentsFrom.length;
-      },
-      // Выбраны все элементы фильтра по Агентам Куда
-      fAgentsToAllSelected() {
-         return this.agentsTo.length === this.fAgentsTo.length;
+      // Выбраны все элементы фильтра по Агентам
+      fAgentsAllSelected() {
+         return this.agents.length === this.fAgents.length;
       },
    },
 
@@ -498,12 +489,31 @@ export default {
          // return moment(ts).format("DD MMM YY ddd HH:mm");
       },
 
+      // Получить статью по ИД
+      getCostType(id) {
+         return this.costTypes.find( i => i.id === id);
+      },
+
+      // Получить агента по ИД
+      getAgent(id) {
+         return this.agents.find( i => i.id === id);
+      },
+
+      // Проверить - статья выбрана в фильтре
+      fCostTypeSelected(id) {
+         return this.fCostTypes.some( i => i.id === id );
+      },
+
+      // Проверить - агент выбран в фильтре
+      fAgentSelected(id) {
+         return this.fAgents.some( i => i.id === id );
+      },
+
       // Проверить фин операцию на соответствие фильтру
       checkFilter(i) {
-         const ct = this.fCostTypesAllSelected || this.fCostTypes.some( j => j.id === i.ctId );
-         const agFrom = this.fAgentsFromAllSelected || this.fAgentsFrom.some( j => j.id === i.agFromId );
-         const agTo = this.fAgentsToAllSelected || this.fAgentsTo.some( j => j.id === i.agToId );
-         return ct && agFrom && agTo;
+         const ct = this.fCostTypesAllSelected || this.fCostTypeSelected(i.ctId);
+         const ag = this.fAgentsAllSelected || (this.fAgentSelected(i.agFromId) || this.fAgentSelected(i.agToId));
+         return ct && ag;
       },
 
       // Построить отчет по Статьям
@@ -596,8 +606,6 @@ export default {
                 const _id = Number(id);
                 return {
                    ctId: _id,
-                   name: i[0].costType.name,
-                   color: i[0].costType.color,
                    sum: _.sumBy(i, 'amount'),
                    cnt: _.countBy(i, '').undefined,
                 }
@@ -608,9 +616,9 @@ export default {
          // clog(dataA);
          this.ctGraphData.datasets[0].data = dataA.map( i => i.sum );
          this.ctGraphData.datasets[0].ctIds = dataA.map( i => i.ctId );
-         this.ctGraphData.datasets[0].backgroundColor = dataA.map( i => i.color );
-         this.ctGraphData.datasets[0].hoverBackgroundColor = dataA.map( i => i.color );
-         this.ctGraphData.labels = dataA.map( i => i.name );
+         this.ctGraphData.datasets[0].backgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
+         this.ctGraphData.datasets[0].hoverBackgroundColor = dataA.map( i => this.getCostType(i.ctId).color );
+         this.ctGraphData.labels = dataA.map( i => this.getCostType(i.ctId).name );
       },
 
       // Детализация при клике сегмента круга на графике детализации по статьям
@@ -687,12 +695,12 @@ export default {
          // -----------------------------------------
          // Объединение периодов
          const dataAB = [];
-         _(this.agentsFrom)
+         _(this.agents)
              .sortBy( ['pid', 'ord'] )
              .value()
              .forEach( agFrom => {
-                const a = dataA.find( i => i.agFromId === agFrom?.id );
-                const b = dataB.find( i => i.agFromId === agFrom?.id );
+                const a = dataA.find( i => i.agFromId === agFrom.id );
+                const b = dataB.find( i => i.agFromId === agFrom.id );
                 if ( a !== undefined ) {
                    dataAB.push({
                       agFromId: agFrom.id,
@@ -764,12 +772,12 @@ export default {
          // -----------------------------------------
          // Объединение периодов
          const dataAB = [];
-         _(this.agentsTo)
+         _(this.agents)
              .sortBy( ['pid', 'ord'] )
              .value()
              .forEach( agTo => {
-                const a = dataA.find( i => i.agToId === agTo?.id );
-                const b = dataB.find( i => i.agToId === agTo?.id );
+                const a = dataA.find( i => i.agToId === agTo.id );
+                const b = dataB.find( i => i.agToId === agTo.id );
                 if ( a !== undefined ) {
                    dataAB.push({
                       agToId: agTo.id,
@@ -826,15 +834,8 @@ export default {
             query ($projectId: Int!, $tsBegin: Int!, $tsEnd: Int!) {
                project(id: $projectId) {
                   id, name, path,
-               },
-               costTypes {
-                 id, pid, ord, name, out, color,
-               },
-               agents {
-                 id, pid, ord, name,
-               },
-               users {
-                 id, username, color,
+                  ctList { id, pid, name, ord, out, color, },
+                  agList { id, pid, name, ord, },
                },
                finopers(projectId: $projectId, tsBegin: $tsBegin, tsEnd: $tsEnd) {
                   id,
@@ -842,11 +843,11 @@ export default {
                   ctId,
                   agFromId,
                   agToId,
-                  ownerId,
+                  user,
+                  ucol,
                   amount,
                   notes,
-                  pq,
-               },
+              },
             }
          `);
          await apolloClient.query({
@@ -858,47 +859,13 @@ export default {
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
-            // Копируем данные из ответа
+            // Выгрузка данных
             this.project = response.data.project;
-            const fos = response.data.finopers;
-            const cts = response.data.costTypes;
-            const ags = response.data.agents;
-            const uss = response.data.users;
-            // Объединяем данные
-            this.finOpers = _(fos)
-                .map( fo => {
-                   const newFo = fo;
-                   newFo.costType = cts.find( i => i.id === fo.ctId);
-                   newFo.agentFrom = ags.find( i => i.id === fo.agFromId);
-                   newFo.agentTo = ags.find( i => i.id === fo.agToId);
-                   const us = uss.find( i => i.id === fo.ownerId )
-                   newFo.user = us.username;
-                   newFo.ucol = us.color;
-                   return newFo
-                })
-                .value();
-            // Подготовка фильтров - Статьи
-            this.costTypes = _(this.finOpers)
-               .groupBy('ctId')
-               .map( i => i[0].costType )
-               .value();
-            this.fCostTypes =  this.costTypes;
-            // Подготовка фильтров - Агенты Откуда
-            this.agentsFrom = _(this.finOpers)
-                .groupBy('agFromId')
-                .map( i => i[0].agentFrom )
-                .compact()
-                .value();
-            this.fAgentsFrom = this.agentsFrom;
-            // Подготовка фильтров - Агенты Куда
-            this.agentsTo = _(this.finOpers)
-                .groupBy('agToId')
-                .map( i => i[0].agentTo )
-                .compact()
-                .value();
-            this.fAgentsTo = this.agentsTo;
-            // clog(this.project, this.finOpers, this.fCostTypes, this.fAgentsFrom, this.agentsTo);
-            // --
+            this.costTypes = response.data.project.ctList;
+            this.costTypes.forEach( i => this.fCostTypes.push(i) );
+            this.agents = response.data.project.agList;
+            this.agents.forEach( i => this.fAgents.push(i) );
+            this.finOpers = response.data.finopers;
             document.title = `Отч 3: ${this.project.name}`;
             this.buildReport();
          });
