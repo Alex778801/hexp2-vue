@@ -2,8 +2,19 @@
 
    <div class="prn1col">
 
-   <!--  Настройки отчета        style="display:none"           -->
-      <div class="Setup">
+      <div class="text-color-secondary flex align-items-center justify-content-end gap-2 mr-3 mt-3"  v-if="isMobile">
+         <label> Настройки </label>
+         <InputSwitch v-model="setupEn" />
+      </div>
+
+      <div class="text-color-secondary flex-column text-right gap-2 mr-3 mt-3" v-if="!setupEn && isMobile">
+         <div> Отчетный: {{ fd2(beginA) }} - {{ fd2(endA) }}</div>
+         <div> Референсный: {{ fd2(beginB) }} - {{ fd2(endB) }}</div>
+      </div>
+
+      <!--  Настройки отчета        style="display:none"           -->
+      <div class="Setup" v-if="setupEn || !isMobile">
+
    <!--  Период А    -->
          <Fieldset>
             <template #legend> Отчетный период </template>
@@ -70,7 +81,7 @@
       <div v-if="reportReady">
 
    <!-- Заголовок  -->
-         <h2 class="ReportTable text-center mt-5">{{ project.path }}{{ project.name }}</h2>
+         <h2 class="ReportTable text-center mt-4 mb-0 pb-0">{{ project.path }}{{ project.name }}</h2>
 
    <!--  Отчет по Статьям    -->
          <div class="ReportTable">
@@ -267,7 +278,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, DateFromTsOrNull, numFromUrlParam} from "@/components/tools/vue-utils";
+import {clog, DateFromTsOrNull, isMobile, numFromUrlParam} from "@/components/tools/vue-utils";
 import moment from "moment/moment";
 
 export default {
@@ -275,6 +286,7 @@ export default {
 
    data() {
       return {
+         setupEn: false,
          // Период А
          beginA: DateFromTsOrNull(numFromUrlParam(this.$route.query.beginA)),
          endA: DateFromTsOrNull(numFromUrlParam(this.$route.query.endA)),
@@ -447,6 +459,10 @@ export default {
       fAgentsToAllSelected() {
          return this.agentsTo.length === this.fAgentsTo.length;
       },
+      // Мобильный/декстопный браузер?
+      isMobile() {
+         return isMobile();
+      },
    },
 
    mounted() {
@@ -496,6 +512,11 @@ export default {
       fd(ts) {
          return moment.unix(ts).format("DD MMM YY ddd HH:mm");
          // return moment(ts).format("DD MMM YY ddd HH:mm");
+      },
+
+      // Форматировать дату 2
+      fd2(ts) {
+         return moment(ts).format("DD MMM YY");
       },
 
       // Проверить фин операцию на соответствие фильтру

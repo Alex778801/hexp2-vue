@@ -39,6 +39,7 @@ import Image from 'primevue/image';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Panel from 'primevue/panel';
 import Chart from 'primevue/chart';
+import InputSwitch from 'primevue/inputswitch';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -165,4 +166,5 @@ createApp(App)
     .component('ConfirmPopup', ConfirmPopup)
     .component('Panel', Panel)
     .component('Chart', Chart)
+    .component('InputSwitch', InputSwitch)
     .mount('#app');
