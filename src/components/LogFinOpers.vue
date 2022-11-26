@@ -21,7 +21,7 @@
       >
 <!--     Мобильная версия    -->
          <div v-if="isMobile" class="MobileItemContainer M_OperBody"
-              @dblclick="$router.push({ path: `/finoper/${item.id}`})">
+              @dblclick="openFinOper(item.id)">
                <div class="ColorBox" :style="{'background-color': item.costType?.color}"></div>
                <div class="Amount" :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
                <div class="Ts">{{ frmTs(item.ts) }}<span class="User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
@@ -130,7 +130,7 @@ import DateIntervalDlg from "./tools/DateIntervalDlg.vue";
 import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
 import {authUtils} from "./tools/auth-utils";
 import { isProxy, toRaw } from 'vue';
-import {clog, isMobile, numFromUrlParam,} from './tools/vue-utils';
+import {checkboxMobileFixMixin, clog, dblClickMobileFixMixin, isMobile, numFromUrlParam,} from './tools/vue-utils';
 
 
 export default {
@@ -142,6 +142,8 @@ export default {
       ConfirmDlg,
       DateIntervalDlg,
    },
+
+   mixins: [dblClickMobileFixMixin],
 
    props: {
    },
@@ -279,6 +281,15 @@ export default {
       // Форматировать дату 2
       frmTs2(ts) {
          return moment.unix(ts).format("DD MMMM YYYY ddd HH:mm:ss");
+      },
+
+      // Открыть фин операцию
+      openFinOper(operId) {
+         // Задержка ложного двойного клика на мобильниках
+         if (this.dblClickMobileFix())
+            return;
+         // --
+         this.$router.push({ path: `/finoper/${operId}`});
       },
 
       // Быстрый фильтр

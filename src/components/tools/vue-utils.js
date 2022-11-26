@@ -75,20 +75,16 @@ export var checkboxMobileFixMixin = {
 }
 
 // Фикс бага - ложный повторный клик на мобильных ус-вах
+// Время последнего двойного клика
+let tsLastDblClickMobileFix = 0;
 export var dblClickMobileFixMixin = {
-   data() {
-      return {
-         // Время последнего двойного клика
-         tsLastDblClickMobileFix: 0,
-      }
-   },
    methods: {
       // Задержка ложного двойного клика на тач скринах
       dblClickMobileFix() {
          const tsNow = moment().valueOf();
-         if (tsNow - this.tsLastDblClickMobileFix < 500)
+         if (tsNow - tsLastDblClickMobileFix < 500)
             return true;
-         this.tsLastDblClickMobileFix = tsNow;
+         tsLastDblClickMobileFix = tsNow;
          return false;
       }
    }
