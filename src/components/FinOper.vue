@@ -46,7 +46,7 @@
       <div class="Field w-full" >
          <label for="amount" class="text-primary"> Сумма </label>
          <span style="min-height: 1rem; display: inline-flex; align-items: center;">
-            <InputNumber id="finoper_amount" v-model="oper.amount" :showClear="true"
+            <InputNumber id="finoper_amount" v-model="oper.amount" :inputProps="{'pattern': '[0-9]*', 'inputmode': 'numeric'}"
                          :class="{'IncomeSum': !getCostTypeOut(), 'OutcomeSum': getCostTypeOut()}"/>
             <Button icon="fa fa-trash" class="ml-2 w-3rem text-xl" @click="oper.amount=null"/>
          </span>
@@ -73,16 +73,8 @@
       </template>
       <template #end>
          <!-- Конпка новое ФОТО        -->
-
-
-
-
-
-
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" chooseLabel="+" accept="image/*, image/heic"
                      customUpload @uploader="newPhoto" auto/>
-
-
          <!--  Кнопки действий формы      -->
          <Button label="Сохр" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
          <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>

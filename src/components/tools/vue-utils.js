@@ -5,6 +5,8 @@
 /* eslint-disable */
 
 // Вывод отладочного сообщения
+import moment from "moment/moment";
+
 export function clog(msg) {
     let buf = "";
     if (true) {
@@ -70,6 +72,26 @@ export var checkboxMobileFixMixin = {
          }
       },
   }
+}
+
+// Фикс бага - ложный повторный клик на мобильных ус-вах
+export var dblClickMobileFixMixin = {
+   data() {
+      return {
+         // Время последнего двойного клика
+         tsLastDblClickMobileFix: 0,
+      }
+   },
+   methods: {
+      // Задержка ложного двойного клика на тач скринах
+      dblClickMobileFix() {
+         const tsNow = moment().valueOf();
+         if (tsNow - this.tsLastDblClickMobileFix < 500)
+            return true;
+         this.tsLastDblClickMobileFix = tsNow;
+         return false;
+      }
+   }
 }
 
 // Найти элемент в дереве по ключу - рекурсия

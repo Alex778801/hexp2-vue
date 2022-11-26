@@ -20,9 +20,10 @@
          <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column">
 <!--        Слой для драга    -->
             <div class="w-10 h-full" style="height: 4rem; display: flex; align-items: center;"
-                :draggable="editMode"
+                :draggable="editMode && hierarchyMode"
                 @dragstart="dragStart($event, item)"
                 @dragend="dragEnd($event, item)"
+                @dragover="dragOver($event, item)"
                 @drop="dragDrop($event, item)"
                 @dragover.prevent
                 @dragenter.prevent
@@ -30,9 +31,9 @@
                <!--  Чек  -->
                <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
                <!--  Редактирование  -->
-               <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @click="itemEdit(item)"></i>
+               <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @dblclick="itemEdit(item)"></i>
                <!--  Иконка и имя  -->
-               <span @click="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
+               <span @dblclick="itemEnter(item)" @contextmenu="itemMenuContextClick(item)" aria-haspopup="true">
                   <i class="fa ml-3 mr-2" :class="item.grp ? 'fa-folder text-4xl text-primary-700' : 'fa-file text-3xl text-primary-300'" :style="{ 'color': itemColor(item) }"></i>
                   <span class="text-color text-center" style="vertical-align: 20%"> {{ item.name }} </span>
                </span>
@@ -122,11 +123,12 @@ import {
    boolFromUrlParam,
    numFromUrlParam,
    findItemById,
-   checkboxMobileFixMixin,
+   checkboxMobileFixMixin, dblClickMobileFixMixin,
 } from './tools/vue-utils';
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import {settingsUtils} from "@/components/tools/settings-utils";
+import moment from "moment";
 
 export default {
    name: 'CatList',
@@ -136,7 +138,7 @@ export default {
       ConfirmDlg,
    },
 
-   mixins: [checkboxMobileFixMixin],
+   mixins: [checkboxMobileFixMixin, dblClickMobileFixMixin],
 
    props: {
       // Наименование справочника
@@ -351,6 +353,10 @@ export default {
 
       // Вход в группу/элемент справочника
       itemEnter(item) {
+         // Задержка ложного двойного клика на мобильниках
+         if (this.dblClickMobileFix())
+            return;
+         // --
          if (item.grp && this.hierarchyMode) {
             // Войти в группу
             this.curPid = item.id;
@@ -368,6 +374,10 @@ export default {
 
       // Редактирование группы/элемента справочника
       itemEdit(item) {
+         // Задержка ложного двойного клика на мобильниках
+         if (this.dblClickMobileFix())
+            return;
+         // --
          if (item.grp) {
             // Редактировать группу
             if (this.urlEditGroup !== '')
@@ -585,11 +595,24 @@ export default {
          event.target.classList.remove('draggedItem');
       },
 
+      // Над чем перетаскиваем
+      dragOver(event, targetItem) {
+         const sourceItemId = event.dataTransfer.getData('itemId');
+         const sourceItem = findItemById(sourceItemId, this.list);
+         // clog(sourceItem, targetItem);
+      },
+
       // На что перетащили
       async dragDrop(event, targetItem) {
          const sourceItemId = event.dataTransfer.getData('itemId');
          const sourceItem = findItemById(sourceItemId, this.list);
          event.target.classList.remove('draggedItem');
+         // Нелья перетаскивать на самого себя
+         if (sourceItem.id === targetItem.id)
+            return;
+         // Нелья перетаксивать элемент на группу и наборот
+         if (sourceItem.grp !== targetItem.grp)
+            return;
          // Отправка запроса на изменение порядка объекта
          const mut = gql(`
                          mutation ($model: String!, $id: Int!, $order: Int!) {
