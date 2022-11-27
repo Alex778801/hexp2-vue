@@ -17,7 +17,9 @@
       <div
            v-for="item in fList" :key="item.id"
       >
-         <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column">
+         <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column; user-select: none;"
+              v-touch:longtap="itemMenuContextLongTap(item)"
+         >
 <!--        Слой для драга    -->
             <div class="w-10 h-full" style="height: 4rem; display: flex; align-items: center;"
                 :draggable="editMode && hierarchyMode"
@@ -71,7 +73,7 @@
                <!--        Кнопка Вставить            -->
                <Button icon="fas fa-paste" :disabled="!canPasteClipboard" @click="clipboardPaste()"
                        v-tooltip.top="{value: tooltipClipboard, escape: true, class: 'tooltipClipboard'}">
-                  <i id="pasteBtn" class="fa fa-paste" :class="{EnBtn: canPasteClipboard}"></i>
+                  <i id="pasteBtn" class="fa fa-paste" :class="{EnBtn: dataInClipboard}"></i>
                </button>
             </div>
          </template>
@@ -93,8 +95,10 @@
    </div>
 
 <!-- Контекстное меню объекта каталога  -->
-   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" popup />
-   <ContextMenu ref="itemMenuContext" :model="itemMenuContent" />
+   <!-- Клик на 3 полосках в режиме редактирования  -->
+   <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" popup style="white-space: nowrap; width: auto; max-width: 30rem !important;"/>
+   <!-- Тап или правая клавиша мыши на названии  -->
+   <ContextMenu ref="itemMenuContext" :model="itemMenuContent"       style="white-space: nowrap; width: auto; max-width: 30rem !important;"/>
 
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />
@@ -161,6 +165,7 @@ export default {
          fetchInProgress: false,
          // Пункты контекстного меню объекта каталога
          itemMenuContent: [
+            { label: '', icon: '', disabled: true},
             { label: 'Редактировать', icon: 'fa fa-pen', command:() => { this.itemMenu_editItem() } },
             { separator: true },
             { label: 'Вверх', icon: 'fa fa-arrow-up',    command:() => { this.itemMenu_changeOrder(-1) } },
@@ -232,7 +237,12 @@ export default {
       },
       // Можно делать вставку из буфера обмена
       canPasteClipboard() {
-         return  this.hierarchyMode && this.editMode && this.clipboard.length > 0;
+         // return  this.hierarchyMode && this.editMode && this.clipboard.length > 0;
+         return  this.hierarchyMode && this.clipboard.length > 0;
+      },
+      // Буфер обмена содержит данные
+      dataInClipboard() {
+         return this.clipboard.length > 0;
       },
       // Подсказка буфера обмена
       tooltipClipboard() {
@@ -253,22 +263,49 @@ export default {
       // При изменении режима редактирования - обновляем историю браузера
       editMode() {
          this.updateHistory();
-      }
+      },
    },
 
    methods: {
-      // Контекстное меню 1
+      // Подготовка контекстного меню
+      procMenuFocusedItem(context, item) {
+         context.menuFocusedItem = item;
+         context.itemMenuContent[0].label = item.name;
+         context.itemMenuContent[0].icon = item.grp ? 'fa fa-folder' : 'fa fa-file';
+         if (!this.hierarchyMode) {
+            // Вверх
+            this.itemMenuContent[3].disabled = true;
+            // Вниз
+            this.itemMenuContent[4].disabled = true;
+         } else {
+            // Вверх
+            this.itemMenuContent[3].disabled = item.ord === 0;
+            // Вниз
+            const maxOrd = _(this.list)
+                .filter({'pid': this.curPid, 'grp': item.grp})
+                .maxBy('ord').ord;
+            this.itemMenuContent[4].disabled = item.ord === maxOrd;
+         }
+      },
+
+      // Контекстное меню - клик на 3 полосках в режиме редактирования
       itemMenuToggle(item) {
-         this.menuFocusedItem = item;
+         this.procMenuFocusedItem(this, item)
          this.$refs.itemMenu.toggle(event);
       },
 
-      // Контекстное меню 2
+      // Контекстное меню - правая клавиша мыши на названии
       itemMenuContextClick(item) {
-         // if (this.editMode) {
-            this.menuFocusedItem = item
-            this.$refs.itemMenuContext.show(event);
-         // }
+         this.procMenuFocusedItem(this, item)
+         this.$refs.itemMenuContext.show(event);
+      },
+
+      // Контекстное меню - долгий тап
+      itemMenuContextLongTap(item) {
+         return function (direction, mouseEvent) {
+            this.instance.procMenuFocusedItem(this.instance, item)
+            this.instance.$refs.itemMenuContext.show(event);
+         }
       },
 
       // Сформировать путь текущей группы

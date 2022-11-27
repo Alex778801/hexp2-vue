@@ -4,6 +4,7 @@ import Vue, { createApp } from 'vue';
 import App from "./App.vue";
 import vueRouter from './router.js';
 import { apolloProvider } from "@/apollo-config";
+import Vue3TouchEvents from "vue3-touch-events";
 
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -135,6 +136,7 @@ createApp(App)
     .use(ConfirmationService)
     .use(DialogService)
     .use(ToastService)
+    .use(Vue3TouchEvents)
     .directive('tooltip', Tooltip)
     .component('font-awesome-icon', FontAwesomeIcon)
     .component('InputText', InputText)
@@ -168,3 +170,5 @@ createApp(App)
     .component('Chart', Chart)
     .component('InputSwitch', InputSwitch)
     .mount('#app');
+
+
