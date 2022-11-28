@@ -265,9 +265,9 @@ export default {
 
    methods: {
       // Подготовка контекстного меню
-      procMenuFocusedItem(context, item) {
-         context.menuFocusedItem = item;
-         context.itemMenuContent[0].label = item.name;
+      procMenuFocusedItem(item) {
+         this.menuFocusedItem = item;
+         this.itemMenuContent[0].label = item.name;
          if (!this.hierarchyMode) {
             // Вверх
             this.itemMenuContent[2].disabled = true;
@@ -286,23 +286,21 @@ export default {
 
       // Контекстное меню - клик на 3 полосках в режиме редактирования
       itemMenuToggle(item) {
-         this.procMenuFocusedItem(this, item)
+         this.procMenuFocusedItem(item)
          this.$refs.itemMenu.toggle(event);
       },
 
       // Контекстное меню - правая клавиша мыши на названии
       itemMenuContextClick(item) {
-         this.procMenuFocusedItem(this, item)
+         this.procMenuFocusedItem(item)
          this.$refs.itemMenuContext.show(event);
       },
 
       // Контекстное меню - долгий тап
       itemMenuContextLongTap(item) {
-         return function (direction, mouseEvent) {
-            // Делаем актуальную копию, инчае данные не обновляются
-            const tmp = this.instance.list.find( i => i.id === item.id)
-            this.instance.procMenuFocusedItem(this.instance, tmp)
-            this.instance.$refs.itemMenuContext.show(event);
+         return (direction, mouseEvent) => {
+            this.procMenuFocusedItem(item)
+            this.$refs.itemMenuContext.show(event);
          }
       },
 
