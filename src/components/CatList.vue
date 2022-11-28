@@ -19,6 +19,7 @@
       >
          <div style="height: 4rem; display: flex; align-items: center; break-inside: avoid-column; user-select: none;"
               v-touch:longtap="itemMenuContextLongTap(item)"
+              v-touch:swipe.right="itemMenuContextLongTap(item)"
          >
 <!--        Слой для драга    -->
             <div class="w-10 h-full" style="height: 4rem; display: flex; align-items: center;"
@@ -165,8 +166,7 @@ export default {
          fetchInProgress: false,
          // Пункты контекстного меню объекта каталога
          itemMenuContent: [
-            { label: '', icon: '', disabled: true},
-            { label: 'Редактировать', icon: 'fa fa-pen', command:() => { this.itemMenu_editItem() } },
+            { label: '', icon: 'fa fa-pen', command:() => { this.itemMenu_editItem() } },
             { separator: true },
             { label: 'Вверх', icon: 'fa fa-arrow-up',    command:() => { this.itemMenu_changeOrder(-1) } },
             { label: 'Вниз', icon: 'fa fa-arrow-down',   command:() => { this.itemMenu_changeOrder(1) } },
@@ -271,20 +271,19 @@ export default {
       procMenuFocusedItem(context, item) {
          context.menuFocusedItem = item;
          context.itemMenuContent[0].label = item.name;
-         context.itemMenuContent[0].icon = item.grp ? 'fa fa-folder' : 'fa fa-file';
          if (!this.hierarchyMode) {
             // Вверх
-            this.itemMenuContent[3].disabled = true;
+            this.itemMenuContent[2].disabled = true;
             // Вниз
-            this.itemMenuContent[4].disabled = true;
+            this.itemMenuContent[3].disabled = true;
          } else {
             // Вверх
-            this.itemMenuContent[3].disabled = item.ord === 0;
+            this.itemMenuContent[2].disabled = item.ord === 0;
             // Вниз
             const maxOrd = _(this.list)
                 .filter({'pid': this.curPid, 'grp': item.grp})
                 .maxBy('ord').ord;
-            this.itemMenuContent[4].disabled = item.ord === maxOrd;
+            this.itemMenuContent[3].disabled = item.ord === maxOrd;
          }
       },
 
@@ -303,7 +302,9 @@ export default {
       // Контекстное меню - долгий тап
       itemMenuContextLongTap(item) {
          return function (direction, mouseEvent) {
-            this.instance.procMenuFocusedItem(this.instance, item)
+            // Делаем актуальную копию, инчае данные не обновляются
+            const tmp = this.instance.list.find( i => i.id === item.id)
+            this.instance.procMenuFocusedItem(this.instance, tmp)
             this.instance.$refs.itemMenuContext.show(event);
          }
       },
