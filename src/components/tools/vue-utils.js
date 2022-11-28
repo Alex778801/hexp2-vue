@@ -58,38 +58,6 @@ export function isMobile() {
   return check;
 }
 
-// Фикс бага - не работает чекбокс при драге на мобильном ус-ве
-export var checkboxMobileFixMixin = {
-   methods: {
-      checkboxMobileFix(item, checkedItems) {
-         if (!isMobile())
-            return;
-         const idx = checkedItems.indexOf(item)
-         if (idx === -1) {
-            checkedItems.push(item);
-         } else {
-               checkedItems.splice(idx, 1);
-         }
-      },
-  }
-}
-
-// Фикс бага - ложный повторный клик на мобильных ус-вах
-// Время последнего двойного клика
-let tsLastDblClickMobileFix = 0;
-export var dblClickMobileFixMixin = {
-   methods: {
-      // Задержка ложного двойного клика на тач скринах
-      dblClickMobileFix() {
-         const tsNow = moment().valueOf();
-         if (tsNow - tsLastDblClickMobileFix < 500)
-            return true;
-         tsLastDblClickMobileFix = tsNow;
-         return false;
-      }
-   }
-}
-
 // Найти элемент в дереве по ключу - рекурсия
 function findItemInTreeRc(tree, key) {
    for (let i = 0; i < tree.length; i++) {

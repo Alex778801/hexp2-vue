@@ -132,7 +132,7 @@ import InputSelectTreeDlg from "./tools/InputSelectTreeDlg.vue";
 import {authUtils} from "./tools/auth-utils";
 
 
-import {clog, dblClickMobileFixMixin, isMobile, numFromUrlParam,} from './tools/vue-utils';
+import {clog, isMobile, numFromUrlParam,} from './tools/vue-utils';
 
 
 export default {
@@ -144,8 +144,6 @@ export default {
       ConfirmDlg,
       DateIntervalDlg,
    },
-
-   mixins: [dblClickMobileFixMixin],
 
    props: {
    },
@@ -287,10 +285,6 @@ export default {
 
       // Открыть фин операцию
       openFinOper(finOper) {
-         // Задержка ложного двойного клика на мобильниках
-         if (this.dblClickMobileFix())
-            return;
-         // --
          this.$router.push({ path: `/finoper/${finOper.id}`});
       },
 

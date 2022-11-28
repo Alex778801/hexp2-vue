@@ -32,7 +32,7 @@
                 @dragenter.prevent
             >
                <!--  Чек  -->
-               <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item" @click="checkboxMobileFix(item, checkedItems)" />
+               <Checkbox class="ml-3" v-if="editMode" v-model="checkedItems" :value="item"/>
                <!--  Редактирование  -->
                <i class="fa fa-pen text-primary ml-3" style="font-size: 1.4rem;" v-if="editMode" @dblclick="itemEdit(item)"></i>
                <!--  Иконка и имя  -->
@@ -128,7 +128,6 @@ import {
    boolFromUrlParam,
    numFromUrlParam,
    findItemById,
-   checkboxMobileFixMixin, dblClickMobileFixMixin,
 } from './tools/vue-utils';
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
@@ -142,8 +141,6 @@ export default {
       InputTextDlg,
       ConfirmDlg,
    },
-
-   mixins: [checkboxMobileFixMixin, dblClickMobileFixMixin],
 
    props: {
       // Наименование справочника
@@ -391,10 +388,6 @@ export default {
 
       // Вход в группу/элемент справочника
       itemEnter(item) {
-         // Задержка ложного двойного клика на мобильниках
-         if (this.dblClickMobileFix())
-            return;
-         // --
          if (item.grp && this.hierarchyMode) {
             // Войти в группу
             this.curPid = item.id;
@@ -412,10 +405,6 @@ export default {
 
       // Редактирование группы/элемента справочника
       itemEdit(item) {
-         // Задержка ложного двойного клика на мобильниках
-         if (this.dblClickMobileFix())
-            return;
-         // --
          if (item.grp) {
             // Редактировать группу
             if (this.urlEditGroup !== '')
