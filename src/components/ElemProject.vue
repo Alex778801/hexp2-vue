@@ -119,7 +119,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, } from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemProject",
@@ -185,7 +185,7 @@ export default {
          query: itemQ,
          variables: {id: this.projectId},
          fetchPolicy: "no-cache"} ).then( (response) => {
-            this.project = replaceNulls(response.data.project);
+            this.project = response.data.project;
             document.title = `Проект: ${this.project.name}`;
             // -- prefCostTypeGroupTree
             this.prefCostTypeGroupTree = JSON.parse(this.project.prefCostTypeGroupTree);
@@ -247,7 +247,7 @@ export default {
          const updateM = gql(`
                #graphql
                mutation ($id: Int!, $name: String!, $prefCostTypeGroup: Int, $prefAgentGroup: Int,
-                         $prefFinOperLogIntv: Int, $prefFinOperLogIntvN: Int, $owner: String!, $acl: String!) {
+                         $prefFinOperLogIntv: Int, $prefFinOperLogIntvN: Int, $owner: String, $acl: String!) {
                   updateProject (id: $id, name: $name, prefCostTypeGroup: $prefCostTypeGroup,
                                  prefAgentGroup: $prefAgentGroup, prefFinOperLogIntv: $prefFinOperLogIntv,
                                  prefFinOperLogIntvN: $prefFinOperLogIntvN, owner: $owner, acl: $acl) {

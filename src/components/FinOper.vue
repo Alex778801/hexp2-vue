@@ -103,7 +103,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {isMobile, replaceNulls} from "@/components/tools/vue-utils";
+import {isMobile, replaceNullsWithEmptyObjs} from "@/components/tools/vue-utils";
 import axios from 'axios'
 import {compress, compressAccurately} from 'image-conversion';
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
@@ -200,7 +200,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
-            this.oper = replaceNulls(response.data.finoper);
+            this.oper = replaceNullsWithEmptyObjs(response.data.finoper);
             this.oper.amount = Number(this.oper.amount);
             document.title = `Фин опер: ${this.oper.project.name}`;
             // -- owner

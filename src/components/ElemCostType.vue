@@ -71,7 +71,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, } from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemCostType",
@@ -129,7 +129,7 @@ export default {
          this.costType.color = '#' + color;
          // -- Мутация - запись изменений
          const updateM = gql(`
-               mutation ($id: Int!, $name: String!, $isOutcome: Boolean!, $color: String!, $owner: String!) {
+               mutation ($id: Int!, $name: String!, $isOutcome: Boolean!, $color: String!, $owner: String) {
                   updateCosttype (id: $id, name: $name, isOutcome: $isOutcome, color: $color, owner: $owner) {
                      ok, result
                   }

@@ -5,7 +5,8 @@
          <span class="text-primary">{{ title }}</span>
       </template>
 
-      <Dropdown v-model="result" :options="options" optionLabel="name" optionValue="id" :placeholder="placeholder" class="w-full"/>
+      <Dropdown v-model="result" :options="options" optionLabel="name" optionValue="id" :placeholder="placeholder" class="w-full"
+                :scroll-height="isMobile ? '35em' : '60em'"/>
       <small v-if="errEmpty" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
 
       <template #footer>
@@ -18,6 +19,8 @@
 
 
 <script>
+
+import {isMobile} from "@/components/tools/vue-utils";
 
 export default {
    name: 'InputSelectDlg',
@@ -45,6 +48,10 @@ export default {
       // Ошибка - пустой ввод
       errEmpty() {
          return this.result === null;
+      },
+      // Мобильник или десктоп
+      isMobile() {
+         return isMobile();
       },
    },
 

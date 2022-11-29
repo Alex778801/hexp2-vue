@@ -35,7 +35,7 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, isMobile, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, isMobile, } from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 
 import CKEditor from '@ckeditor/ckeditor5-vue';
@@ -119,7 +119,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
-            this.project = replaceNulls(response.data.project);
+            this.project = response.data.project;
             document.title = `Инфо: ${this.project.name}`;
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {

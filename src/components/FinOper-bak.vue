@@ -211,7 +211,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
-            this.oper = replaceNulls(response.data.finoper);
+            this.oper = replaceNullsWithEmptyObjs(response.data.finoper);
             this.oper.amount = Number(this.oper.amount);
             document.title = `Фин опер: ${this.oper.project.name}`;
             // -- owner

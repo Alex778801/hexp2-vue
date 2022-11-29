@@ -18,7 +18,7 @@
          <div class="Name" :class="{'SumOutcomeColor': costType.out, 'SumIncomeColor': !costType.out}">{{ costType.name }}</div>
          <div class="Amount" :class="{'SumOutcomeColor': costType.out, 'SumIncomeColor': !costType.out}">{{ frmSum(group.amount) }}</div>
       </div>
-      <div class="Body" v-for="item in group.group"
+      <div class="Body" v-for="(item, idx) in group.group" :key="idx"
            :draggable="dragMode"
            @dragstart="dragStart($event, item)"
            @dragend="dragEnd($event, item)"
@@ -30,7 +30,7 @@
                     :disabled="dragMode" :readonly="project.readOnly">
          </InputText>
          <InputNumber class="Amount" inputStyle="font-size: 0.9rem; width: 6rem; text-align: end"
-                      v-model="item.amount" @input="onChangeAmount($event, item)" maxFractionDigits="0" min="0"
+                      v-model="item.amount" @input="onChangeAmount($event, item)" :maxFractionDigits="0" :min="0"
                       :disabled="dragMode" :readonly="project.readOnly">
          </InputNumber>
       </div>
@@ -50,7 +50,7 @@
    <Toolbar class="m-1 p-2">
       <template #start>
          <!--  Флаг изменений        -->
-         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged && bugDataLoaded"/>
+         <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged && dataLoaded"/>
       </template>
       <template #end>
          <!-- Конпка новая строка бюджета        -->
@@ -63,7 +63,7 @@
    </Toolbar>
 
 <!-- Диалог выбора статьи новой строки бюджета -->
-   <InputSelectDlg ref="InputCostTypeDlg" />
+   <InputSelectDlg ref="InputCostTypeDlg"/>
 
 </template>
 
@@ -72,9 +72,10 @@
 
 import gql from "graphql-tag";
 import {apolloClient} from "@/apollo-config";
-import {clog, findItemById, replaceNulls, swap} from "@/components/tools/vue-utils";
+import {clog, findItemById, isMobile, replaceNullsWithEmptyObjs, swap} from "@/components/tools/vue-utils";
 import {authUtils} from "@/components/tools/auth-utils";
 import InputSelectDlg from "@/components/tools/InputSelectDlg";
+import {reactive} from "vue";
 
 const fp = require('lodash/fp');
 
@@ -99,7 +100,8 @@ export default {
          dragMode: false,
          // Данные изменены пользователем
          dataChanged: false,
-         bugDataLoaded: false,
+         // Данные загружены
+         dataLoaded: false,
       }
    },
 
@@ -174,7 +176,7 @@ export default {
       // На что перетащили - перемещение
       dragDropMoveItem(event, targetItem) {
          event.target.classList.remove('draggedItem');
-         const sourceItemId = event.dataTransfer.getData('itemId');
+         const sourceItemId = Number(event.dataTransfer.getData('itemId'));
          // сам на себя - отмена
          if (sourceItemId === targetItem.id)
             return;
@@ -228,12 +230,20 @@ export default {
          this.$refs.InputCostTypeDlg.show(
              "Выберите статью", "Статья", this.project.ctList, false,
              (costTypeId) => {
+                // Макс порядковый номер в статье - чтобы добавить новый эл в конец
                 const maxOrder = _(this.budgetFlat)
                     .filter( i => i.costType.id === costTypeId)
                     ?.maxBy( i => i.order)
                     ?.order || -1;
+                // Мин среди отрицательных (новых) ИД
+                const minId = _(this.budgetFlat)
+                    .filter( i => i.id < 0)
+                    ?.minBy( i => i.id)
+                    ?.id || 0;
+                // --
                 const costType = this.project.ctList.find( i => i.id === costTypeId );
-                this.budgetFlat.push( { id: -1, costType: costType, order: maxOrder + 1, amount: 0, notes: ''} );
+                const newLine = { id: minId - 1, costType: costType, order: maxOrder + 1, amount: 0, notes: ''};
+                this.budgetFlat.push(newLine);
                 // Применим бюджет из плоской копии
                 this.applyBudgetFlat();
              }
@@ -247,7 +257,7 @@ export default {
              .sortBy( i => [i.costType.order, i.order] )
              .value();
          // Группируем по статьям и рассчитаем суммы
-         this.budget = _(replaceNulls(this.budgetFlat))
+         this.budget = _(this.budgetFlat)
              .groupBy( 'costType.id' )
              .map( (group, amount) => ({
                 group: group,
@@ -277,7 +287,7 @@ export default {
             fetchPolicy: "no-cache"
          }).then((response) => {
             // Заменим null на {}
-            this.project = replaceNulls(response.data.project);
+            this.project = replaceNullsWithEmptyObjs(response.data.project);
             document.title = `Бюджет: ${this.project.name}`;
             // Копия бюджета без группировок
             this.budgetFlat = response.data.budget;
@@ -286,13 +296,23 @@ export default {
             // Костыль - нужно разобраться, какой компонент вызывает изменение данных при загрузке
             setTimeout(() => {
                this.dataChanged = false;
-               this.bugDataLoaded = true;
+               this.dataLoaded = true;
             }, 1000);
          }).catch((error) => authUtils.err(error));
       },
 
       // Кнопка Сохранить
       async save() {
+         // Убрать лишнее из плоской копии бюджета
+         const budgetFlatCompact = _(this.budgetFlat)
+             .map( i => ({
+                id: i.id,
+                costTypeId: i.costType.id,
+                order: i.order,
+                amount: i.amount,
+                notes: i.notes,
+             }))
+             .value();
          // -- Мутация - запись изменений
          const updateM = gql(`
                   #graphql
@@ -306,7 +326,8 @@ export default {
             mutation: updateM,
             variables: {
                projectId: Number(this.projectId),
-               budgetPack: JSON.stringify(this.budgetFlat),
+               // budgetPack: JSON.stringify(this.budgetFlat),
+               budgetPack: JSON.stringify(budgetFlatCompact),
                deletedPack: JSON.stringify(this.deleted),
             },
             fetchPolicy: "no-cache"

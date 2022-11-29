@@ -59,7 +59,7 @@
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {clog, replaceNulls} from "@/components/tools/vue-utils";
+import {clog, } from "@/components/tools/vue-utils";
 
 export default {
    name: "ElemAgent",
@@ -90,7 +90,8 @@ export default {
       const itemQ = gql(`
             query($id: Int!) {
                agent(id: $id) {
-                  id, name, path, owner {id, username,}, user, acl, aclList, readOnly,
+                  id, name, path,
+                  owner { id, username, }, user, acl, aclList, readOnly,
                }
             }
       `);
@@ -98,7 +99,7 @@ export default {
          query: itemQ,
          variables: {id: this.agentId},
          fetchPolicy: "no-cache"} ).then( (response) => {
-            this.agent = replaceNulls(response.data.agent);
+            this.agent = response.data.agent;
             document.title = `Агент: ${this.agent.name}`;
             // -- owner
             this.aclListOwner = JSON.parse(this.agent.aclList).slice(2);
@@ -113,7 +114,7 @@ export default {
       async save() {
          // -- Мутация - запись изменений
          const updateM = gql(`
-               mutation ($id: Int!, $name: String!, $owner: String!) {
+               mutation ($id: Int!, $name: String!, $owner: String) {
                   updateAgent (id: $id, name: $name, owner: $owner) {
                      ok, result
                   }

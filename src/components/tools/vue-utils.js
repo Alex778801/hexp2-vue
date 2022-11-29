@@ -78,7 +78,7 @@ export function findItemInTree(tree, key) {
 }
 
 // Заменить в объекте все поля со значением null на значение {}
-export function replaceNulls(obj) {
+export function replaceNullsWithEmptyObjs(obj) {
    for (let key in obj) {
       if (obj[key] === null)
          obj[key] = {}
