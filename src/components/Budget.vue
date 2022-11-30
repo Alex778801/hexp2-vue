@@ -7,7 +7,7 @@
       <template #start>
          <!-- Путь    -->
          <i class="fa fa-file-code text-primary text-3xl"/>
-         <span class="text-primary ml-2">Бюдет '<router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project?.path}}{{project?.name}}</router-link>'</span>
+         <span class="text-primary ml-2">Бюджет '<router-link :to="'/project/' + projectId" class="text-primary font-bold my-1">{{project?.path}}{{project?.name}}</router-link>'</span>
       </template>
    </Toolbar>
 
@@ -228,18 +228,20 @@ export default {
       // Новая строка бюджета
       newBudgetLine() {
          this.$refs.InputCostTypeDlg.show(
-             "Выберите статью", "Статья", this.project.ctList, false,
+             "Выберите статью", "Статья...", this.project.ctList, false,
              (costTypeId) => {
-                // Макс порядковый номер в статье - чтобы добавить новый эл в конец
-                const maxOrder = _(this.budgetFlat)
-                    .filter( i => i.costType.id === costTypeId)
-                    ?.maxBy( i => i.order)
-                    ?.order || -1;
                 // Мин среди отрицательных (новых) ИД
-                const minId = _(this.budgetFlat)
-                    .filter( i => i.id < 0)
-                    ?.minBy( i => i.id)
-                    ?.id || 0;
+                let minId = _(this.budgetFlat)
+                    .filter( i => i.id < 0 )
+                    ?.minBy( i => i.id )
+                    ?.id;
+                minId = minId === undefined ? 0 : minId;
+                // Макс порядковый номер в статье - чтобы добавить новый эл в конец
+                let maxOrder = _(this.budgetFlat)
+                    .filter( i => i.costType.id === costTypeId )
+                    ?.maxBy( i => i.order )
+                    ?.order;
+                maxOrder = maxOrder === undefined ? -1 : maxOrder;
                 // --
                 const costType = this.project.ctList.find( i => i.id === costTypeId );
                 const newLine = { id: minId - 1, costType: costType, order: maxOrder + 1, amount: 0, notes: ''};
@@ -341,6 +343,8 @@ export default {
          }).catch((error) => {
             authUtils.err(error);
          });
+         this.deleted = [];
+         await this.fetchData();
          // this.$router.go(-1);
       },
 
