@@ -37,8 +37,8 @@ export function boolFromUrlParam(value) {
 }
 
 // Извлечь численное значение из GET параметра URL
-export function numFromUrlParam(value) {
-   return Number(isNaN(Number(value)) ? -1 : Number(value));
+export function numFromUrlParam(value, defValue = -1) {
+   return Number(isNaN(Number(value)) ? defValue : Number(value));
 }
 
 // Преобразовать unix timestamp в дату или вернуть null

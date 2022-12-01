@@ -354,14 +354,15 @@ export default {
       calendar() {
          // Сформируем начальный временной интервал
          if (this.tsBegin === -1 || this.tsEnd === -1) {
-            const start = this.list[0].ts;
+            const start = this.list[0]?.ts;
             let min = start, max = start;
             this.list.forEach(i => {
                min = i.ts < min ? i.ts : min;
                max = i.ts > max ? i.ts : max;
             })
-            this.tsBegin = min;
-            this.tsEnd = max;
+            const now = new Date(), y = now.getFullYear(), m = now.getMonth();
+            this.tsBegin = min || moment(new Date(y, m, 1)).unix();
+            this.tsEnd = max || moment(new Date(y, m + 1, 0)).unix();
          }
          // Откроем диалог выбора временного интервала и выполним обновление журнала
          this.$refs.dateIntervalDlg.show(
