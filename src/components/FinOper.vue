@@ -82,7 +82,7 @@
    </Toolbar>
 
 <!-- Фото галерея -->
-   <div v-for="(photo, idx) in oper.photoList" :key="idx" class="m-1">
+   <div v-for="(photo, idx) in oper.photoList" :key="idx" class="m-1 mb-2">
       <img class="w-full" :src="mediaRoot + '/' + photo.image"/>
       <div class="ImageToolbar" >
          <ConfirmPopup></ConfirmPopup>
@@ -215,6 +215,10 @@ export default {
 
       // Добавить новое фото
       async newPhoto(event) {
+         // Если есть изменения в данных - сохраним их
+            if (this.dataChanged)
+               await this.save();
+         // --
          const file = event.files[0];
          const photoFileSize = settingsUtils.loadPhotoFileSize();
          imageConversion.compressAccurately(file, photoFileSize).then(async res => {
@@ -243,6 +247,9 @@ export default {
 
       // Операция с фото: 1 - удалить, 2 вращать вправо, 3 вращать влео
       async actionPhoto(photoId, action) {
+         // Если есть изменения в данных - сохраним их
+         if (this.dataChanged)
+            await this.save();
          // -- Мутация - операция с фото
          const photoM = gql(`
                #graphql
@@ -293,6 +300,7 @@ export default {
             },
             fetchPolicy: "no-cache"
          }).then((response) => {
+            this.dataChanged = false;
             this.$toast.add({
                severity: 'success',
                summary: 'Финансовая операция',
@@ -359,10 +367,11 @@ export default {
 
 .ImageToolbar {
    position: relative;
-   top: -1.8rem;
+   top: -1.5rem;
    right: 0.1rem;
    text-align: right;
-   height: 0.8rem
+   height: 0.8rem;
+   opacity: 70%;
 }
 
 </style>
