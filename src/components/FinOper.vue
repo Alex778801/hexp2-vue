@@ -49,6 +49,7 @@
             <InputNumber id="finoper_amount" v-model="oper.amount" :inputProps="{'pattern': '[0-9]*', 'inputmode': 'numeric'}"
                          :class="{'IncomeSum': !getCostTypeOut(), 'OutcomeSum': getCostTypeOut()}"/>
             <Button icon="fa fa-trash" class="ml-2 w-3rem text-xl" @click="oper.amount=null"/>
+            <Button icon="fa fa-calculator" class="ml-2 w-3rem text-xl" @click="calcMathExpr()"/>
          </span>
       </div>
 <!--  Примечание -->
@@ -91,14 +92,20 @@
          <Button icon="fa fa-redo-alt" class="mr-2" @click="actionPhoto(photo.id, 3)"/>
       </div>
    </div>
-
 </div>
+
+   <!-- Диалог ввода строки -->
+   <InputTextDlg child ref="inputMathExpDlg" />
 
 </template>
 
 
 <script>
 /* eslint-disable */
+
+import { create, all } from 'mathjs'
+const config = { }
+const math = create(all, config)
 
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
@@ -109,11 +116,17 @@ import {compress, compressAccurately} from 'image-conversion';
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
 import * as imageConversion from "image-conversion";
 import {settingsUtils} from "@/components/tools/settings-utils";
+import InputTextDlg from "@/components/tools/InputTextDlg";
+import ConfirmDlg from "@/components/tools/ConfirmDlg";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
    name: "FinOper",
+
+   components: {
+      InputTextDlg,
+   },
 
    data() {
       return {
@@ -157,7 +170,6 @@ export default {
    },
 
    methods: {
-
       // Получиьт цвет выбранной Статьи
       getCostTypeColor() {
          return this.oper.ctList?.find( i => i.id === this.oper.costType.id)?.color;
@@ -273,6 +285,40 @@ export default {
          })
       },
 
+      // Рассчитать сумму операции по математическому выражению
+      calcMathExpr() {
+         // Найдем мат выражение в тексте примечания
+         let expr = '';
+         const begin = this.oper.notes.indexOf('#!');
+         const end = this.oper.notes.indexOf('!#', begin);
+         if (begin !== -1 && end !== -1 ) {
+            expr = this.oper.notes.slice(begin + 2, end)
+         }
+         this.$refs.inputMathExpDlg.show(
+             'Введите математич. выражение',
+             expr,
+             false,
+             async (data) => {
+                // --
+                try {
+                   const res = Math.round(math.evaluate(data));
+                   if (res < 0)
+                      throw 'Отрицательный результат вычислений';
+                   this.oper.amount = res;
+                   // Сохраним выражение в теле примечания
+                   const begin = this.oper.notes.indexOf('#!');
+                   const end = this.oper.notes.indexOf('!#', begin);
+                   if (begin !== -1 && end !== -1) {
+                      this.oper.notes = this.oper.notes.slice(0, begin) + this.oper.notes.slice(end + 2);
+                   }
+                   this.oper.notes = (this.oper.notes.trim() + '\n#! ' + data.replaceAll(' ', '') + ' !#').trim();
+                } catch (err) {
+                   this.$toast.add({severity: 'error', summary: `Ошибка`, detail: 'Недопустимое математическое выражение', life: 3000});
+                }
+                // --
+             })
+      },
+
       // Кнопка Сохранить
       async save() {
          // -- Мутация - запись изменений
@@ -345,7 +391,7 @@ export default {
       }
 
       #finoper_amount :deep(input) {
-         width: 14rem;
+         width: 12rem;
          font-weight: bold;
          text-align: center;
          font-size: 2rem;
