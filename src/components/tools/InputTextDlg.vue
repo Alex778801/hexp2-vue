@@ -6,7 +6,7 @@
       </template>
 
       <div class="field">
-         <InputText id="inputText" v-model="data" aria-describedby="username2-help" class="w-full p-inputtext-sm my-2" :class="{ 'p-invalid': errEmpty }" @keyup.enter="ok()"/>
+         <InputText id="inputText" v-model="data" aria-describedby="username2-help" class="w-full my-2" :class="{ 'p-invalid': errEmpty }" @keyup.enter="ok()"/>
          <small v-if="errEmpty" id="inputText-help" class="p-error"> Пустое значение не допустимо </small>
       </div>
 

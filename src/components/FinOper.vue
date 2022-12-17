@@ -95,7 +95,7 @@
 </div>
 
    <!-- Диалог ввода строки -->
-   <InputTextDlg child ref="inputMathExpDlg" />
+   <InputMathDlg child ref="inputMathDlg" />
 
 </template>
 
@@ -116,7 +116,7 @@ import {compress, compressAccurately} from 'image-conversion';
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
 import * as imageConversion from "image-conversion";
 import {settingsUtils} from "@/components/tools/settings-utils";
-import InputTextDlg from "@/components/tools/InputTextDlg";
+import InputMathDlg from "@/components/tools/InputMathDlg";
 import ConfirmDlg from "@/components/tools/ConfirmDlg";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -125,7 +125,7 @@ export default {
    name: "FinOper",
 
    components: {
-      InputTextDlg,
+      InputMathDlg,
    },
 
    data() {
@@ -292,9 +292,9 @@ export default {
          const begin = this.oper.notes.indexOf('#!');
          const end = this.oper.notes.indexOf('!#', begin);
          if (begin !== -1 && end !== -1 ) {
-            expr = this.oper.notes.slice(begin + 2, end)
+            expr = this.oper.notes.slice(begin + 2, end).trim();
          }
-         this.$refs.inputMathExpDlg.show(
+         this.$refs.inputMathDlg.show(
              'Введите математич. выражение',
              expr,
              false,
