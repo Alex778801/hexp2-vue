@@ -95,7 +95,7 @@
 </div>
 
    <!-- Диалог ввода строки -->
-   <InputMathDlg child ref="inputMathDlg" />
+   <InputMathDlg child ref="inputMathDlg"/>
 
 </template>
 
@@ -295,9 +295,7 @@ export default {
             expr = this.oper.notes.slice(begin + 2, end).trim();
          }
          this.$refs.inputMathDlg.show(
-             'Введите математич. выражение',
              expr,
-             false,
              async (data) => {
                 // --
                 try {
