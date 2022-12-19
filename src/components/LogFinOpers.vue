@@ -26,7 +26,7 @@
                <div class="ColorBox" :style="{'background-color': item.costType?.color}"></div>
                <div class="Amount" :class="{'SumIncomeColor': !item.costType?.out}">{{ frmSum(item.amount) }}</div>
                <div class="Ts">{{ frmTs(item.ts) }}<span class="User" :style="{'color': item.ucol}">@{{item.user}}</span></div>
-               <div class="Notes">{{ item.notes }}</div>
+               <div class="Notes" v-html="frmNotes(item.notes)"></div>
                <div class="Photo">
                   <i class="fas fa-camera" v-if="item.pq>0"></i>
                </div>
@@ -51,7 +51,7 @@
             <div class="AgentFrom">{{ item.agentFrom?.name }}<br>
                <span class="AgentTo">{{ item.agentTo?.name }}</span></div>
             <div class="User" :style="{'color': item.ucol}">{{ item.user }}</div>
-            <div class="Notes">{{ item.notes }}</div>
+            <div class="Notes" v-html="frmNotes(item.notes)"></div>
          </div>
 <!--     --    -->
       </div>
@@ -281,6 +281,11 @@ export default {
       // Форматировать дату 2
       frmTs2(ts) {
          return moment.unix(ts).format("DD MMMM YYYY ddd HH:mm:ss");
+      },
+
+      // Форматировать заметки
+      frmNotes(text) {
+         return text.replace('#!', '<span class="MathExpr">').replace('!#', '</span>');
       },
 
       // Открыть фин операцию
@@ -750,7 +755,7 @@ export default {
    .Notes {
       text-align: start;
       font-size: 0.95rem;
-      color: var(--surface-700);;
+      color: var(--surface-700);
       line-height: 1.2rem;
       max-height: 11.45rem;
       overflow: auto;
@@ -861,6 +866,10 @@ export default {
       height: 2rem;
       display: table;
    }
+}
+
+:deep(.MathExpr) {
+   color: var(--primary-300);
 }
 
 </style>
