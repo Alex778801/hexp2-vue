@@ -75,7 +75,7 @@
       <template #end>
          <!-- Конпка новое ФОТО        -->
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" chooseLabel="+" accept="image/*, image/heic"
-                     customUpload @uploader="newPhoto" auto/>
+                     customUpload @uploader="newPhoto" auto multiple/>
          <!--  Кнопки действий формы      -->
          <Button label="Сохр" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
          <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
@@ -231,18 +231,20 @@ export default {
             if (this.dataChanged)
                await this.save();
          // --
-         const file = event.files[0];
-         const photoFileSize = settingsUtils.loadPhotoFileSize();
-         imageConversion.compressAccurately(file, photoFileSize).then(async res => {
-            // console.log(res);
-            const payload = new FormData();
-            payload.append('token', localStorage.getItem('token'));
-            payload.append('file', res);
-            payload.append('operId', this.operId);
-            await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
-               this.fetchData();
-            }).catch((error) => console.log(error))
-         })
+         // const file = event.files[0];
+         for (const file of event.files) {
+            const photoFileSize = settingsUtils.loadPhotoFileSize();
+            imageConversion.compressAccurately(file, photoFileSize).then(async res => {
+               // console.log(res);
+               const payload = new FormData();
+               payload.append('token', localStorage.getItem('token'));
+               payload.append('file', res);
+               payload.append('operId', this.operId);
+               await axios.post(`${__backendAddr__}${__backendUploads__}/uploadFinOperPhoto/`, payload).then((response) => {
+                  this.fetchData();
+               }).catch((error) => console.log(error))
+            })
+         }
       },
 
       // Удалить фото - подтверждение
