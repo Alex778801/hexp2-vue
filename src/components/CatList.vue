@@ -4,7 +4,16 @@
    <Toolbar class="m-1 p-2 top-infobar">
       <template #start>
          <!-- Путь    -->
-         <Button icon="fa fa-arrow-alt-circle-up" style="padding: 0.3rem 0;" :class="{'glowBtn': glowDirBtn}" @click="levelUp"></Button><span class="text-primary font-bold ml-2">{{ frmCurPath() }}</span>
+         <Button icon="fa fa-arrow-alt-circle-up" style="padding: 0.3rem 0;" :class="{'glowBtn': glowDirBtn}" @click="levelUp"></Button>
+         <div v-if="hierarchyMode">
+            <span class="text-primary font-bold ml-2 cursor-pointer select-none">
+               <span @dblclick="levelRoot()"> ⌘ </span>
+               <span v-for="item in getPathList()" :key="item.id" @dblclick="itemEnter(item)"> {{ item.name }} / </span>
+            </span>
+         </div>
+         <div v-else>
+            <span class="text-primary font-bold ml-2"> Иерархия отключена! </span>
+         </div>
       </template>
       <template #end>
          <!-- Кнопка На уровень вверх    -->
@@ -99,7 +108,7 @@
    <!-- Клик на 3 полосках в режиме редактирования  -->
    <Menu id="itemMenu" ref="itemMenu" :model="itemMenuContent" popup style="white-space: nowrap; width: auto; max-width: 30rem !important;"/>
    <!-- Тап или правая клавиша мыши на названии  -->
-   <ContextMenu ref="itemMenuContext" :model="itemMenuContent"       style="white-space: nowrap; width: auto; max-width: 30rem !important;"/>
+   <ContextMenu ref="itemMenuContext" :model="itemMenuContent" style="white-space: nowrap; width: auto; max-width: 30rem !important;"/>
 
 <!-- Диалог ввода строки -->
    <InputTextDlg child ref="inputTextDlg" />
@@ -304,19 +313,19 @@ export default {
          }
       },
 
-      // Сформировать путь текущей группы
-      frmCurPath() {
+      // Сформировать путь к текущей папке
+      getPathList() {
+         let path = [];
          if (this.hierarchyMode) {
             let tmpPid = this.curPid;
-            let path = '';
             let item = findItemById(tmpPid, this.list);
             while (item !== undefined) {
-               path = item.name + '/' + path;
+               path.push(item);
                item = findItemById(item.pid, this.list);
             }
-            return path;
+            path.reverse();
          }
-         else return "--- Иерархия выключена ---"
+         return path;
       },
 
       // Цвет элемента
@@ -377,6 +386,17 @@ export default {
       levelUp() {
          if (this.canLevelUp) {
             this.curPid = findItemById(this.curPid, this.list).pid;
+            this.updateHistory();
+            // Мигание
+            this.glowDirBtn = true;
+            setTimeout(() => {this.glowDirBtn = false}, 300);
+         }
+      },
+
+      // Перейти в корень
+      levelRoot() {
+         if (this.hierarchyMode) {
+            this.curPid = -1;
             this.updateHistory();
             // Мигание
             this.glowDirBtn = true;
@@ -759,6 +779,10 @@ export default {
       column-fill: auto;
       column-rule: 0.15rem dotted var(--primary-100);
       column-span: none;
+   }
+
+   a.glink:link, a.glink:visited, a.glink:hover, a.glink:active {
+      color: red !important;
    }
 
 </style>
