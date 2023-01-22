@@ -6,10 +6,12 @@
          <!-- Путь    -->
          <Button icon="fa fa-arrow-alt-circle-up" style="padding: 0.3rem 0;" :class="{'glowBtn': glowDirBtn}" @click="levelUp"></Button>
          <div v-if="hierarchyMode">
-            <span class="text-primary font-bold ml-2 cursor-pointer select-none">
-               <span @dblclick="levelRoot()"> ⌘ </span>
-               <span v-for="item in getPathList()" :key="item.id" @dblclick="itemEnter(item)"> {{ item.name }} / </span>
-            </span>
+            <div class="text-primary font-bold ml-2 line-height-3 cursor-pointer select-none">
+               <span class="pathItem" @dblclick="levelRoot()"> ⌘ </span>
+               <template v-for="item in getPathList()" :key="item.id">
+                  <span class="pathItem" @dblclick="itemEnter(item)">{{ item.name }}</span> /
+               </template>
+            </div>
          </div>
          <div v-else>
             <span class="text-primary font-bold ml-2"> Иерархия отключена! </span>
@@ -781,8 +783,8 @@ export default {
       column-span: none;
    }
 
-   a.glink:link, a.glink:visited, a.glink:hover, a.glink:active {
-      color: red !important;
+   .pathItem:hover {
+      color: var(--primary-800);
    }
 
 </style>
