@@ -708,6 +708,7 @@ export default {
    .ColorBox {
       height: 100%;
       text-align: center;
+      min-width: 2.6rem;
    }
 
    .Photo {
