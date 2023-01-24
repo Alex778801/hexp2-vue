@@ -75,6 +75,7 @@
             </div>
          </Fieldset>
    <!--  --  -->
+
       </div>
 
    <!-- Отчет                               -->
@@ -268,6 +269,16 @@
 
    <!-- --  -->
       </div>
+
+
+      <!--      Нижняя панель инструментов -->
+      <Toolbar class="mx-0 my-1 p-2 no-print">
+         <template #end>
+            <!--  Кнопки действий формы      -->
+            <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="$router.go(-1)"/>
+         </template>
+      </Toolbar>
+
 
    </div>
 
