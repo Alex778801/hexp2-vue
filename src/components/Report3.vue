@@ -543,7 +543,7 @@ export default {
          // -----------------------------------------
          // Отчетный период
          const beginTsA = moment(this.beginA).unix();
-         const endTsA = moment(this.endA).unix();
+         const endTsA = moment(this.endA).unix() + 86399;
          const dataA = _(this.finOpers)
              .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
              .groupBy('ctId')
@@ -561,7 +561,7 @@ export default {
          // -----------------------------------------
          // Референсный период
          const beginTsB = moment(this.beginB).unix();
-         const endTsB = moment(this.endB).unix();
+         const endTsB = moment(this.endB).unix() + 86399;
          const dataB = _(this.finOpers)
              .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
              .groupBy('ctId')
@@ -620,7 +620,7 @@ export default {
          // -----------------------------------------
          // Отчетный период
          const beginTsA = moment(this.beginA).unix();
-         const endTsA = moment(this.endA).unix();
+         const endTsA = moment(this.endA).unix() + 86399;
          const dataA = _(this.finOpers)
              .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
              .groupBy('ctId')
@@ -661,7 +661,7 @@ export default {
          // -----------------------------------------
          // Референсный период
          const beginTsB = moment(this.beginB).unix();
-         const endTsB = moment(this.endB).unix();
+         const endTsB = moment(this.endB).unix() + 86399;
          const dataB = _(this.finOpers)
              .filter( i => i.ts >= beginTsB && i.ts <= endTsB && this.checkFilter(i))
              .groupBy( i => [ new Date(i.ts * 1000).getMonth() ])
@@ -684,7 +684,7 @@ export default {
          // -----------------------------------------
          // Отчетный период
          const beginTsA = moment(this.beginA).unix();
-         const endTsA = moment(this.endA).unix();
+         const endTsA = moment(this.endA).unix() + 86399;
          const dataA = _(this.finOpers)
              .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
              .groupBy('agFromId')
@@ -761,7 +761,7 @@ export default {
          // -----------------------------------------
          // Отчетный период
          const beginTsA = moment(this.beginA).unix();
-         const endTsA = moment(this.endA).unix();
+         const endTsA = moment(this.endA).unix() + 86399;
          const dataA = _(this.finOpers)
              .filter( i => i.ts >= beginTsA && i.ts <= endTsA && this.checkFilter(i) )
              .groupBy('agToId')
