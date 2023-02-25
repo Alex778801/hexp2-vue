@@ -1,5 +1,11 @@
 <template>
    <Menubar :model="items" class="m-1 no-print" :class="{'bg-primary-100': String(dbLogoName).substring(0, 1) === '!'}">
+      <template #start>
+         <router-link to="/" class="mr-2 text-primary" style="text-decoration: none;">
+            <i class="fa fa-home"></i>
+            {{ dbLogoName }}
+         </router-link>
+      </template>
       <template #end>
          <div class="p-inputgroup">
             <InputText placeholder="строка поиска" style="width: 12em" v-model="findStr" @keyup.enter="search()"/>
@@ -24,7 +30,7 @@ export default {
       return {
          findStr: this.$route.params.findStr,
          items: [
-            { label: '', icon: 'fa fa-home', disabled: true },
+            // { label: '', icon: 'fa fa-home', disabled: true },
             { label: 'Проекты', icon: 'fa fa-file-invoice', to: '/cat-projects' },
             { label: 'Статьи', icon: 'fa fa-coins', to: '/cat-costtypes' },
             { label: 'Агенты', icon: 'fa fa-user-tie', to: '/cat-agents' },
@@ -37,14 +43,14 @@ export default {
    },
 
    watch: {
-      // Изменение лого имени - обновляем вручную составной объект для реактивности
-      dbLogoName: {
-         handler(newVal, oldVal) {
-            this.items[0].label = newVal;
-         },
-         immediate: true,
-         deep: true
-      }
+      // // Изменение лого имени - обновляем вручную составной объект для реактивности
+      // dbLogoName: {
+      //    handler(newVal, oldVal) {
+      //       this.items[0].label = newVal;
+      //    },
+      //    immediate: true,
+      //    deep: true
+      // }
    },
 
    methods: {
