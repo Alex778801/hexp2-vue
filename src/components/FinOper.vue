@@ -290,7 +290,7 @@ export default {
       // Рассчитать сумму операции по математическому выражению
       calcMathExpr() {
          // Найдем мат выражение в тексте примечания
-         let expr = '';
+         let expr = this.oper.amount !== 0 ? this.oper.amount : '';
          const begin = this.oper.notes.indexOf('#!');
          const end = this.oper.notes.indexOf('!#', begin);
          if (begin !== -1 && end !== -1 ) {
