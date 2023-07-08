@@ -42,6 +42,8 @@ import Panel from 'primevue/panel';
 import Chart from 'primevue/chart';
 import InputSwitch from 'primevue/inputswitch';
 import OverlayPanel from 'primevue/overlaypanel';
+import SplitButton from 'primevue/splitbutton';
+import SpeedDial from 'primevue/speeddial';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -171,6 +173,8 @@ createApp(App)
     .component('Chart', Chart)
     .component('InputSwitch', InputSwitch)
     .component('OverlayPanel', OverlayPanel)
+    .component('SplitButton', SplitButton)
+    .component('SpeedDial', SpeedDial)
     .mount('#app');
 
 

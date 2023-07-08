@@ -73,11 +73,15 @@
          <i class="fa fa-pen text-primary text-xl ml-2" v-if="dataChanged"/>
       </template>
       <template #end>
+         <!-- Меню действий -->
+<!--         <SplitButton class="mr-2" label="" icon="fa fa-trash" @click="save" :model="actionMenu" />-->
          <!-- Конпка новое ФОТО        -->
          <FileUpload class="mr-2" uploadIcon="pi pi-image" mode="basic" chooseLabel="+" accept="image/*, image/heic"
                      customUpload @uploader="newPhoto" auto multiple/>
          <!--  Кнопки действий формы      -->
-         <Button label="Сохр" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>
+<!--         <Button label="Сохр" icon="fa fa-save" class="mr-2 p-button-success" :disabled="oper.readOnly" @click="save()"/>-->
+         <SplitButton label="Сохр" icon="fa fa-save" class="mr-2 p-button-success"
+                      :disabled="oper.readOnly" @click="save()" :model="actionMenu" />
          <Button label="Закр" icon="fa fa-ban" class="p-button-danger" @click="cancel()"/>
       </template>
    </Toolbar>
@@ -97,6 +101,12 @@
    <!-- Диалог ввода строки -->
    <InputMathDlg child ref="inputMathDlg"/>
 
+   <!-- Диалог подтверждения -->
+   <ConfirmDlg child ref="confirmDlg" />
+
+   <!-- Диалог выбора проекта для переноса операции  -->
+   <InputSelectTreeDlg ref="selectProjectDlg" />
+
 </template>
 
 
@@ -110,7 +120,7 @@ const math = create(all, config)
 import {apolloClient} from "@/apollo-config";
 import {authUtils} from "@/components/tools/auth-utils";
 import gql from "graphql-tag";
-import {isMobile, replaceNullsWithEmptyObjs} from "@/components/tools/vue-utils";
+import {clog, isMobile, replaceNullsWithEmptyObjs} from "@/components/tools/vue-utils";
 import axios from 'axios'
 import {compress, compressAccurately} from 'image-conversion';
 import {__backendAddr__, __backendMediaDir__, __backendUploads__} from "@/setup";
@@ -118,6 +128,7 @@ import * as imageConversion from "image-conversion";
 import {settingsUtils} from "@/components/tools/settings-utils";
 import InputMathDlg from "@/components/tools/InputMathDlg";
 import ConfirmDlg from "@/components/tools/ConfirmDlg";
+import InputSelectTreeDlg from "@/components/tools/InputSelectTreeDlg.vue";
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.xsrfCookieName = 'csrftoken'
 
@@ -125,6 +136,8 @@ export default {
    name: "FinOper",
 
    components: {
+      InputSelectTreeDlg,
+      ConfirmDlg,
       InputMathDlg,
    },
 
@@ -144,6 +157,12 @@ export default {
          curPhotoIdx: 0,
          // Данные изменены пользователем
          dataChanged: false,
+         // Меню действий с фин операцией
+         actionMenu: [
+            { label: 'Переместить', icon: 'fa fa-arrow-right', command:() => { this.changeProject() } },
+            { label: 'Копировать', icon: 'fa fa-copy',         command:() => { this.copy() } },
+            { label: 'Удалить', icon: 'fa fa-trash',           command:() => { this.delete() } },
+         ],
       }
    },
 
@@ -290,7 +309,7 @@ export default {
       // Рассчитать сумму операции по математическому выражению
       calcMathExpr() {
          // Найдем мат выражение в тексте примечания
-         let expr = this.oper.amount !== 0 ? this.oper.amount : '';
+         let expr = this.oper.amount !== 0 && this.oper.amount !== null ? '' + this.oper.amount : '';
          const begin = this.oper.notes.indexOf('#!');
          const end = this.oper.notes.indexOf('!#', begin);
          if (begin !== -1 && end !== -1 ) {
@@ -362,7 +381,143 @@ export default {
       // Кнопка Отмена
       cancel() {
          this.$router.go(-1);
-      }
+      },
+
+      // Удалить
+      delete() {
+         this.$refs.confirmDlg.show(
+             'Подтвердите действие',
+             'Удалить фин операцию?',
+             async () => {
+                // Мутация на удаление фин операции
+                const delM = gql(`
+                   #graphql
+                   mutation ($id: Int!) {
+                      deleteFinoper(id: $id) {
+                        ok, result
+                      }
+                   }
+                   `);
+                await apolloClient.mutate({
+                   mutation: delM,
+                   variables: {
+                      id: Number(this.operId),
+                   },
+                   fetchPolicy: "no-cache"
+                }).then((response) => {
+                   this.$toast.add({
+                      severity: 'success',
+                      summary: `Операция`,
+                      detail: 'Успешно удалена',
+                      life: 2000
+                   });
+                   this.cancel();
+                }).catch((error) => {
+                   authUtils.err(error);
+                })
+                // --
+             })
+      },
+
+      // Копировать
+      async copy() {
+         // Мутация на копироване (клонирование) фин операции
+         const copyM = gql(`
+                   #graphql
+                   mutation ($id: Int!) {
+                      copyFinoper(id: $id) {
+                        ok, result
+                      }
+                   }
+                   `);
+         await apolloClient.mutate({
+            mutation: copyM,
+            variables: {
+               id: Number(this.operId),
+            },
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            this.$toast.add({
+               severity: 'success',
+               summary: `Операция`,
+               detail: 'Успешно скопирована (имя начинается со слова КОПИЯ)',
+               life: 2000
+            });
+         }).catch((error) => {
+            authUtils.err(error);
+         })
+      },
+
+      // Переместить
+      async changeProject() {
+         // -------------------------------------------------------
+         // Запрос дерева проектов
+         const treeQ = gql(`
+            #graphql
+            query {
+                projectsTree
+            }
+         `);
+         await apolloClient.query({
+            query: treeQ,
+            fetchPolicy: "no-cache"
+         }).then((response) => {
+            // Подготовка списка выбора
+            const options = JSON.parse(response.data.projectsTree);
+            // -------------------------------------------------------
+            // Диалог выбора проекта
+            this.$refs.selectProjectDlg.show(
+                'Выберите целевой проект для переноса:',
+                'список проектов...',
+                options,
+                false,
+                false,
+                async projectId => {
+                   // Проверим валидность целевого проекта
+                   if (projectId === this.projectId) {
+                      this.$toast.add({
+                         severity: 'error',
+                         summary: `Перемещение НЕ выполнено`,
+                         detail: 'Проект для переноса и текущий проект должны различаться!',
+                         life: 0
+                      });
+                      return;
+                   }
+                   // -------------------------------------------------------
+                   // Мутация на перенос фин операции в другой порект
+                   const moveM = gql(`
+                   #graphql
+                   mutation ($id: Int!, $projectId: Int!) {
+                      moveFinoper(id: $id, projectId: $projectId) {
+                        ok, result
+                      }
+                   }
+                   `);
+                   const variables = {
+                      id: Number(this.operId),
+                      projectId: projectId,
+                   };
+                   await apolloClient.mutate({
+                      mutation: moveM,
+                      variables: variables,
+                      fetchPolicy: "no-cache"
+                   }).then((response) => {
+                      // Результат переноса
+                      this.$toast.add({
+                         severity: 'success',
+                         summary: `Операция`,
+                         detail: 'Успешно перемещен',
+                         life: 2000
+                      });
+
+                   }).catch((error) => {
+                      authUtils.err(error);
+                   })
+                });
+            // --
+         }).catch( (error) => authUtils.err(error) )
+      },
+
    },
 
 }
